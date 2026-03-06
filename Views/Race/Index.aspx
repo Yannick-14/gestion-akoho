@@ -25,7 +25,7 @@
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Home") %>">Home</a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Race") %>">Race</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Privacy", "Home") %>">Privacy</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Lot") %>">Lot</a></li>
                 </ul>
             </div>
         </div>
@@ -45,18 +45,18 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h2 class="h5">Ajouter une race</h2>
-                    <% using (Html.BeginForm("Create", "Race", FormMethod.Post)) { %>
+                    <form action="/Race/Create" method="post">
                         <%= Html.AntiForgeryToken() %>
                         <div class="mb-3">
                             <label for="nom" class="form-label">Nom</label>
                             <input id="nom" name="nom" class="form-control" />
                         </div>
                         <div class="mb-3">
-                            <label for="jourFoyAtody" class="form-label">Jour de foy atody</label>
+                            <label for="jourFoyAtody" class="form-label">Jour d' eclosion</label>
                             <input id="jourFoyAtody" name="jourFoyAtody" type="number" min="1" class="form-control" />
                         </div>
                         <button type="submit" class="btn btn-primary">Creer</button>
-                    <% } %>
+                    </form>
                 </div>
             </div>
         <% } else { %>

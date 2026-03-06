@@ -15,7 +15,7 @@
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Home") %>">Home</a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Race") %>">Race</a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Privacy", "Home") %>">Privacy</a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Lot") %>">Lot</a></li>
                 </ul>
             </div>
         </div>

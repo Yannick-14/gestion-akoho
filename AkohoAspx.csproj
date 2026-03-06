@@ -70,34 +70,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\RaceController.cs" />
-    <Compile Include="Data\AppDbContext.cs" />
+    <Compile Include="Controllers\**\*.cs" />
+    <Compile Include="Data\**\*.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\CroissanceAlimentRace.cs" />
-    <Compile Include="Models\CroissancePoidsRace.cs" />
-    <Compile Include="Models\ErrorViewModel.cs" />
-    <Compile Include="Models\Lot.cs" />
-    <Compile Include="Models\MouvementLot.cs" />
-    <Compile Include="Models\PrixVenteRaceParPoids.cs" />
-    <Compile Include="Models\Race.cs" />
-    <Compile Include="Models\TypeMouvement.cs" />
-    <Compile Include="Repository\CroissanceRepository.cs" />
-    <Compile Include="Repository\LotRepository.cs" />
-    <Compile Include="Repository\RaceRepository.cs" />
+    <Compile Include="Models\**\*.cs" />
+    <Compile Include="Repository\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax">
       <SubType>Component</SubType>
     </Content>
     <Content Include="packages.config" />
-    <Content Include="Views\Home\Index.aspx" />
-    <Content Include="Views\Home\Privacy.aspx" />
-    <Content Include="Views\Race\Index.aspx" />
-    <Content Include="Views\Shared\Error.aspx" />
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\**\*.*" />
     <Content Include="Web.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
