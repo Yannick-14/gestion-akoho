@@ -13,12 +13,14 @@ namespace AkohoAspx.Controllers
         private readonly AppDbContext _dbContext;
         private readonly RaceRepository _raceRepository;
         private readonly CroissanceRepository _croissanceRepository;
+        private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository;
 
         public RaceController()
         {
             _dbContext = new AppDbContext();
             _raceRepository = new RaceRepository(_dbContext);
             _croissanceRepository = new CroissanceRepository(_dbContext);
+            _prixVenteRacePoidsRepository = new PrixVenteRacePoidsRepository(_dbContext);
         }
 
         [HttpGet]
@@ -90,6 +92,11 @@ namespace AkohoAspx.Controllers
                 TempData["RaceError"] = "Aucune race active dans la session.";
                 return RedirectToAction("Index");
             }
+            await _prixVenteRacePoidsRepository.Creation(new PrixVenteRaceParPoids
+            {
+                RaceId = raceId,
+                Prix = prix
+            });
 
             TempData["RaceSuccess"] = "Prix enregistre pour la race " + raceId + ": " + prix;
             return RedirectToAction("Index");
