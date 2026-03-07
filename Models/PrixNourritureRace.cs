@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 
 namespace AkohoAspx.Models
 {
@@ -7,8 +7,8 @@ namespace AkohoAspx.Models
         public int Id { get; set; }
         public DateTime Creation { get; set; }
         public int RaceId { get; set; }
-        public decimal prix { get; set; }
-        public int valeurGrame { get; set; } = 1;
+        public decimal Prix { get; set; }
+        public int ValeurGrame { get; set; } = 1;
 
         public virtual Race Race { get; set; }
     }

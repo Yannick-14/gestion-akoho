@@ -56,7 +56,7 @@ namespace AkohoAspx.Services
             if (resolvedRaceId <= 0) return OperationResult.Failure("Aucune race active dans la session.");
 
             decimal prix = ParseDecimal(prixRaw);
-            await _prixVenteRacePoidsRepository.Creation(new PrixVenteRaceParPoids
+            await _prixVenteRacePoidsRepository.Creation(new PrixVenteRace
             {
                 RaceId = resolvedRaceId,
                 Prix = prix
@@ -105,13 +105,13 @@ namespace AkohoAspx.Services
             var items = new List<CroissancePoidsRace>();
             foreach (int index in ExtractIndexes(requestForm, "leftItems["))
             {
-                string semaine = requestForm["leftItems[" + index + "].Semaine"];
+                int semaine = ParseInt(requestForm["leftItems[" + index + "].Semaine"]);
                 int poids = ParseInt(requestForm["leftItems[" + index + "].Poids"]);
 
                 items.Add(new CroissancePoidsRace
                 {
-                    Semaine = (semaine ?? string.Empty).Trim(),
-                    Poids = poids
+                    ValueSemaine = semaine,
+                    PoidsMoyen = poids
                 });
             }
 
@@ -123,13 +123,13 @@ namespace AkohoAspx.Services
             var items = new List<CroissanceAlimentRace>();
             foreach (int index in ExtractIndexes(requestForm, "rightItems["))
             {
-                string semaine = requestForm["rightItems[" + index + "].Semaine"];
+                int semaine = ParseInt(requestForm["rightItems[" + index + "].Semaine"]);
                 int aliment = ParseInt(requestForm["rightItems[" + index + "].Aliment"]);
 
                 items.Add(new CroissanceAlimentRace
                 {
-                    Semaine = (semaine ?? string.Empty).Trim(),
-                    Aliment = aliment
+                    ValueSemaine = semaine,
+                    PoidsMoyen = aliment
                 });
             }
 

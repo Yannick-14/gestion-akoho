@@ -35,7 +35,7 @@ namespace AkohoAspx.Repository
         {
             return await _dbContext.MouvementsLot
                 .Where(mvt => mvt.LotId == lotId)
-                .Select(mvt => (int?)mvt.nombre)
+                .Select(mvt => (int?)mvt.Nombre)
                 .SumAsync() ?? 0;
         }
 
@@ -64,7 +64,7 @@ namespace AkohoAspx.Repository
                 .Select(g => new
                 {
                     Semaine = g.Key,
-                    Mort = g.Sum(mvt => (int?)mvt.nombre) ?? 0
+                    Mort = g.Sum(mvt => (int?)mvt.Nombre) ?? 0
                 })
                 .ToListAsync();
 

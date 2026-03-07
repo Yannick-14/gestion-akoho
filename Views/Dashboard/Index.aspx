@@ -11,75 +11,62 @@
 <body>
     <% Html.RenderPartial("Navigation"); %>
 
-    <div class="container">
+    <div class="container py-4">
         <h1 class="mb-4">Dashboard</h1>
 
-        <% if (Model != null && Model.Any()) { %>
-            <div class="row g-3">
-                <% foreach (var lot in Model) { %>
-                    <div class="col-12 col-md-6 col-xl-4">
-                        <div class="card h-100 shadow-sm border-0">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h2 class="h5 mb-0"><%: lot.Lot.NomLot %></h2>
-                                    <div>
-                                        <span class="badge bg-secondary"><%: lot.Lot.Race != null ? lot.Lot.Race.Nom : "Inconnue" %> (ID: <%: lot.Lot.RaceId %>)</span>
-                                        <span class="badge bg-primary">Lot</span>
-                                    </div>
-                                </div>
+        <% var lotOeufsActifs = Model != null ? Model.LotOeufsActive : Enumerable.Empty<AkohoAspx.Models.LotOeuf>(); %>
+        <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Models.Lot>(); %>
 
-                                <div class="vstack gap-2 small">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Nombre de contenu</span>
-                                        <strong><%: lot.Lot.NombreInitial %></strong>
+        <section class="mb-5">
+            <h2 class="h4 mb-3">LotOeufs actifs</h2>
+            <% if (lotOeufsActifs.Any()) { %>
+                <div class="row g-3">
+                    <% foreach (var lotOeuf in lotOeufsActifs) { %>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body">
+                                    <h3 class="h6 mb-3">LotOeuf #<%: lotOeuf.Id %></h3>
+                                    <div class="small vstack gap-1">
+                                        <div><strong>Lot parent:</strong> <%: lotOeuf.LotParentId %></div>
+                                        <div><strong>Race:</strong> <%: lotOeuf.Race != null ? lotOeuf.Race.Nom : lotOeuf.RaceId.ToString() %></div>
+                                        <div><strong>Nombre oeufs:</strong> <%: lotOeuf.NbOeufs %></div>
+                                        <div><strong>Pourcentage:</strong> <%: lotOeuf.Pourcentage %></div>
+                                        <div><strong>Validation:</strong> <%: lotOeuf.Validation ? "true" : "false" %></div>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Monnaie investie</span>
-                                        <strong><%: lot.Lot.TotalInvesti.ToString("N2") %> Ar</strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Reste nombre actuel</span>
-                                        <strong><%: lot.ResteNombreActuel %></strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Prix unitaire race</span>
-                                        <strong><%: lot.Lot.Race != null && lot.Lot.Race.PrixVentesParPoids.Any() ? lot.Lot.Race.PrixVentesParPoids.FirstOrDefault().Prix.ToString("N2") + " Ar" : "N/A" %></strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Mort</span>
-                                        <strong class="text-danger"><%: lot.Mort %></strong>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="text-muted">Statu</span>
-                                        <%
-                                            if (lot.Lot.Statu == 0) {%>
-                                                <strong class="text-success">Akoho</strong>
-                                            <%} else { %>
-                                                <strong class="text-success">Atody</strong>
-                                            <%}
-                                        %>
-                                    </div>
-                                    <div class="d-flex justify-content-between pt-1 border-top">
-                                        <span class="text-muted">Benefice</span>
-                                        <strong class="<%: lot.Benefice >= 0 ? "text-success" : "text-danger" %>">
-                                            <%: lot.Benefice.ToString("N2") %> Ar
-                                        </strong>
-
-                                        <span class="text-muted">Sakafo hatrizay</span>
-                                        <strong class="<%: lot.DepenseSakafo >= 0 ? "text-success" : "text-danger" %>">
-                                            <%: lot.DepenseSakafo.ToString("N2") %> Ar
-                                        </strong>
-                                    </div>
-                                    <a href="/DashBoard/MakaAtody?lotId=<%: lot.Lot.Id %>&raceId=<%: lot.Lot.RaceId %>" class="btn btn-primary">Maka Atody</a>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <% } %>
-            </div>
-        <% } else { %>
-            <div class="alert alert-info">Aucune donnee disponible pour le dashboard.</div>
-        <% } %>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info">Aucun lotOeuf actif.</div>
+            <% } %>
+        </section>
+
+        <section>
+            <h2 class="h4 mb-3">Tous les lots</h2>
+            <% if (lots.Any()) { %>
+                <div class="row g-3">
+                    <% foreach (var lot in lots) { %>
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body">
+                                    <h3 class="h6 mb-3"><%: lot.NomLot %></h3>
+                                    <div class="small vstack gap-1">
+                                        <div><strong>ID:</strong> <%: lot.Id %></div>
+                                        <div><strong>Race:</strong> <%: lot.Race != null ? lot.Race.Nom : lot.RaceId.ToString() %></div>
+                                        <div><strong>Nombre:</strong> <%: lot.NombreInitial %></div>
+                                        <div><strong>Creation:</strong> <%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info">Aucun lot disponible.</div>
+            <% } %>
+        </section>
     </div>
 </body>
 </html>

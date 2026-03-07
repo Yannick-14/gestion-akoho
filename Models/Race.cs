@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace AkohoAspx.Models
 {
@@ -12,7 +12,9 @@ namespace AkohoAspx.Models
         public virtual ICollection<CroissancePoidsRace> CroissancesPoids { get; set; }
         public virtual ICollection<CroissanceAlimentRace> CroissancesAliment { get; set; }
         public virtual ICollection<PrixVenteRace> PrixVenteRace { get; set; }
+        public virtual ICollection<PrixNourritureRace> PrixNourritures { get; set; }
         public virtual ICollection<Lot> Lots { get; set; }
+        public virtual ICollection<LotOeuf> LotsOeuf { get; set; }
 
         public Race()
         {
@@ -20,7 +22,9 @@ namespace AkohoAspx.Models
             CroissancesPoids = new List<CroissancePoidsRace>();
             CroissancesAliment = new List<CroissanceAlimentRace>();
             PrixVenteRace = new List<PrixVenteRace>();
+            PrixNourritures = new List<PrixNourritureRace>();
             Lots = new List<Lot>();
+            LotsOeuf = new List<LotOeuf>();
         }
     }
 }

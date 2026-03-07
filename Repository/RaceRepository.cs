@@ -37,7 +37,7 @@ namespace AkohoAspx.Repository
         {
             return await _dbContext.Races
                 .Where(r => r.Id == raceId)
-                .Select(r => r.JourFoyAtody)
+                .Select(r => r.DureEclosionOeuf)
                 .FirstOrDefaultAsync();
         }
     }

@@ -18,14 +18,14 @@ namespace AkohoAspx.Repository
 
         public async Task<LotOeuf> creationLotOeuf(LotOeuf lot)
         {
-            _dbContext.LotsOeufs.Add(lot);
+            _dbContext.LotsOeuf.Add(lot);
             await _dbContext.SaveChangesAsync();
             return lot;
         }
 
         public async Task<IReadOnlyList<LotOeuf>> GetAllAsync()
         {
-            return await _dbContext.LotsOeufs
+            return await _dbContext.LotsOeuf
                 .Include(l => l.Race)
                 .OrderByDescending(l => l.Creation)
                 .ToListAsync();
@@ -33,23 +33,23 @@ namespace AkohoAspx.Repository
 
         public async Task<IReadOnlyList<LotOeuf>> GetLotOeufsActive()
         {
-            return await _dbContext.LotsOeufs
+            return await _dbContext.LotsOeuf
                 .Include(l => l.Race)
-                .Where(l => l.validation == false)
+                .Where(l => l.Validation == false)
                 .OrderByDescending(l => l.Creation)
                 .ToListAsync();
         }
 
         public async Task<LotOeuf> getInfoIntialeLotOeufs(int lotId)
         {
-            return await _dbContext.LotsOeufs
+            return await _dbContext.LotsOeuf
                 .Where(l => l.Id == lotId)
                 .FirstOrDefaultAsync();
         }
 
         public async Task<LotOeuf> updateValidationEtPourcentage(int lotId, bool validation, decimal pourcentage)
         {
-            LotOeuf lotOeuf = await _dbContext.LotsOeufs
+            LotOeuf lotOeuf = await _dbContext.LotsOeuf
                 .Where(l => l.Id == lotId)
                 .FirstOrDefaultAsync();
 
@@ -58,8 +58,8 @@ namespace AkohoAspx.Repository
                 return null;
             }
 
-            lotOeuf.validation = validation;
-            lotOeuf.pourcentage = pourcentage;
+            lotOeuf.Validation = validation;
+            lotOeuf.Pourcentage = pourcentage;
 
             await _dbContext.SaveChangesAsync();
             return lotOeuf;

@@ -16,21 +16,21 @@ namespace AkohoAspx.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<IReadOnlyList<PrixVenteRaceParPoids>> GetAllAsync()
+        public async Task<IReadOnlyList<PrixVenteRace>> GetAllAsync()
         {
-            return await _dbContext.PrixVentesRaceParPoids.ToListAsync();
+            return await _dbContext.PrixVentesRace.ToListAsync();
         }
 
-        public async Task<IReadOnlyList<PrixVenteRaceParPoids>> getPrixVenteRace(int raceId)
+        public async Task<IReadOnlyList<PrixVenteRace>> getPrixVenteRace(int raceId)
         {
-            return await _dbContext.PrixVentesRaceParPoids
+            return await _dbContext.PrixVentesRace
                 .Where(p => p.RaceId == raceId)
                 .ToListAsync();
         }
 
-        public async Task<PrixVenteRaceParPoids> Creation(PrixVenteRaceParPoids prixVenteRaceParPoids)
+        public async Task<PrixVenteRace> Creation(PrixVenteRace prixVenteRaceParPoids)
         {
-            _dbContext.PrixVentesRaceParPoids.Add(prixVenteRaceParPoids);
+            _dbContext.PrixVentesRace.Add(prixVenteRaceParPoids);
             await _dbContext.SaveChangesAsync();
             return prixVenteRaceParPoids;
         }

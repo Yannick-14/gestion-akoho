@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace AkohoAspx.Models
@@ -17,12 +17,14 @@ namespace AkohoAspx.Models
         public virtual Race Race { get; set; }
         public virtual Lot ParentLot { get; set; }
         public virtual LotOeuf LotOeuf { get; set; }
-        public virtual TypeLot TypeLot { get; set; }
+        public virtual ICollection<MouvementLot> Mouvements { get; set; }
+        public virtual ICollection<LotOeuf> LotsOeuf { get; set; }
 
         public Lot()
         {
             NomLot = string.Empty;
-            LotOeuf = new List<LotOeuf>();
+            Mouvements = new List<MouvementLot>();
+            LotsOeuf = new List<LotOeuf>();
         }
     }
 }

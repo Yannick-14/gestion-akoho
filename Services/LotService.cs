@@ -16,7 +16,6 @@ namespace AkohoAspx.Services
         private readonly LotRepository _lotRepository;
         private readonly RaceRepository _raceRepository;
         private readonly MouvementLotRepository _mouvementLotRepository;
-        private readonly TypeMouvementRepository _typeMouvementRepository;
 
         public LotService() : this(new AppDbContext()) {}
         public int getPoidsDefault() { return 150; }
@@ -27,7 +26,6 @@ namespace AkohoAspx.Services
             _lotRepository = new LotRepository(_dbContext);
             _raceRepository = new RaceRepository(_dbContext);
             _mouvementLotRepository = new MouvementLotRepository(_dbContext);
-            _typeMouvementRepository = new TypeMouvementRepository(_dbContext);
         }
 
         public async Task<LotIndexData> GetIndexDataAsync()
@@ -123,6 +121,12 @@ namespace AkohoAspx.Services
         //         return OperationResult.Success("Nouvel lot cree avec succes.");
         //     } catch (Exception ex) { return OperationResult.Failure("Insertion lot echouee: " + ex.Message); }
         // }
+
+        public async Task<OperationResult> CreateLotAtody(FormCollection requestForm)
+        {
+            await Task.CompletedTask;
+            return OperationResult.Failure("CreateLotAtody n'est pas encore disponible dans cette version.");
+        }
 
         public void Dispose() { _dbContext.Dispose(); }
     }

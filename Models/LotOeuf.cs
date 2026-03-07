@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace AkohoAspx.Models
@@ -7,14 +7,25 @@ namespace AkohoAspx.Models
     {
         public int Id { get; set; }
         public DateTime Creation { get; set; }
-        public DateTime? dateEclosion { get; set; }
+        public DateTime? DateEclosion { get; set; }
         public int LotParentId { get; set; }
         public int RaceId { get; set; }
-        public int nbOeufs { get; set; }
-        public decimal pourcentage { get; set; }
-        public bool validation { get; set; } = false;
+        public int NbOeufs { get; set; }
+        public decimal Pourcentage { get; set; }
+        public bool Validation { get; set; } = false;
 
         public virtual Race Race { get; set; }
         public virtual Lot ParentLot { get; set; }
+        public virtual Lot LotParent
+        {
+            get { return ParentLot; }
+            set { ParentLot = value; }
+        }
+        public virtual ICollection<Lot> Lots { get; set; }
+
+        public LotOeuf()
+        {
+            Lots = new List<Lot>();
+        }
     }
 }

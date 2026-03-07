@@ -35,15 +35,6 @@ CREATE TABLE dbo.race
 );
 GO
 
--- CREATE TABLE dbo.typeLot
--- (
---     id INT IDENTITY(1,1) NOT NULL,
---     nom NVARCHAR(100) NOT NULL,
---     CONSTRAINT PK_typeLot PRIMARY KEY CLUSTERED (id),
---     CONSTRAINT UQ_typeLot_nom UNIQUE (nom)
--- );
--- GO
-
 CREATE TABLE dbo.croissancePoidsRace
 (
     id INT IDENTITY(1,1) NOT NULL,

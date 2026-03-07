@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using AkohoAspx.Models;
 
@@ -15,16 +15,19 @@ namespace AkohoAspx.Data
         {
         }
 
-        public virtual DbSet<Race> Races { get; set; }
-        public virtual DbSet<CroissancePoidsRace> CroissancesPoidsRace { get; set; }
+        // ── DbSets ───────────────────────────────────────────────────
+        public virtual DbSet<Race>                 Races                  { get; set; }
+        public virtual DbSet<CroissancePoidsRace>  CroissancesPoidsRace   { get; set; }
         public virtual DbSet<CroissanceAlimentRace> CroissancesAlimentRace { get; set; }
-        public virtual DbSet<PrixVenteRaceParPoids> PrixVentesRaceParPoids { get; set; }
-        public virtual DbSet<Lot> Lots { get; set; }
-        public virtual DbSet<TypeMouvement> TypesMouvement { get; set; }
-        public virtual DbSet<MouvementLot> MouvementsLot { get; set; }
+        public virtual DbSet<LotOeuf>              LotsOeuf               { get; set; }
+        public virtual DbSet<Lot>                  Lots                   { get; set; }
+        public virtual DbSet<PrixVenteRace>        PrixVentesRace         { get; set; }
+        public virtual DbSet<PrixNourritureRace>   PrixNourrituresRace    { get; set; }
+        public virtual DbSet<MouvementLot>         MouvementsLot          { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            // ── race ────────────────────────────────────────────────
             modelBuilder.Entity<Race>()
                 .ToTable("race")
                 .HasKey(e => e.Id);
@@ -35,9 +38,12 @@ namespace AkohoAspx.Data
             modelBuilder.Entity<Race>().Property(e => e.Nom)
                 .HasColumnName("nom")
                 .HasMaxLength(80);
-            modelBuilder.Entity<Race>().Property(e => e.JourFoyAtody)
-                .HasColumnName("jourFoyAtody");
+            modelBuilder.Entity<Race>().Property(e => e.DureEclosionOeuf)
+                .HasColumnName("dureEclosionOeuf");
+            modelBuilder.Entity<Race>().Property(e => e.PoidsDefaut)
+                .HasColumnName("poidsDefaut");
 
+            // ── croissancePoidsRace ─────────────────────────────────
             modelBuilder.Entity<CroissancePoidsRace>()
                 .ToTable("croissancePoidsRace")
                 .HasKey(e => e.Id);
@@ -45,12 +51,12 @@ namespace AkohoAspx.Data
             modelBuilder.Entity<CroissancePoidsRace>().Property(e => e.Id)
                 .HasColumnName("id")
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-            modelBuilder.Entity<CroissancePoidsRace>().Property(e => e.RaceId).HasColumnName("raceId");
-            modelBuilder.Entity<CroissancePoidsRace>().Property(e => e.Semaine)
-                .HasColumnName("semaine")
-                .HasMaxLength(15);
-            modelBuilder.Entity<CroissancePoidsRace>().Property(e => e.Poids)
-                .HasColumnName("poids");
+            modelBuilder.Entity<CroissancePoidsRace>().Property(e => e.RaceId)
+                .HasColumnName("raceId");
+            modelBuilder.Entity<CroissancePoidsRace>().Property(e => e.ValueSemaine)
+                .HasColumnName("valueSemaine");
+            modelBuilder.Entity<CroissancePoidsRace>().Property(e => e.PoidsMoyen)
+                .HasColumnName("poidsMoyen");
 
             modelBuilder.Entity<CroissancePoidsRace>()
                 .HasRequired(e => e.Race)
@@ -58,6 +64,7 @@ namespace AkohoAspx.Data
                 .HasForeignKey(e => e.RaceId)
                 .WillCascadeOnDelete(false);
 
+            // ── croissanceAlimentRace ───────────────────────────────
             modelBuilder.Entity<CroissanceAlimentRace>()
                 .ToTable("croissanceAlimentRace")
                 .HasKey(e => e.Id);
@@ -65,12 +72,12 @@ namespace AkohoAspx.Data
             modelBuilder.Entity<CroissanceAlimentRace>().Property(e => e.Id)
                 .HasColumnName("id")
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-            modelBuilder.Entity<CroissanceAlimentRace>().Property(e => e.RaceId).HasColumnName("raceId");
-            modelBuilder.Entity<CroissanceAlimentRace>().Property(e => e.Semaine)
-                .HasColumnName("semaine")
-                .HasMaxLength(15);
-            modelBuilder.Entity<CroissanceAlimentRace>().Property(e => e.Aliment)
-                .HasColumnName("aliment");
+            modelBuilder.Entity<CroissanceAlimentRace>().Property(e => e.RaceId)
+                .HasColumnName("raceId");
+            modelBuilder.Entity<CroissanceAlimentRace>().Property(e => e.ValueSemaine)
+                .HasColumnName("valueSemaine");
+            modelBuilder.Entity<CroissanceAlimentRace>().Property(e => e.PoidsMoyen)
+                .HasColumnName("poidsMoyen");
 
             modelBuilder.Entity<CroissanceAlimentRace>()
                 .HasRequired(e => e.Race)
@@ -78,27 +85,46 @@ namespace AkohoAspx.Data
                 .HasForeignKey(e => e.RaceId)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<PrixVenteRaceParPoids>()
-                .ToTable("prixVenteRaceParPoids")
+            // ── lotOeuf ─────────────────────────────────────────────
+            modelBuilder.Entity<LotOeuf>()
+                .ToTable("lotOeuf")
                 .HasKey(e => e.Id);
 
-            modelBuilder.Entity<PrixVenteRaceParPoids>().Property(e => e.Id)
+            modelBuilder.Entity<LotOeuf>().Property(e => e.Id)
                 .HasColumnName("id")
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-            modelBuilder.Entity<PrixVenteRaceParPoids>().Property(e => e.RaceId)
+            modelBuilder.Entity<LotOeuf>().Property(e => e.Creation)
+                .HasColumnName("creation")
+                .HasColumnType("datetime");
+            modelBuilder.Entity<LotOeuf>().Property(e => e.DateEclosion)
+                .HasColumnName("dateEclosion")
+                .HasColumnType("datetime");
+            modelBuilder.Entity<LotOeuf>().Property(e => e.LotParentId)
+                .HasColumnName("lotParentId");
+            modelBuilder.Entity<LotOeuf>().Property(e => e.RaceId)
                 .HasColumnName("raceId");
-            modelBuilder.Entity<PrixVenteRaceParPoids>().Property(e => e.PoidsGrame)
-                .HasColumnName("poidsGrame");
-            modelBuilder.Entity<PrixVenteRaceParPoids>().Property(e => e.Prix)
-                .HasColumnName("prix")
+            modelBuilder.Entity<LotOeuf>().Property(e => e.NbOeufs)
+                .HasColumnName("nbOeufs");
+            modelBuilder.Entity<LotOeuf>().Property(e => e.Pourcentage)
+                .HasColumnName("pourcentage")
                 .HasPrecision(10, 2);
+            modelBuilder.Entity<LotOeuf>().Property(e => e.Validation)
+                .HasColumnName("validation");
 
-            modelBuilder.Entity<PrixVenteRaceParPoids>()
+            modelBuilder.Entity<LotOeuf>()
                 .HasRequired(e => e.Race)
-                .WithMany(r => r.PrixVentesParPoids)
+                .WithMany(r => r.LotsOeuf)
                 .HasForeignKey(e => e.RaceId)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<LotOeuf>()
+                .Ignore(e => e.ParentLot)
+                .HasRequired(e => e.LotParent)
+                .WithMany(l => l.LotsOeuf)
+                .HasForeignKey(e => e.LotParentId)
+                .WillCascadeOnDelete(false);
+
+            // ── lot ─────────────────────────────────────────────────
             modelBuilder.Entity<Lot>()
                 .ToTable("lot")
                 .HasKey(e => e.Id);
@@ -109,20 +135,20 @@ namespace AkohoAspx.Data
             modelBuilder.Entity<Lot>().Property(e => e.Creation)
                 .HasColumnName("creation")
                 .HasColumnType("datetime");
-            modelBuilder.Entity<Lot>().Property(e => e.DateAfoyAkoho)
-                .HasColumnName("dateAfoyAkoho")
-                .HasColumnType("datetime");
             modelBuilder.Entity<Lot>().Property(e => e.NomLot)
                 .HasColumnName("nomLot")
                 .HasMaxLength(80);
-            modelBuilder.Entity<Lot>().Property(e => e.RaceId).HasColumnName("raceID");
-            modelBuilder.Entity<Lot>().Property(e => e.NombreInitial).HasColumnName("nombreInitial");
-            modelBuilder.Entity<Lot>().Property(e => e.PoidsAchat).HasColumnName("poidsAchat");
-            modelBuilder.Entity<Lot>().Property(e => e.TotalInvesti)
-                .HasColumnName("totalInvesti")
+            modelBuilder.Entity<Lot>().Property(e => e.RaceId)
+                .HasColumnName("raceId");
+            modelBuilder.Entity<Lot>().Property(e => e.NombreInitial)
+                .HasColumnName("nombreInitial");
+            modelBuilder.Entity<Lot>().Property(e => e.PoidsInitiale)
+                .HasColumnName("poidsInitiale");
+            modelBuilder.Entity<Lot>().Property(e => e.PrixAchat)
+                .HasColumnName("prixAchat")
                 .HasPrecision(10, 2);
-            modelBuilder.Entity<Lot>().Property(e => e.LotParent).HasColumnName("lotParent");
-            modelBuilder.Entity<Lot>().Property(e => e.Statu).HasColumnName("statu");
+            modelBuilder.Entity<Lot>().Property(e => e.LotOeufId)
+                .HasColumnName("lotOeufId");
 
             modelBuilder.Entity<Lot>()
                 .HasRequired(e => e.Race)
@@ -131,22 +157,63 @@ namespace AkohoAspx.Data
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Lot>()
-                .HasOptional(e => e.ParentLot)
-                .WithMany(l => l.ChildLots)
-                .HasForeignKey(e => e.LotParent)
+                .Ignore(e => e.ParentLot)
+                .HasOptional(e => e.LotOeuf)
+                .WithMany(o => o.Lots)
+                .HasForeignKey(e => e.LotOeufId)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TypeMouvement>()
-                .ToTable("typeMouvement")
+            // ── prixVenteRace ────────────────────────────────────────
+            modelBuilder.Entity<PrixVenteRace>()
+                .ToTable("prixVenteRace")
                 .HasKey(e => e.Id);
 
-            modelBuilder.Entity<TypeMouvement>().Property(e => e.Id)
+            modelBuilder.Entity<PrixVenteRace>().Property(e => e.Id)
                 .HasColumnName("id")
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-            modelBuilder.Entity<TypeMouvement>().Property(e => e.Nom)
-                .HasColumnName("nom")
-                .HasMaxLength(100);
+            modelBuilder.Entity<PrixVenteRace>().Property(e => e.Creation)
+                .HasColumnName("creation")
+                .HasColumnType("datetime");
+            modelBuilder.Entity<PrixVenteRace>().Property(e => e.RaceId)
+                .HasColumnName("raceId");
+            modelBuilder.Entity<PrixVenteRace>().Property(e => e.Prix)
+                .HasColumnName("prix")
+                .HasPrecision(10, 2);
+            modelBuilder.Entity<PrixVenteRace>().Property(e => e.ValeurGrame)
+                .HasColumnName("valeurGrame");
 
+            modelBuilder.Entity<PrixVenteRace>()
+                .HasRequired(e => e.Race)
+                .WithMany(r => r.PrixVenteRace)
+                .HasForeignKey(e => e.RaceId)
+                .WillCascadeOnDelete(false);
+
+            // ── prixNourritureRace ───────────────────────────────────
+            modelBuilder.Entity<PrixNourritureRace>()
+                .ToTable("prixNourritureRace")
+                .HasKey(e => e.Id);
+
+            modelBuilder.Entity<PrixNourritureRace>().Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            modelBuilder.Entity<PrixNourritureRace>().Property(e => e.Creation)
+                .HasColumnName("creation")
+                .HasColumnType("datetime");
+            modelBuilder.Entity<PrixNourritureRace>().Property(e => e.RaceId)
+                .HasColumnName("raceId");
+            modelBuilder.Entity<PrixNourritureRace>().Property(e => e.Prix)
+                .HasColumnName("prix")
+                .HasPrecision(10, 2);
+            modelBuilder.Entity<PrixNourritureRace>().Property(e => e.ValeurGrame)
+                .HasColumnName("valeurGrame");
+
+            modelBuilder.Entity<PrixNourritureRace>()
+                .HasRequired(e => e.Race)
+                .WithMany(r => r.PrixNourritures)
+                .HasForeignKey(e => e.RaceId)
+                .WillCascadeOnDelete(false);
+
+            // ── mouvementLot ─────────────────────────────────────────
             modelBuilder.Entity<MouvementLot>()
                 .ToTable("mouvementLot")
                 .HasKey(e => e.Id);
@@ -157,20 +224,15 @@ namespace AkohoAspx.Data
             modelBuilder.Entity<MouvementLot>().Property(e => e.Creation)
                 .HasColumnName("creation")
                 .HasColumnType("datetime");
-            modelBuilder.Entity<MouvementLot>().Property(e => e.LotId).HasColumnName("lotId");
-            modelBuilder.Entity<MouvementLot>().Property(e => e.Quantite).HasColumnName("quantite");
-            modelBuilder.Entity<MouvementLot>().Property(e => e.TypeId).HasColumnName("typeID");
+            modelBuilder.Entity<MouvementLot>().Property(e => e.LotId)
+                .HasColumnName("lotId");
+            modelBuilder.Entity<MouvementLot>().Property(e => e.Nombre)
+                .HasColumnName("nombre");
 
             modelBuilder.Entity<MouvementLot>()
                 .HasRequired(e => e.Lot)
                 .WithMany(l => l.Mouvements)
                 .HasForeignKey(e => e.LotId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<MouvementLot>()
-                .HasRequired(e => e.TypeMouvement)
-                .WithMany(t => t.Mouvements)
-                .HasForeignKey(e => e.TypeId)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);
