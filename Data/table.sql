@@ -82,7 +82,6 @@ CREATE TABLE dbo.lotOeuf
     validation BIT NOT NULL CONSTRAINT DF_lotOeuf_validation DEFAULT 0,  -- FALSE par défaut
     CONSTRAINT PK_lotOeuf PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_lotOeuf_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
-    CONSTRAINT FK_lotOeuf_lotParent FOREIGN KEY (lotParentId) REFERENCES dbo.lot(id),
     CONSTRAINT CK_lotOeuf_nbOeufs_nonnegative CHECK (nbOeufs >= 0),
     CONSTRAINT CK_lotOeuf_pourcentage_nonnegative CHECK (pourcentage >= 0)
 );
@@ -98,10 +97,8 @@ CREATE TABLE dbo.lot
     poidsInitiale INT NOT NULL,
     prixAchat DECIMAL(10,2) NOT NULL CONSTRAINT DF_lot_prixAchat DEFAULT (0),
     lotOeufId INT NULL,
-    typeLotId INT NOT NULL,
     CONSTRAINT PK_lot PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_lot_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
-    CONSTRAINT FK_lot_typeLot FOREIGN KEY (typeLotId) REFERENCES dbo.typeLot(id),
     CONSTRAINT CK_lot_nombreInitial_nonnegative CHECK (nombreInitial >= 0),
     CONSTRAINT CK_lot_poidsInitiale_nonnegative CHECK (poidsInitiale >= 0),
     CONSTRAINT CK_lot_prixAchat_nonnegative CHECK (prixAchat >= 0)
@@ -157,7 +154,6 @@ CREATE INDEX IX_croissanceAlimentRace_raceId_semaine ON dbo.croissanceAlimentRac
 CREATE INDEX IX_lotOeuf_lotParentId ON dbo.lotOeuf(lotParentId);
 CREATE INDEX IX_lotOeuf_raceId ON dbo.lotOeuf(raceId);
 CREATE INDEX IX_lot_raceId ON dbo.lot(raceId);
-CREATE INDEX IX_lot_typeLotId ON dbo.lot(typeLotId);
 CREATE INDEX IX_lot_lotOeufId ON dbo.lot(lotOeufId);
 CREATE INDEX IX_prixVenteRace_raceId_valeurGrame ON dbo.prixVenteRace(raceId, valeurGrame);
 CREATE INDEX IX_prixNourritureRace_raceId_valeurGrame ON dbo.prixNourritureRace(raceId, valeurGrame);

@@ -35,3 +35,19 @@ VALUES
     (1, 0.020, 1),
     (2, 0.022, 1);
 GO
+
+-- REGION INSERT LOT
+INSERT INTO dbo.lot (creation, nomLot, raceId, nombreInitial, poidsInitiale, prixAchat, lotOeufId)
+VALUES
+    (GETDATE(), N'Lot Achat 1', 1, 100, 200, 5000.00, NULL),
+    (GETDATE(), N'Lot Éclosion 1', 2, 50, 40, 0.00, NULL);
+GO
+
+-- Insertion de trois enregistrements de lotOeuf avec validation = true
+-- On suppose que les lots insérés ci-dessus ont des IDs 1 et 2
+INSERT INTO dbo.lotOeuf (creation, dateEclosion, lotParentId, raceId, nbOeufs, pourcentage, validation)
+VALUES
+    (GETDATE(), DATEADD(day, 21, GETDATE()), 1, 1, 200, 75.5, 1),
+    (GETDATE(), DATEADD(day, 22, GETDATE()), 1, 1, 180, 80.0, 1),
+    (GETDATE(), DATEADD(day, 24, GETDATE()), 2, 2, 150, 90.0, 1);
+GO
