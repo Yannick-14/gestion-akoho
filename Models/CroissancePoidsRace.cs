@@ -11,7 +11,7 @@
 
         public CroissancePoidsRace()
         {
-            Semaine = string.Empty;
+            valueSemaine = string.Empty;
         }
     }
 }

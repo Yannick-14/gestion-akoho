@@ -7,17 +7,17 @@ namespace AkohoAspx.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly SakafoService _sakafoService;
+        // private readonly SakafoService _sakafoService;
 
         public HomeController()
         {
-            _sakafoService = new SakafoService();
+            // _sakafoService = new SakafoService();
         }
 
         public async Task<ActionResult> Index()
         {
-            var depense = await _sakafoService.getDepenseAlimentActuelleLotEnGramme(11);
-            System.Console.WriteLine($"[HOME] depense trouvés: {depense}");
+            // var depense = await _sakafoService.getDepenseAlimentActuelleLotEnGramme(11);
+            // System.Console.WriteLine($"[HOME] depense trouvés: {depense}");
 
             return View();
         }

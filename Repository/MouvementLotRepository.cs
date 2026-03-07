@@ -10,12 +10,10 @@ namespace AkohoAspx.Repository
     public class MouvementLotRepository
     {
         private readonly AppDbContext _dbContext;
-        private readonly TypeMouvementRepository _typeMouvementRepository;
 
         public MouvementLotRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _typeMouvementRepository = new TypeMouvementRepository(dbContext);
         }
 
         public async Task<MouvementLot> creationMouvement(MouvementLot transaction)
@@ -32,25 +30,17 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
-        public async Task<int> getResteTotalLot(int lotId)
+        public async Task<int> getTotalMortDansLot(int lotId)
         {
-            int idEntree = await _typeMouvementRepository.getIdMouvementEntree();
-            int idSortie = await _typeMouvementRepository.getIdMouvementSortie();
-
             return await _dbContext.MouvementsLot
                 .Where(mvt => mvt.LotId == lotId)
-                .Select(mvt => (int?)(mvt.TypeId == idEntree ? mvt.Quantite : (mvt.TypeId == idSortie ? -mvt.Quantite : 0)))
+                .Select(mvt => (int?)mvt.nombre)
                 .SumAsync() ?? 0;
         }
 
         public async Task<int> getResteMortTotalLot(int lotId)
         {
-            int idSortie = await _typeMouvementRepository.getIdMouvementSortie();
-
-            return await _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lotId)
-                .Select(mvt => (int?)(mvt.TypeId == idSortie ? mvt.Quantite : 0))
-                .SumAsync() ?? 0;
+            return await getTotalMortDansLot(lotId);
         }
 
         public async Task<List<int>> getResteParSemaine(int lotId, System.DateTime lotCreationDate, int semainesEcoulees)

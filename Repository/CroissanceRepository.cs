@@ -52,8 +52,8 @@ namespace AkohoAspx.Repository
                         var poidsRace = new CroissancePoidsRace
                         {
                             RaceId = raceId,
-                            Poids = race.Poids,
-                            Semaine = race.Semaine
+                            PoidsMoyen = race.Poids,
+                            valueSemaine = race.Semaine
                         };
                         await createDataEntity(poidsRace);
                     }
@@ -63,8 +63,8 @@ namespace AkohoAspx.Repository
                         var alimentRace = new CroissanceAlimentRace
                         {
                             RaceId = raceId,
-                            Aliment = aliment.Aliment,
-                            Semaine = aliment.Semaine
+                            PoidsMoyen = aliment.PoidsMoyen,
+                            valueSemaine = aliment.valueSemaine
                         };
                         await createDataEntity(alimentRace);
                     }

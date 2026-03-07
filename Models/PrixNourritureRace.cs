@@ -11,10 +11,5 @@ namespace AkohoAspx.Models
         public int valeurGrame { get; set; } = 1;
 
         public virtual Race Race { get; set; }
-
-        public PrixVenteRace()
-        {
-            Race = new Race();
-        }
     }
 }

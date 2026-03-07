@@ -11,7 +11,7 @@ namespace AkohoAspx.Models
 
         public virtual ICollection<CroissancePoidsRace> CroissancesPoids { get; set; }
         public virtual ICollection<CroissanceAlimentRace> CroissancesAliment { get; set; }
-        public virtual ICollection<PrixVenteRaceParPoids> PrixVentesParPoids { get; set; }
+        public virtual ICollection<PrixVenteRace> PrixVenteRace { get; set; }
         public virtual ICollection<Lot> Lots { get; set; }
 
         public Race()
@@ -19,7 +19,7 @@ namespace AkohoAspx.Models
             Nom = string.Empty;
             CroissancesPoids = new List<CroissancePoidsRace>();
             CroissancesAliment = new List<CroissanceAlimentRace>();
-            PrixVentesParPoids = new List<PrixVenteRaceParPoids>();
+            PrixVenteRace = new List<PrixVenteRace>();
             Lots = new List<Lot>();
         }
     }

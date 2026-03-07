@@ -54,7 +54,7 @@
                             <input id="poidsAchat" name="poidsAchat" type="number" min="0" value="0" class="form-control" />
                         </div>
                         <div class="col-12 col-md-4">
-                            <label for="totalInvesti" class="form-label">Total investi</label>
+                            <label for="totalInvesti" class="form-label">Prix Total Achat</label>
                             <input id="totalInvesti" name="totalInvesti" type="number" min="0" step="0.01" value="0" class="form-control" />
                         </div>
                     </div>
@@ -88,8 +88,8 @@
                                 <td><%: lot.NomLot %></td>
                                 <td><%: lot.Race != null ? lot.Race.Nom : lot.RaceId.ToString() %></td>
                                 <td><%: lot.NombreInitial %></td>
-                                <td><%: lot.PoidsAchat %></td>
-                                <td><%: lot.TotalInvesti %></td>
+                                <td><%: lot.PoidsInitiale %></td>
+                                <td><%: lot.PrixAchat %></td>
                                 <td><%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></td>
                             </tr>
                         <% } %>

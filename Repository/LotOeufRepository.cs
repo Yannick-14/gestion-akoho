@@ -30,6 +30,7 @@ namespace AkohoAspx.Repository
                 .OrderByDescending(l => l.Creation)
                 .ToListAsync();
         }
+
         public async Task<IReadOnlyList<LotOeuf>> GetLotOeufsActive()
         {
             return await _dbContext.LotsOeufs
@@ -44,6 +45,24 @@ namespace AkohoAspx.Repository
             return await _dbContext.LotsOeufs
                 .Where(l => l.Id == lotId)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<LotOeuf> updateValidationEtPourcentage(int lotId, bool validation, decimal pourcentage)
+        {
+            LotOeuf lotOeuf = await _dbContext.LotsOeufs
+                .Where(l => l.Id == lotId)
+                .FirstOrDefaultAsync();
+
+            if (lotOeuf == null)
+            {
+                return null;
+            }
+
+            lotOeuf.validation = validation;
+            lotOeuf.pourcentage = pourcentage;
+
+            await _dbContext.SaveChangesAsync();
+            return lotOeuf;
         }
     }
 }

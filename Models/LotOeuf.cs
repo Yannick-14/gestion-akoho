@@ -16,11 +16,5 @@ namespace AkohoAspx.Models
 
         public virtual Race Race { get; set; }
         public virtual Lot ParentLot { get; set; }
-
-        public LotOeuf()
-        {
-            ParentLot = new List<Lot>();
-            Mouvements = new List<MouvementLot>();
-        }
     }
 }
