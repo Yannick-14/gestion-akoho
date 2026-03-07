@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using AkohoAspx.Data;
 using AkohoAspx.Models;
 using AkohoAspx.Repository;
@@ -35,13 +36,14 @@ namespace AkohoAspx.Services
             };
         }
 
-        public async Task<OperationResult> CreateLotAsync(
-            string nomLotRaw,
-            string raceIdRaw,
-            string nombreInitialRaw,
-            string poidsAchatRaw,
-            string totalInvestiRaw)
+        public async Task<OperationResult> CreateLotAsync(FormCollection requestForm)
         {
+            string nomLotRaw = requestForm != null ? requestForm["nomLot"] : null;
+            string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
+            string nombreInitialRaw = requestForm != null ? requestForm["nombreInitial"] : null;
+            string poidsAchatRaw = requestForm != null ? requestForm["poidsAchat"] : null;
+            string totalInvestiRaw = requestForm != null ? requestForm["totalInvesti"] : null;
+
             string nomLot = (nomLotRaw ?? string.Empty).Trim();
 
             int raceId;

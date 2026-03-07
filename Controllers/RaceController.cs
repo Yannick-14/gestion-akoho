@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using AkohoAspx.Models;
 using AkohoAspx.Services;
 using AkohoAspx.Services.Results;
 
@@ -27,9 +25,9 @@ namespace AkohoAspx.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(string nom, int jourFoyAtody)
+        public async Task<ActionResult> Create(FormCollection requestForm)
         {
-            OperationResult<int> result = await _raceService.CreateRaceAsync(nom, jourFoyAtody);
+            OperationResult<int> result = await _raceService.CreateRaceAsync(requestForm);
             SetRaceTempData(result);
 
             if (result.IsSuccess)
@@ -42,13 +40,11 @@ namespace AkohoAspx.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> createCroissanceRace(int raceId, List<CroissancePoidsRace> leftItems, List<CroissanceAlimentRace> rightItems)
+        public async Task<ActionResult> createCroissanceRace(FormCollection requestForm)
         {
             OperationResult result = await _raceService.CreateCroissanceRaceAsync(
-                raceId,
-                Session["CurrentRaceId"],
-                leftItems,
-                rightItems);
+                requestForm,
+                Session["CurrentRaceId"]);
 
             SetRaceTempData(result);
             return RedirectToAction("Index");
@@ -56,9 +52,9 @@ namespace AkohoAspx.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> addPrixUnitaire(string raceId, string prix)
+        public async Task<ActionResult> addPrixUnitaire(FormCollection requestForm)
         {
-            OperationResult result = await _raceService.AddPrixUnitaireAsync(raceId, prix, Session["CurrentRaceId"]);
+            OperationResult result = await _raceService.AddPrixUnitaireAsync(requestForm, Session["CurrentRaceId"]);
             SetRaceTempData(result);
             return RedirectToAction("Index");
         }

@@ -25,19 +25,9 @@ namespace AkohoAspx.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(
-            string nomLot,
-            string raceId,
-            string nombreInitial,
-            string poidsAchat,
-            string totalInvesti)
+        public async Task<ActionResult> Create(FormCollection requestForm)
         {
-            OperationResult result = await _lotService.CreateLotAsync(
-                nomLot,
-                raceId,
-                nombreInitial,
-                poidsAchat,
-                totalInvesti);
+            OperationResult result = await _lotService.CreateLotAsync(requestForm);
 
             SetLotTempData(result);
             return RedirectToAction("Index");
