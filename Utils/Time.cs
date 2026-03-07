@@ -26,7 +26,8 @@ namespace AkohoAspx.Utils
 
         public static int getSemaineEcouler(DateTime date)
         {
-            TimeSpan difference = DateTime.Now - date;
+            DateTime dateActuelle = new Time().GetDateActuelle();
+            TimeSpan difference = dateActuelle - date;
             int semaines = (int)(difference.TotalDays / 7);
             return semaines < 0 ? 0 : semaines;
         }

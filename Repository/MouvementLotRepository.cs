@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AkohoAspx.Data;
 using AkohoAspx.Models;
+using AkohoAspx.Utils;
 
 namespace AkohoAspx.Repository
 {
@@ -43,32 +44,45 @@ namespace AkohoAspx.Repository
             return await getTotalMortDansLot(lotId);
         }
 
-        public async Task<List<int>> getResteParSemaine(int lotId, System.DateTime lotCreationDate, int semainesEcoulees)
+        public async Task<List<int>> getResteParSemaine(Lot lot)
         {
-            int idEntree = await _typeMouvementRepository.getIdMouvementEntree();
-            int idSortie = await _typeMouvementRepository.getIdMouvementSortie();
+            var resteParSemaine = new List<int>();
+            if (lot == null)
+            {
+                return resteParSemaine;
+            }
 
-            // Grouping by week using database functions for efficient SQL aggregation
-            var variations = await _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lotId && mvt.Creation >= lotCreationDate)
-                .GroupBy(mvt => System.Data.Entity.DbFunctions.DiffDays(lotCreationDate, mvt.Creation) / 7 + 1)
+            int semainesEcoulees = Time.getSemaineEcouler(lot.Creation);
+            if (semainesEcoulees <= 0)
+            {
+                return resteParSemaine;
+            }
+
+            var mortsParSemaine = await _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lot.Id && mvt.Creation >= lot.Creation)
+                .GroupBy(mvt => DbFunctions.DiffDays(lot.Creation, mvt.Creation) / 7 + 1)
                 .Select(g => new
                 {
                     Semaine = g.Key,
-                    Variation = g.Sum(mvt => mvt.TypeId == idEntree ? mvt.Quantite : (mvt.TypeId == idSortie ? -mvt.Quantite : 0))
+                    Mort = g.Sum(mvt => (int?)mvt.nombre) ?? 0
                 })
                 .ToListAsync();
 
-            var resteParSemaine = new List<int>();
-            int resteCourant = 0;
+            int resteCourant = lot.NombreInitial;
 
             for (int s = 1; s <= semainesEcoulees; s++)
             {
-                var variationSemaine = variations.FirstOrDefault(v => v.Semaine == s);
-                if (variationSemaine != null)
+                var mortSemaine = mortsParSemaine.FirstOrDefault(v => v.Semaine == s);
+                if (mortSemaine != null)
                 {
-                    resteCourant += variationSemaine.Variation;
+                    resteCourant -= mortSemaine.Mort;
                 }
+
+                if (resteCourant < 0)
+                {
+                    resteCourant = 0;
+                }
+
                 resteParSemaine.Add(resteCourant);
             }
 

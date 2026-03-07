@@ -50,12 +50,12 @@ namespace AkohoAspx.Services
         }
 
         // Recuperer la totalite de nombre restant dans un lot a chaque semaine jusqu'a la semaine actuelle
-        public async Task<List<int>> getResteParSemaine(int lotId, int semainesEcoulees)
+        public async Task<List<int>> getResteParSemaine(int lotId)
         {
             Lot lot = await _lotRepository.getInfoIntialeLot(lotId);
             if (lot == null) return new List<int>();
             
-            var resteParSemaine = await _mouvementLotRepository.getResteParSemaine(lotId, lot.Creation, semainesEcoulees);
+            var resteParSemaine = await _mouvementLotRepository.getResteParSemaine(lot);
 
             for (int s = 0; s < resteParSemaine.Count; s++)
             {
@@ -70,7 +70,7 @@ namespace AkohoAspx.Services
             int semainesEcoulees = await compterSemaineEcouler(lotId);
             var croissanceParSemaine = await getCroissanceRace(lotId);
             Console.WriteLine($"croissanceParSemaine: {croissanceParSemaine}");
-            var resteParSemaine = await getResteParSemaine(lotId, semainesEcoulees);
+            var resteParSemaine = await getResteParSemaine(lotId);
 
             var alimentParSemaine = new Dictionary<int, int>();
             foreach (var c in croissanceParSemaine)
