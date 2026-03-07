@@ -2,55 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using AkohoAspx.Data;
 using AkohoAspx.Models;
-using AkohoAspx.Repository;
+using AkohoAspx.Services;
+using AkohoAspx.Services.Results;
 
 namespace AkohoAspx.Controllers
 {
     public class RaceController : Controller
     {
-        private readonly AppDbContext _dbContext;
-        private readonly RaceRepository _raceRepository;
-        private readonly CroissanceRepository _croissanceRepository;
-        private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository;
+        private readonly RaceService _raceService;
 
         public RaceController()
         {
-            _dbContext = new AppDbContext();
-            _raceRepository = new RaceRepository(_dbContext);
-            _croissanceRepository = new CroissanceRepository(_dbContext);
-            _prixVenteRacePoidsRepository = new PrixVenteRacePoidsRepository(_dbContext);
+            _raceService = new RaceService();
         }
 
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            IReadOnlyList<Race> races = await _raceRepository.GetAllAsync();
-            ViewBag.CurrentRaceId = GetCurrentRaceIdFromSession();
-            return View(races);
+            RaceIndexData indexData = await _raceService.GetIndexDataAsync(Session["CurrentRaceId"]);
+            ViewBag.CurrentRaceId = indexData.CurrentRaceId;
+            return View(indexData.Races);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(string nom, int jourFoyAtody)
         {
-            if (string.IsNullOrWhiteSpace(nom) || jourFoyAtody <= 0)
+            OperationResult<int> result = await _raceService.CreateRaceAsync(nom, jourFoyAtody);
+            SetRaceTempData(result);
+
+            if (result.IsSuccess)
             {
-                TempData["RaceError"] = "Le nom et le jour de foy atody sont obligatoires.";
-                return RedirectToAction("Index");
+                Session["CurrentRaceId"] = result.Value;
             }
-
-            var race = new Race
-            {
-                Nom = nom.Trim(),
-                JourFoyAtody = jourFoyAtody
-            };
-
-            int createdRaceId = await _raceRepository.CreateAsync(race);
-            Console.WriteLine("createdRaceId: " + createdRaceId);
-            Session["CurrentRaceId"] = createdRaceId;
-            TempData["RaceSuccess"] = "Race creee. RaceId actif: " + createdRaceId;
 
             return RedirectToAction("Index");
         }
@@ -59,48 +44,22 @@ namespace AkohoAspx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> createCroissanceRace(int raceId, List<CroissancePoidsRace> leftItems, List<CroissanceAlimentRace> rightItems)
         {
-            if (raceId <= 0)
-            {
-                raceId = GetCurrentRaceIdFromSession();
-            }
+            OperationResult result = await _raceService.CreateCroissanceRaceAsync(
+                raceId,
+                Session["CurrentRaceId"],
+                leftItems,
+                rightItems);
 
-            if (raceId <= 0)
-            {
-                TempData["RaceError"] = "Aucune race active dans la session.";
-                return RedirectToAction("Index");
-            }
-
-            List<CroissancePoidsRace> left = leftItems ?? new List<CroissancePoidsRace>();
-            List<CroissanceAlimentRace> right = rightItems ?? new List<CroissanceAlimentRace>();
-
-            await _croissanceRepository.createCroissancePoidsAndAliment(raceId, left, right);
-            TempData["RaceSuccess"] = (left.Count + right.Count) + " ligne(s) inseree(s) pour la race " + raceId + ".";
+            SetRaceTempData(result);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> addPrixUnitaire(FormCollection form)
+        public async Task<ActionResult> addPrixUnitaire(string raceId, string prix)
         {
-            int.TryParse(form["raceId"], out int raceId);
-            decimal.TryParse(form["prix"], out decimal prix);
-            if (raceId <= 0)
-            {
-                raceId = GetCurrentRaceIdFromSession();
-            }
-
-            if (raceId <= 0)
-            {
-                TempData["RaceError"] = "Aucune race active dans la session.";
-                return RedirectToAction("Index");
-            }
-            await _prixVenteRacePoidsRepository.Creation(new PrixVenteRaceParPoids
-            {
-                RaceId = raceId,
-                Prix = prix
-            });
-
-            TempData["RaceSuccess"] = "Prix enregistre pour la race " + raceId + ": " + prix;
+            OperationResult result = await _raceService.AddPrixUnitaireAsync(raceId, prix, Session["CurrentRaceId"]);
+            SetRaceTempData(result);
             return RedirectToAction("Index");
         }
 
@@ -108,31 +67,30 @@ namespace AkohoAspx.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ResetCurrentRace()
         {
+            OperationResult result = _raceService.BuildResetCurrentRaceResult();
             Session.Remove("CurrentRaceId");
-            TempData["RaceSuccess"] = "Race active retiree de la session.";
+            SetRaceTempData(result);
             return RedirectToAction("Index");
-        }
-
-        private int GetCurrentRaceIdFromSession()
-        {
-            object value = Session["CurrentRaceId"];
-            if (value == null)
-            {
-                return 0;
-            }
-
-            int raceId;
-            return int.TryParse(value.ToString(), out raceId) ? raceId : 0;
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _dbContext.Dispose();
+                _raceService.Dispose();
             }
 
             base.Dispose(disposing);
+        }
+
+        private void SetRaceTempData(IOperationResult result)
+        {
+            if (result == null || string.IsNullOrWhiteSpace(result.Message))
+            {
+                return;
+            }
+
+            TempData[result.IsSuccess ? "RaceSuccess" : "RaceError"] = result.Message;
         }
     }
 }

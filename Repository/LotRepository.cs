@@ -30,5 +30,12 @@ namespace AkohoAspx.Repository
                 .OrderByDescending(l => l.Creation)
                 .ToListAsync();
         }
+
+        public async Task<IReadOnlyList<Lot>> getInfoIntialeLot(int lotId)
+        {
+            return await _dbContext.Lots
+                .Where(l => l.Id == lotId)
+                .ToListAsync();
+        }
     }
 }
