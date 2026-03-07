@@ -52,11 +52,11 @@ CREATE TABLE dbo.croissanceAlimentRace
 (
     id INT IDENTITY(1,1) NOT NULL,
     raceId INT NOT NULL,
-    semaine INT NOT NULL,
+    valueSemaine INT NOT NULL,
     poidsMoyen INT NOT NULL,
     CONSTRAINT PK_croissanceAlimentRace PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_croissanceAlimentRace_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
-    CONSTRAINT CK_croissanceAlimentRace_semaine_positive CHECK (semaine > 0),
+    CONSTRAINT CK_croissanceAlimentRace_valueSemaine_positive CHECK (valueSemaine > 0),
     CONSTRAINT CK_croissanceAlimentRace_poidsMoyen_nonnegative CHECK (poidsMoyen >= 0)
 );
 GO
@@ -141,7 +141,7 @@ CREATE TABLE dbo.mouvementLot
 GO
 
 CREATE INDEX IX_croissancePoidsRace_raceId_valueSemaine ON dbo.croissancePoidsRace(raceId, valueSemaine);
-CREATE INDEX IX_croissanceAlimentRace_raceId_semaine ON dbo.croissanceAlimentRace(raceId, semaine);
+CREATE INDEX IX_croissanceAlimentRace_raceId_valueSemaine ON dbo.croissanceAlimentRace(raceId, valueSemaine);
 CREATE INDEX IX_lotOeuf_lotParentId ON dbo.lotOeuf(lotParentId);
 CREATE INDEX IX_lotOeuf_raceId ON dbo.lotOeuf(raceId);
 CREATE INDEX IX_lot_raceId ON dbo.lot(raceId);

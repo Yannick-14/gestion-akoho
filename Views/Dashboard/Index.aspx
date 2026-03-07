@@ -60,6 +60,9 @@
                                         <div><strong>PoidsInitiale:</strong> <%: lot.PoidsInitiale %></div>
                                         <div><strong>PrixAchat:</strong> <%: lot.PrixAchat %></div>
                                         <div><strong>Creation:</strong> <%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
+                                        <hr class="my-1 border-secondary" />
+                                        <div><strong>Poids Actuel (U.):</strong> <%: Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] + " g" : "N/A" %></div>
+                                        <div><strong>Total Nourriture 💵:</strong> <%: Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></div>
                                     </div>
                                 </div>
                             </div>

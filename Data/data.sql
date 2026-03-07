@@ -16,7 +16,7 @@ VALUES
 GO
 
 -- Croissance aliment (consommation hebdomadaire en grammes)
-INSERT INTO dbo.croissanceAlimentRace (raceId, semaine, poidsMoyen)
+INSERT INTO dbo.croissanceAlimentRace (raceId, valueSemaine, poidsMoyen)
 VALUES
     (1, 1, 200), (1, 2, 400), (1, 3, 800), (1, 4, 1400), (1, 5, 2200),
     (2, 1, 180), (2, 2, 380), (2, 3, 750), (2, 4, 1300), (2, 5, 2100);
