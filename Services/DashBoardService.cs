@@ -15,12 +15,9 @@ namespace AkohoAspx.Services
         private readonly LotRepository _lotRepository;
         private readonly RaceRepository _raceRepository;
         private readonly MouvementLotRepository _mouvementLotRepository;
-        private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository; // Added
+        private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository;
 
-        public DashBoardService()
-            : this(new AppDbContext())
-        {
-        }
+        public DashBoardService() : this(new AppDbContext()) {}
 
         public DashBoardService(AppDbContext dbContext)
         {
@@ -31,9 +28,7 @@ namespace AkohoAspx.Services
             _prixVenteRacePoidsRepository = new PrixVenteRacePoidsRepository(_dbContext);
         }
 
-        public async Task<int> getMortTotalDansLot(int lotId) {
-            return await _mouvementLotRepository.getResteMortTotalLot(lotId);
-        }
+        public async Task<int> getMortTotalDansLot(int lotId) { return await _mouvementLotRepository.getResteMortTotalLot(lotId); }
 
         public async Task<System.Collections.Generic.IEnumerable<DashboardLotItem>> GetDashboardDataAsync()
         {

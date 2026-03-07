@@ -18,10 +18,8 @@ namespace AkohoAspx.Services
         private readonly MouvementLotRepository _mouvementLotRepository;
         private readonly TypeMouvementRepository _typeMouvementRepository;
 
-        public LotService()
-            : this(new AppDbContext())
-        {
-        }
+        public LotService() : this(new AppDbContext()) {}
+        public int getPoidsDefault() { return 150; }
 
         public LotService(AppDbContext dbContext)
         {
@@ -41,8 +39,6 @@ namespace AkohoAspx.Services
             };
         }
 
-        public int getPoidsDefault() { return 150; }
-
         public async Task<OperationResult> CreateLotAsync(FormCollection requestForm)
         {
             string nomLotRaw = requestForm != null ? requestForm["nomLot"] : null;
@@ -61,15 +57,9 @@ namespace AkohoAspx.Services
             decimal totalInvesti;
             bool totalOk = decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.CurrentCulture, out totalInvesti) || decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.InvariantCulture, out totalInvesti);
 
-            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || nombreInitial <= 0 || poidsAchat <= 0)
-            {
-                return OperationResult.Failure("Donnees invalides. Verifiez les champs du formulaire.");
-            }
+            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || nombreInitial <= 0 || poidsAchat <= 0) return OperationResult.Failure("Donnees invalides. Verifiez les champs du formulaire.");
 
-            if (!await _raceRepository.ExistsAsync(raceId))
-            {
-                return OperationResult.Failure("Race introuvable.");
-            }
+            if (!await _raceRepository.ExistsAsync(raceId)) return OperationResult.Failure("Race introuvable.");
 
             var lot = new Lot
             {
@@ -94,11 +84,7 @@ namespace AkohoAspx.Services
                 };
                 await _mouvementLotRepository.creationMouvement(mouvement);
                 return OperationResult.Success("Lot cree avec succes.");
-            }
-            catch (Exception ex)
-            {
-                return OperationResult.Failure("Insertion lot echouee: " + ex.Message);
-            }
+            } catch (Exception ex) { return OperationResult.Failure("Insertion lot echouee: " + ex.Message); }
         }
 
         // creer un lot provennant d'extraction d'atody
@@ -115,15 +101,10 @@ namespace AkohoAspx.Services
             int.TryParse(lotIdRaw, out int lotId);
             int.TryParse(quantiteAtodyRaw, out int quantiteAtody);
 
-            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || quantiteAtody <= 0)
-            {
-                return OperationResult.Failure("Donnees invalides. Verifiez les champs du formulaire.");
-            }
+            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || quantiteAtody <= 0) return OperationResult.Failure("Donnees. Verifiez les champs du formulaire.");
 
-            if (!await _raceRepository.ExistsAsync(raceId))
-            {
-                return OperationResult.Failure("Race introuvable.");
-            }
+            if (!await _raceRepository.ExistsAsync(raceId)) return OperationResult.Failure("Race introuvable.");
+
             DateTime dateEclosion = Time.creationDateAvecJour(await _raceRepository.getJourEclosionRace(raceId));
             var newLot = new Lot
             {
@@ -149,16 +130,9 @@ namespace AkohoAspx.Services
                 };
                 await _mouvementLotRepository.creationMouvement(mouvement);
                 return OperationResult.Success("Nouvel lot cree avec succes.");
-            }
-            catch (Exception ex)
-            {
-                return OperationResult.Failure("Insertion lot echouee: " + ex.Message);
-            }
+            } catch (Exception ex) { return OperationResult.Failure("Insertion lot echouee: " + ex.Message); }
         }
 
-        public void Dispose()
-        {
-            _dbContext.Dispose();
-        }
+        public void Dispose() { _dbContext.Dispose(); }
     }
 }

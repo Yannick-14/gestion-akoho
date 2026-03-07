@@ -42,9 +42,7 @@ namespace AkohoAspx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> createCroissanceRace(FormCollection requestForm)
         {
-            OperationResult result = await _raceService.CreateCroissanceRaceAsync(
-                requestForm,
-                Session["CurrentRaceId"]);
+            OperationResult result = await _raceService.CreateCroissanceRaceAsync( requestForm, Session["CurrentRaceId"]);
 
             SetRaceTempData(result);
             return RedirectToAction("Index");

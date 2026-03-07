@@ -17,10 +17,7 @@ namespace AkohoAspx.Services
         private readonly CroissanceRepository _croissanceRepository;
         private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository;
 
-        public RaceService()
-            : this(new AppDbContext())
-        {
-        }
+        public RaceService() : this(new AppDbContext()) {}
 
         public RaceService(AppDbContext dbContext)
         {
@@ -63,16 +60,11 @@ namespace AkohoAspx.Services
         public async Task<OperationResult> CreateCroissanceRaceAsync(FormCollection requestForm, object currentRaceSessionValue)
         {
             int raceId = ParseInt(requestForm != null ? requestForm["raceId"] : null);
-            int resolvedRaceId = ResolveRequestedRaceId(raceId, currentRaceSessionValue);
-            if (resolvedRaceId <= 0)
-            {
-                return OperationResult.Failure("Aucune race active dans la session.");
-            }
 
             List<CroissancePoidsRace> left = ParseCroissancePoidsItems(requestForm);
             List<CroissanceAlimentRace> right = ParseCroissanceAlimentItems(requestForm);
 
-            await _croissanceRepository.createCroissancePoidsAndAliment(resolvedRaceId, left, right);
+            await _croissanceRepository.createCroissancePoidsAndAliment(raceId, left, right);
             return OperationResult.Success((left.Count + right.Count) + " ligne(s) inseree(s) pour la race " + resolvedRaceId + ".");
         }
 
@@ -81,10 +73,7 @@ namespace AkohoAspx.Services
             string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
             string prixRaw = requestForm != null ? requestForm["prix"] : null;
             int resolvedRaceId = ResolveRequestedRaceId(ParseInt(raceIdRaw), currentRaceSessionValue);
-            if (resolvedRaceId <= 0)
-            {
-                return OperationResult.Failure("Aucune race active dans la session.");
-            }
+            if (resolvedRaceId <= 0) return OperationResult.Failure("Aucune race active dans la session.");
 
             decimal prix = ParseDecimal(prixRaw);
             await _prixVenteRacePoidsRepository.Creation(new PrixVenteRaceParPoids
@@ -96,30 +85,11 @@ namespace AkohoAspx.Services
             return OperationResult.Success("Prix enregistre pour la race " + resolvedRaceId + ": " + prix);
         }
 
-        public OperationResult BuildResetCurrentRaceResult()
-        {
-            return OperationResult.Success("Race active retiree de la session.");
-        }
+        public OperationResult BuildResetCurrentRaceResult() { return OperationResult.Success("Race active retiree de la session."); }
 
         public void Dispose()
         {
             _dbContext.Dispose();
-        }
-
-        private static int ResolveRequestedRaceId(int raceId, object currentRaceSessionValue)
-        {
-            return raceId > 0 ? raceId : ResolveRaceId(currentRaceSessionValue);
-        }
-
-        private static int ResolveRaceId(object currentRaceSessionValue)
-        {
-            if (currentRaceSessionValue == null)
-            {
-                return 0;
-            }
-
-            int raceId;
-            return int.TryParse(currentRaceSessionValue.ToString(), out raceId) ? raceId : 0;
         }
 
         private static int ParseInt(string rawValue)
