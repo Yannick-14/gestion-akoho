@@ -15,8 +15,8 @@ namespace AkohoAspx.Controllers
         }
         public async Task<ActionResult> Index()
         {
-            await _dashBoardService.testReste();
-            return View();
+            var data = await _dashBoardService.GetDashboardDataAsync();
+            return View(data);
         }
 
         public ActionResult Privacy()

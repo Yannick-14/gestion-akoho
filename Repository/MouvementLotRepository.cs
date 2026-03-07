@@ -42,5 +42,15 @@ namespace AkohoAspx.Repository
                 .Select(mvt => (int?)(mvt.TypeId == idEntree ? mvt.Quantite : (mvt.TypeId == idSortie ? -mvt.Quantite : 0)))
                 .SumAsync() ?? 0;
         }
+
+        public async Task<int> getResteMortTotalLot(int lotId)
+        {
+            int idSortie = await _typeMouvementRepository.getIdMouvementSortie();
+
+            return await _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lotId)
+                .Select(mvt => (int?)(mvt.TypeId == idSortie ? mvt.Quantite : 0))
+                .SumAsync() ?? 0;
+        }
     }
 }
