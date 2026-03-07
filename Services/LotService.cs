@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using AkohoAspx.Data;
 using AkohoAspx.Models;
 using AkohoAspx.Repository;
+using AkohoAspx.Utils;
 using AkohoAspx.Services.Results;
 
 namespace AkohoAspx.Services
@@ -39,6 +40,8 @@ namespace AkohoAspx.Services
                 Races = await _raceRepository.GetAllAsync()
             };
         }
+
+        public int getPoidsDefault() { return 150; }
 
         public async Task<OperationResult> CreateLotAsync(FormCollection requestForm)
         {
@@ -98,25 +101,21 @@ namespace AkohoAspx.Services
             }
         }
 
-        public async Task<OperationResult> CreateLotAsync(FormCollection requestForm)
+        // creer un lot provennant d'extraction d'atody
+        public async Task<OperationResult> CreateLotAtody(FormCollection requestForm)
         {
             string nomLotRaw = requestForm != null ? requestForm["nomLot"] : null;
             string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
-            string nombreInitialRaw = requestForm != null ? requestForm["nombreInitial"] : null;
-            string poidsAchatRaw = requestForm != null ? requestForm["poidsAchat"] : null;
-            string totalInvestiRaw = requestForm != null ? requestForm["totalInvesti"] : null;
+            string lotIdRaw = requestForm != null ? requestForm["lotId"] : null;
+            string quantiteAtodyRaw = requestForm != null ? requestForm["quantiteAtody"] : null;
 
             string nomLot = (nomLotRaw ?? string.Empty).Trim();
 
             int.TryParse(raceIdRaw, out int raceId);
-            int.TryParse(nombreInitialRaw, out int nombreInitial);
-            int.TryParse(poidsAchatRaw, out int poidsAchat);
+            int.TryParse(lotIdRaw, out int lotId);
+            int.TryParse(quantiteAtodyRaw, out int quantiteAtody);
 
-            string totalRaw = totalInvestiRaw ?? "0";
-            decimal totalInvesti;
-            bool totalOk = decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.CurrentCulture, out totalInvesti) || decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.InvariantCulture, out totalInvesti);
-
-            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || nombreInitial <= 0 || poidsAchat <= 0)
+            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || quantiteAtody <= 0)
             {
                 return OperationResult.Failure("Donnees invalides. Verifiez les champs du formulaire.");
             }
@@ -125,30 +124,31 @@ namespace AkohoAspx.Services
             {
                 return OperationResult.Failure("Race introuvable.");
             }
-
-            var lot = new Lot
+            DateTime dateEclosion = Time.creationDateAvecJour(await _raceRepository.getJourEclosionRace(raceId));
+            var newLot = new Lot
             {
                 NomLot = nomLot,
                 RaceId = raceId,
-                NombreInitial = nombreInitial,
-                PoidsAchat = poidsAchat,
-                TotalInvesti = totalInvesti,
+                NombreInitial = quantiteAtody,
+                PoidsAchat = getPoidsDefault(),
+                TotalInvesti = 0,
                 Creation = DateTime.Now,
-                Statu = 0
+                DateAfoyAkoho = dateEclosion,
+                LotParent = lotId,
+                Statu = 1
             };
-
             try
             {
-                Lot resultLot = await _lotRepository.creationLot(lot);
+                Lot resultLot = await _lotRepository.creationLot(newLot);
                 var mouvement = new MouvementLot
                 {
                     LotId = resultLot.Id,
-                    Quantite = nombreInitial,
+                    Quantite = quantiteAtody,
                     Creation = DateTime.Now,
                     TypeId = await _typeMouvementRepository.getIdMouvementEntree()
                 };
                 await _mouvementLotRepository.creationMouvement(mouvement);
-                return OperationResult.Success("Lot cree avec succes.");
+                return OperationResult.Success("Nouvel lot cree avec succes.");
             }
             catch (Exception ex)
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using AkohoAspx.Data;
 using AkohoAspx.Models;
@@ -30,6 +31,14 @@ namespace AkohoAspx.Repository
         public async Task<bool> ExistsAsync(int raceId)
         {
             return await _dbContext.Races.AnyAsync(r => r.Id == raceId);
+        }
+
+        public async Task<int> getJourEclosionRace(int raceId)
+        {
+            return await _dbContext.Races
+                .Where(r => r.Id == raceId)
+                .Select(r => r.JourFoyAtody)
+                .FirstOrDefaultAsync();
         }
     }
 }

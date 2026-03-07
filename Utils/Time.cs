@@ -1,3 +1,5 @@
+using System;
+
 namespace AkohoAspx.Utils
 {
     public class Time

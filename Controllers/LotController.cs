@@ -38,10 +38,10 @@ namespace AkohoAspx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateLotAtody(FormCollection requestForm)
         {
-            OperationResult result = await _lotService.CreateLotAsync(requestForm);
+            OperationResult result = await _lotService.CreateLotAtody(requestForm);
 
             SetLotTempData(result);
-            return RedirectToAction("Index");
+            return RedirectToAction("DashBoard/Index");
         }
 
         protected override void Dispose(bool disposing)

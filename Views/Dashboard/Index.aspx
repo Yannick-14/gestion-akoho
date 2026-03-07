@@ -42,6 +42,10 @@
                                         <strong><%: lot.ResteNombreActuel %></strong>
                                     </div>
                                     <div class="d-flex justify-content-between">
+                                        <span class="text-muted">Prix unitaire race</span>
+                                        <strong><%: lot.Lot.Race != null && lot.Lot.Race.PrixVentesParPoids.Any() ? lot.Lot.Race.PrixVentesParPoids.FirstOrDefault().Prix.ToString("N2") + " Ar" : "N/A" %></strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
                                         <span class="text-muted">Mort</span>
                                         <strong class="text-danger"><%: lot.Mort %></strong>
                                     </div>
