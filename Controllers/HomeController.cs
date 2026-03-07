@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 using AkohoAspx.Models;
 using System.Threading.Tasks;
 using AkohoAspx.Services;
@@ -16,7 +16,9 @@ namespace AkohoAspx.Controllers
 
         public async Task<ActionResult> Index()
         {
-            await _sakafoService.compterSemaineEcouler(7);
+            var depense = await _sakafoService.getDepenseAlimentActuelleLotEnGramme(11);
+            System.Console.WriteLine($"[HOME] depense trouvés: {depense}");
+
             return View();
         }
 

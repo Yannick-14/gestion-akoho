@@ -64,6 +64,11 @@
                                         <strong class="<%: lot.Benefice >= 0 ? "text-success" : "text-danger" %>">
                                             <%: lot.Benefice.ToString("N2") %> Ar
                                         </strong>
+
+                                        <span class="text-muted">Sakafo hatrizay</span>
+                                        <strong class="<%: lot.DepenseSakafo >= 0 ? "text-success" : "text-danger" %>">
+                                            <%: lot.DepenseSakafo.ToString("N2") %> Ar
+                                        </strong>
                                     </div>
                                     <a href="/DashBoard/MakaAtody?lotId=<%: lot.Lot.Id %>&raceId=<%: lot.Lot.RaceId %>" class="btn btn-primary">Maka Atody</a>
                                 </div>

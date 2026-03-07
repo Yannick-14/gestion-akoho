@@ -16,6 +16,7 @@ namespace AkohoAspx.Services
         private readonly RaceRepository _raceRepository;
         private readonly MouvementLotRepository _mouvementLotRepository;
         private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository;
+        private readonly SakafoService _sakafoService;
 
         public DashBoardService() : this(new AppDbContext()) {}
 
@@ -26,6 +27,7 @@ namespace AkohoAspx.Services
             _raceRepository = new RaceRepository(_dbContext);
             _mouvementLotRepository = new MouvementLotRepository(_dbContext);
             _prixVenteRacePoidsRepository = new PrixVenteRacePoidsRepository(_dbContext);
+            _sakafoService = new SakafoService(_dbContext);
         }
 
         public async Task<int> getMortTotalDansLot(int lotId) { return await _mouvementLotRepository.getResteMortTotalLot(lotId); }
@@ -48,13 +50,17 @@ namespace AkohoAspx.Services
 
                 int mort = await getMortTotalDansLot(lot.Id);
                 decimal benefice = (reste * prixMoyen) - initialInfo.TotalInvesti;
+                decimal totaliteGramme = await _sakafoService.getDepenseAlimentActuelleLotEnGramme(lot.Id);
+                decimal prixMoyenSakafo = 1000; // 1000Ar 20g
+                decimal depenseSakafo = (totaliteGramme * prixMoyenSakafo) / 20;
 
                 items.Add(new DashboardLotItem
                 {
                     Lot = initialInfo,
                     ResteNombreActuel = reste,
                     Mort = mort,
-                    Benefice = benefice
+                    Benefice = benefice,
+                    DepenseSakafo = depenseSakafo
                 });
             }
 

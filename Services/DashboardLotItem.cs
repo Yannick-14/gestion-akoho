@@ -6,5 +6,6 @@ namespace AkohoAspx.Services
         public int ResteNombreActuel { get; set; }
         public int Mort { get; set; }
         public decimal Benefice { get; set; }
+        public decimal DepenseSakafo { get; set; }
     }
 }

@@ -7,25 +7,23 @@ namespace AkohoAspx.Models
     {
         public int Id { get; set; }
         public DateTime Creation { get; set; }
-        public DateTime? DateAfoyAkoho { get; set; }
         public string NomLot { get; set; }
         public int RaceId { get; set; }
         public int NombreInitial { get; set; }
-        public int PoidsAchat { get; set; }
-        public decimal TotalInvesti { get; set; }
-        public int? LotParent { get; set; }
-        public int Statu { get; set; }
+        public int PoidsInitiale { get; set; }
+        public decimal PrixAchat { get; set; }
+        public int? LotOeufId { get; set; }
+        public int TypeLotId { get; set; }
 
         public virtual Race Race { get; set; }
         public virtual Lot ParentLot { get; set; }
-        public virtual ICollection<Lot> ChildLots { get; set; }
-        public virtual ICollection<MouvementLot> Mouvements { get; set; }
+        public virtual LotOeuf LotOeuf { get; set; }
+        public virtual TypeLot TypeLot { get; set; }
 
         public Lot()
         {
             NomLot = string.Empty;
-            ChildLots = new List<Lot>();
-            Mouvements = new List<MouvementLot>();
+            LotOeuf = new List<LotOeuf>();
         }
     }
 }
