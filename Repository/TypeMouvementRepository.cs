@@ -22,5 +22,21 @@ namespace AkohoAspx.Repository
                 .Where(tm => tm.Nom == type)
                 .ToListAsync();
         }
+
+        public async Task<int> getIdMouvementEntree()
+        {
+            return await _dbContext.TypesMouvement
+                .Where(tm => tm.Nom == "entree")
+                .Select(tm => tm.Id)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> getIdMouvementSortie()
+        {
+            return await _dbContext.TypesMouvement
+                .Where(tm => tm.Nom == "sortie")
+                .Select(tm => tm.Id)
+                .FirstOrDefaultAsync();
+        }
     }
 }

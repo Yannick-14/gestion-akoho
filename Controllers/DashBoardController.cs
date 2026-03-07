@@ -1,13 +1,22 @@
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using AkohoAspx.Models;
+using AkohoAspx.Services;
+using AkohoAspx.Services.Results;
 
 namespace AkohoAspx.Controllers
 {
     public class DashBoardController : Controller
     {
-        public ActionResult Index()
+        private readonly DashBoardService _dashBoardService;
+        public DashBoardController()
         {
-            return View();
+            _dashBoardService = new DashBoardService();
+        }
+        public async Task<ActionResult> Index()
+        {
+            var data = await _dashBoardService.GetDashboardDataAsync();
+            return View(data);
         }
 
         public ActionResult Privacy()
