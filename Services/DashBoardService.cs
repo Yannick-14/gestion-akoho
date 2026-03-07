@@ -25,10 +25,20 @@ namespace AkohoAspx.Services
 
         public async Task<DashboardLotItem> GetDashboardDataAsync()
         {
+            var lots = await _lotRepository.GetAllAsync();
+            var mouvementRepo = new MouvementLotRepository(_dbContext);
+            var resteActuelLots = new System.Collections.Generic.Dictionary<int, int>();
+
+            foreach (var lot in lots)
+            {
+                resteActuelLots[lot.Id] = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id);
+            }
+
             return new DashboardLotItem
             {
                 LotOeufsActive = await _lotOeufRepository.GetLotOeufsActive(),
-                Lots = await _lotRepository.GetAllAsync()
+                Lots = lots,
+                ResteActuelLots = resteActuelLots
             };
         }
 

@@ -55,7 +55,10 @@
                                     <div class="small vstack gap-1">
                                         <div><strong>ID:</strong> <%: lot.Id %></div>
                                         <div><strong>Race:</strong> <%: lot.Race != null ? lot.Race.Nom : lot.RaceId.ToString() %></div>
-                                        <div><strong>Nombre:</strong> <%: lot.NombreInitial %></div>
+                                        <div><strong>Nombre Initial:</strong> <%: lot.NombreInitial %></div>
+                                        <div><strong>Reste Actuel:</strong> <%: Model != null && Model.ResteActuelLots.ContainsKey(lot.Id) ? Model.ResteActuelLots[lot.Id] : lot.NombreInitial %></div>
+                                        <div><strong>PoidsInitiale:</strong> <%: lot.PoidsInitiale %></div>
+                                        <div><strong>PrixAchat:</strong> <%: lot.PrixAchat %></div>
                                         <div><strong>Creation:</strong> <%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
                                     </div>
                                 </div>

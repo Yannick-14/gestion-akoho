@@ -39,9 +39,13 @@ namespace AkohoAspx.Repository
                 .SumAsync() ?? 0;
         }
 
-        public async Task<int> getResteMortTotalLot(int lotId)
-        {
-            return await getTotalMortDansLot(lotId);
+        public async Task<int> resteNombreRaceActuelleLot(int lotId)
+        { 
+            var lot = await _dbContext.Lots.FindAsync(lotId);
+            if (lot == null) return 0;
+            
+            int totalMort = await getTotalMortDansLot(lotId);
+            return lot.NombreInitial - totalMort;
         }
 
         public async Task<List<int>> getResteParSemaine(Lot lot)
