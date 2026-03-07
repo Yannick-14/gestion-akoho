@@ -98,6 +98,64 @@ namespace AkohoAspx.Services
             }
         }
 
+        public async Task<OperationResult> CreateLotAsync(FormCollection requestForm)
+        {
+            string nomLotRaw = requestForm != null ? requestForm["nomLot"] : null;
+            string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
+            string nombreInitialRaw = requestForm != null ? requestForm["nombreInitial"] : null;
+            string poidsAchatRaw = requestForm != null ? requestForm["poidsAchat"] : null;
+            string totalInvestiRaw = requestForm != null ? requestForm["totalInvesti"] : null;
+
+            string nomLot = (nomLotRaw ?? string.Empty).Trim();
+
+            int.TryParse(raceIdRaw, out int raceId);
+            int.TryParse(nombreInitialRaw, out int nombreInitial);
+            int.TryParse(poidsAchatRaw, out int poidsAchat);
+
+            string totalRaw = totalInvestiRaw ?? "0";
+            decimal totalInvesti;
+            bool totalOk = decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.CurrentCulture, out totalInvesti) || decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.InvariantCulture, out totalInvesti);
+
+            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || nombreInitial <= 0 || poidsAchat <= 0)
+            {
+                return OperationResult.Failure("Donnees invalides. Verifiez les champs du formulaire.");
+            }
+
+            if (!await _raceRepository.ExistsAsync(raceId))
+            {
+                return OperationResult.Failure("Race introuvable.");
+            }
+
+            var lot = new Lot
+            {
+                NomLot = nomLot,
+                RaceId = raceId,
+                NombreInitial = nombreInitial,
+                PoidsAchat = poidsAchat,
+                TotalInvesti = totalInvesti,
+                Creation = DateTime.Now,
+                Statu = 0
+            };
+
+            try
+            {
+                Lot resultLot = await _lotRepository.creationLot(lot);
+                var mouvement = new MouvementLot
+                {
+                    LotId = resultLot.Id,
+                    Quantite = nombreInitial,
+                    Creation = DateTime.Now,
+                    TypeId = await _typeMouvementRepository.getIdMouvementEntree()
+                };
+                await _mouvementLotRepository.creationMouvement(mouvement);
+                return OperationResult.Success("Lot cree avec succes.");
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Failure("Insertion lot echouee: " + ex.Message);
+            }
+        }
+
         public void Dispose()
         {
             _dbContext.Dispose();

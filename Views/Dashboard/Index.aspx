@@ -61,7 +61,7 @@
                                             <%: lot.Benefice.ToString("N2") %> Ar
                                         </strong>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Maka Atody</button>
+                                    <a href="/DashBoard/MakaAtody?lotId=<%: lot.Lot.Id %>&raceId=<%: lot.Lot.RaceId %>" class="btn btn-primary">Maka Atody</a>
                                 </div>
                             </div>
                         </div>

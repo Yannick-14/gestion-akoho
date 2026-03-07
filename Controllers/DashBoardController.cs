@@ -19,6 +19,13 @@ namespace AkohoAspx.Controllers
             return View(data);
         }
 
+        public ActionResult MakaAtody(int lotId, int raceId)
+        {
+            ViewBag.LotId = lotId;
+            ViewBag.RaceId = raceId;
+            return View();
+        }
+
         public ActionResult Privacy()
         {
             return View();

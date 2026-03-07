@@ -33,6 +33,17 @@ namespace AkohoAspx.Controllers
             return RedirectToAction("Index");
         }
 
+        // controlleur qui permet de creer un nouvel lot avec l'extraction d'oeuf vennant d'un lot
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateLotAtody(FormCollection requestForm)
+        {
+            OperationResult result = await _lotService.CreateLotAsync(requestForm);
+
+            SetLotTempData(result);
+            return RedirectToAction("Index");
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
