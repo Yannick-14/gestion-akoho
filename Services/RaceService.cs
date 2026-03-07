@@ -37,26 +37,6 @@ namespace AkohoAspx.Services
             };
         }
 
-        public async Task<OperationResult<int>> CreateRaceAsync(FormCollection requestForm)
-        {
-            string nom = (requestForm != null ? requestForm["nom"] : null) ?? string.Empty;
-            int jourFoyAtody = ParseInt(requestForm != null ? requestForm["jourFoyAtody"] : null);
-
-            if (string.IsNullOrWhiteSpace(nom) || jourFoyAtody <= 0)
-            {
-                return OperationResult<int>.Failure("Le nom et le jour de foy atody sont obligatoires.");
-            }
-
-            var race = new Race
-            {
-                Nom = nom.Trim(),
-                JourFoyAtody = jourFoyAtody
-            };
-
-            int createdRaceId = await _raceRepository.CreateAsync(race);
-            return OperationResult<int>.Success(createdRaceId, "Race creee. RaceId actif: " + createdRaceId);
-        }
-
         public async Task<OperationResult> CreateCroissanceRaceAsync(FormCollection requestForm, object currentRaceSessionValue)
         {
             int raceId = ParseInt(requestForm != null ? requestForm["raceId"] : null);
@@ -90,11 +70,6 @@ namespace AkohoAspx.Services
         public void Dispose()
         {
             _dbContext.Dispose();
-        }
-
-        private static int ResolveRequestedRaceId(int raceId, object currentRaceSessionValue)
-        {
-            return raceId > 0 ? raceId : ResolveRaceId(currentRaceSessionValue);
         }
 
         private static int ResolveRaceId(object currentRaceSessionValue)
