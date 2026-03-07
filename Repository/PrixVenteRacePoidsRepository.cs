@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using AkohoAspx.Data;
 using AkohoAspx.Models;
@@ -18,6 +19,13 @@ namespace AkohoAspx.Repository
         public async Task<IReadOnlyList<PrixVenteRaceParPoids>> GetAllAsync()
         {
             return await _dbContext.PrixVentesRaceParPoids.ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<PrixVenteRaceParPoids>> getPrixVenteRace(int raceId)
+        {
+            return await _dbContext.PrixVentesRaceParPoids
+                .Where(p => p.RaceId == raceId)
+                .ToListAsync();
         }
 
         public async Task<PrixVenteRaceParPoids> Creation(PrixVenteRaceParPoids prixVenteRaceParPoids)

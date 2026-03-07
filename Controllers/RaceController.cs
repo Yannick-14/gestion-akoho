@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -80,8 +80,10 @@ namespace AkohoAspx.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult addPrixUnitaire(int raceId, double prix)
+        public async Task<ActionResult> addPrixUnitaire(FormCollection form)
         {
+            int.TryParse(form["raceId"], out int raceId);
+            decimal.TryParse(form["prix"], out decimal prix);
             if (raceId <= 0)
             {
                 raceId = GetCurrentRaceIdFromSession();
