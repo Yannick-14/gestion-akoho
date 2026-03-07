@@ -14,6 +14,8 @@ namespace AkohoAspx.Services
         private readonly AppDbContext _dbContext;
         private readonly LotRepository _lotRepository;
         private readonly RaceRepository _raceRepository;
+        private readonly MouvementLotRepository _mouvementLotRepository;
+        private readonly TypeMouvementRepository _typeMouvementRepository;
 
         public LotService()
             : this(new AppDbContext())
@@ -25,6 +27,8 @@ namespace AkohoAspx.Services
             _dbContext = dbContext;
             _lotRepository = new LotRepository(_dbContext);
             _raceRepository = new RaceRepository(_dbContext);
+            _mouvementLotRepository = new MouvementLotRepository(_dbContext);
+            _typeMouvementRepository = new TypeMouvementRepository(_dbContext);
         }
 
         public async Task<LotIndexData> GetIndexDataAsync()
@@ -46,19 +50,15 @@ namespace AkohoAspx.Services
 
             string nomLot = (nomLotRaw ?? string.Empty).Trim();
 
-            int raceId;
-            int nombreInitial;
-            int poidsAchat;
-            decimal totalInvesti;
-
-            bool raceOk = int.TryParse(raceIdRaw, out raceId);
-            bool nombreOk = int.TryParse(nombreInitialRaw, out nombreInitial);
-            bool poidsOk = int.TryParse(poidsAchatRaw, out poidsAchat);
+            int.TryParse(raceIdRaw, out int raceId);
+            int.TryParse(nombreInitialRaw, out int nombreInitial);
+            int.TryParse(poidsAchatRaw, out int poidsAchat);
 
             string totalRaw = totalInvestiRaw ?? "0";
+            decimal totalInvesti;
             bool totalOk = decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.CurrentCulture, out totalInvesti) || decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.InvariantCulture, out totalInvesti);
 
-            if (string.IsNullOrWhiteSpace(nomLot) || !raceOk || raceId <= 0 || !nombreOk || !poidsOk || !totalOk)
+            if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || nombreInitial <= 0 || poidsAchat <= 0)
             {
                 return OperationResult.Failure("Donnees invalides. Verifiez les champs du formulaire.");
             }
@@ -81,7 +81,15 @@ namespace AkohoAspx.Services
 
             try
             {
-                await _lotRepository.creationLot(lot);
+                Lot resultLot = await _lotRepository.creationLot(lot);
+                var mouvement = new MouvementLot
+                {
+                    LotId = resultLot.Id,
+                    Quantite = nombreInitial,
+                    Creation = DateTime.Now,
+                    TypeId = await _typeMouvementRepository.getIdMouvementEntree()
+                };
+                await _mouvementLotRepository.creationMouvement(mouvement);
                 return OperationResult.Success("Lot cree avec succes.");
             }
             catch (Exception ex)

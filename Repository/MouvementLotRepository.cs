@@ -29,5 +29,13 @@ namespace AkohoAspx.Repository
                 .Where(mvt => mvt.LotId == lotId)
                 .ToListAsync();
         }
+
+        public async Task<int> getResteTotalLot(int lotId)
+        {
+            return await _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lotId)
+                .Select(mvt => (int?)mvt.Quantite)
+                .SumAsync() ?? 0;
+        }
     }
 }
