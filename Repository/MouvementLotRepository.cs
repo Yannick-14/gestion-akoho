@@ -10,10 +10,12 @@ namespace AkohoAspx.Repository
     public class MouvementLotRepository
     {
         private readonly AppDbContext _dbContext;
+        private readonly TypeMouvementRepository _typeMouvementRepository;
 
         public MouvementLotRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
+            _typeMouvementRepository = new TypeMouvementRepository(dbContext);
         }
 
         public async Task<MouvementLot> creationMouvement(MouvementLot transaction)
@@ -32,9 +34,12 @@ namespace AkohoAspx.Repository
 
         public async Task<int> getResteTotalLot(int lotId)
         {
+            int idEntree = await _typeMouvementRepository.getIdMouvementEntree();
+            int idSortie = await _typeMouvementRepository.getIdMouvementSortie();
+
             return await _dbContext.MouvementsLot
                 .Where(mvt => mvt.LotId == lotId)
-                .Select(mvt => (int?)mvt.Quantite)
+                .Select(mvt => (int?)(mvt.TypeId == idEntree ? mvt.Quantite : (mvt.TypeId == idSortie ? -mvt.Quantite : 0)))
                 .SumAsync() ?? 0;
         }
     }

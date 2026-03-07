@@ -14,6 +14,7 @@ namespace AkohoAspx.Services
         private readonly AppDbContext _dbContext;
         private readonly LotRepository _lotRepository;
         private readonly RaceRepository _raceRepository;
+        private readonly MouvementLotRepository _mouvementLotRepository;
 
         public DashBoardService()
             : this(new AppDbContext())
@@ -25,7 +26,9 @@ namespace AkohoAspx.Services
             _dbContext = dbContext;
             _lotRepository = new LotRepository(_dbContext);
             _raceRepository = new RaceRepository(_dbContext);
+            _mouvementLotRepository = new MouvementLotRepository(_dbContext);
         }
+
         public void Dispose()
         {
             _dbContext.Dispose();
