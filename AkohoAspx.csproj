@@ -78,6 +78,7 @@
     <Compile Include="Models\**\*.cs" />
     <Compile Include="Repository\**\*.cs" />
     <Compile Include="Services\**\*.cs" />
+    <Compile Include="ViewsCodeBehind\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax">

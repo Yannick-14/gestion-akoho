@@ -1,4 +1,4 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<AkohoAspx.Models.ErrorViewModel>" %>
+<%@ Page Language="C#" Inherits="AkohoAspx.ViewsCodeBehind.Shared.ErrorPage" %>
 <!DOCTYPE html>
 <html>
 <head>

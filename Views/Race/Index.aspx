@@ -1,14 +1,5 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<AkohoAspx.Models.Race>>" %>
+<%@ Page Language="C#" Inherits="AkohoAspx.ViewsCodeBehind.Race.RaceIndexPage" %>
 <%@ Import Namespace="System.Linq" %>
-<%
-    int currentRaceId = 0;
-    object currentRaceObj = ViewBag.CurrentRaceId;
-    if (currentRaceObj != null)
-    {
-        int.TryParse(currentRaceObj.ToString(), out currentRaceId);
-    }
-    bool hasCurrentRace = currentRaceId > 0;
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +32,7 @@
             <div class="alert alert-success" role="alert"><%: TempData["RaceSuccess"] %></div>
         <% } %>
 
-        <% if (!hasCurrentRace) { %>
+        <% if (!HasCurrentRace) { %>
             <div class="card mb-4">
                 <div class="card-body">
                     <h2 class="h5">Ajouter une race</h2>
@@ -61,7 +52,7 @@
             </div>
         <% } else { %>
             <div class="alert alert-info d-flex justify-content-between align-items-center">
-                <div>Race active (session): <strong><%: currentRaceId %></strong></div>
+                <div>Race active (session): <strong><%: CurrentRaceId %></strong></div>
                 <div>
                     <% using (Html.BeginForm("ResetCurrentRace", "Race", FormMethod.Post)) { %>
                         <%= Html.AntiForgeryToken() %>
@@ -77,7 +68,7 @@
 
                     <% using (Html.BeginForm("createCroissanceRace", "Race", FormMethod.Post, new { @class = "small" })) { %>
                         <%= Html.AntiForgeryToken() %>
-                        <input type="hidden" name="raceId" value="<%: currentRaceId %>" />
+                        <input type="hidden" name="raceId" value="<%: CurrentRaceId %>" />
 
                         <div class="row g-2">
                             <div class="col-12 col-lg-6">
@@ -133,7 +124,7 @@
                     <h2 class="h5">Ajouter un prix unitaire de vente</h2>
                     <% using (Html.BeginForm("addPrixUnitaire", "Race", FormMethod.Post)) { %>
                         <%= Html.AntiForgeryToken() %>
-                        <input type="hidden" name="raceId" value="<%: currentRaceId %>" />
+                        <input type="hidden" name="raceId" value="<%: CurrentRaceId %>" />
                         <div class="mb-3">
                             <label for="prix" class="form-label">Prix par gramme</label>
                             <input id="prix" name="prix" type="number" min="1" class="form-control" />
@@ -221,3 +212,4 @@
     </script>
 </body>
 </html>
+

@@ -1,12 +1,9 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Lot>>" %>
+<%@ Page Language="C#" Inherits="AkohoAspx.ViewsCodeBehind.Lot.LotIndexPage" %>
 <%@ Import Namespace="System.Linq" %>
 <%@ Import Namespace="System.Collections.Generic" %>
 <%@ Import Namespace="System.Web.Mvc" %>
 <%@ Import Namespace="AkohoAspx.Models" %>
 
-<%
-    IEnumerable<Race> raceOptions = ViewBag.Races as IEnumerable<Race>;
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -52,8 +49,8 @@
                         <div class="col-12 col-md-6">
                             <label for="raceId" class="form-label">Race</label>
                             <select id="raceId" name="raceId" class="form-select">
-                                <option value="">-- Sélectionner une race --</option>
-                                <% foreach (var race in raceOptions ?? Enumerable.Empty<AkohoAspx.Models.Race>()) { %>
+                                <option value="">-- S�lectionner une race --</option>
+                                <% foreach (var race in RaceOptions) { %>
                                     <option value="<%: race.Id %>">
                                         <%: race.Nom %>
                                     </option>
@@ -116,3 +113,4 @@
     </div>
 </body>
 </html>
+
