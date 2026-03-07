@@ -13,7 +13,6 @@ namespace AkohoAspx.Models
         public int PoidsInitiale { get; set; }
         public decimal PrixAchat { get; set; }
         public int? LotOeufId { get; set; }
-        public int TypeLotId { get; set; }
 
         public virtual Race Race { get; set; }
         public virtual Lot ParentLot { get; set; }

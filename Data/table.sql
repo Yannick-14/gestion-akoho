@@ -35,14 +35,14 @@ CREATE TABLE dbo.race
 );
 GO
 
-CREATE TABLE dbo.typeLot
-(
-    id INT IDENTITY(1,1) NOT NULL,
-    nom NVARCHAR(100) NOT NULL,
-    CONSTRAINT PK_typeLot PRIMARY KEY CLUSTERED (id),
-    CONSTRAINT UQ_typeLot_nom UNIQUE (nom)
-);
-GO
+-- CREATE TABLE dbo.typeLot
+-- (
+--     id INT IDENTITY(1,1) NOT NULL,
+--     nom NVARCHAR(100) NOT NULL,
+--     CONSTRAINT PK_typeLot PRIMARY KEY CLUSTERED (id),
+--     CONSTRAINT UQ_typeLot_nom UNIQUE (nom)
+-- );
+-- GO
 
 CREATE TABLE dbo.croissancePoidsRace
 (
@@ -79,8 +79,10 @@ CREATE TABLE dbo.lotOeuf
     raceId INT NOT NULL,
     nbOeufs INT NOT NULL,
     pourcentage DECIMAL(10,2) NOT NULL,
+    validation BIT NOT NULL CONSTRAINT DF_lotOeuf_validation DEFAULT 0,  -- FALSE par défaut
     CONSTRAINT PK_lotOeuf PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_lotOeuf_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
+    CONSTRAINT FK_lotOeuf_lotParent FOREIGN KEY (lotParentId) REFERENCES dbo.lot(id),
     CONSTRAINT CK_lotOeuf_nbOeufs_nonnegative CHECK (nbOeufs >= 0),
     CONSTRAINT CK_lotOeuf_pourcentage_nonnegative CHECK (pourcentage >= 0)
 );

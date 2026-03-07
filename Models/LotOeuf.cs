@@ -12,6 +12,7 @@ namespace AkohoAspx.Models
         public int RaceId { get; set; }
         public int nbOeufs { get; set; }
         public decimal pourcentage { get; set; }
+        public bool validation { get; set; } = false;
 
         public virtual Race Race { get; set; }
         public virtual Lot ParentLot { get; set; }
