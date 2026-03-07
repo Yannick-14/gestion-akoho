@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,11 +31,11 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
-        public async Task<IReadOnlyList<Lot>> getInfoIntialeLot(int lotId)
+        public async Task<Lot> getInfoIntialeLot(int lotId)
         {
             return await _dbContext.Lots
                 .Where(l => l.Id == lotId)
-                .ToListAsync();
+                .FirstOrDefaultAsync();
         }
     }
 }

@@ -1,12 +1,22 @@
 ﻿using System.Web.Mvc;
 using AkohoAspx.Models;
+using System.Threading.Tasks;
+using AkohoAspx.Services;
 
 namespace AkohoAspx.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        private readonly SakafoService _sakafoService;
+
+        public HomeController()
         {
+            _sakafoService = new SakafoService();
+        }
+
+        public async Task<ActionResult> Index()
+        {
+            await _sakafoService.compterSemaineEcouler(7);
             return View();
         }
 

@@ -52,7 +52,7 @@ namespace AkohoAspx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> addPrixUnitaire(FormCollection requestForm)
         {
-            OperationResult result = await _raceService.AddPrixUnitaireAsync(requestForm, Session["CurrentRaceId"]);
+            OperationResult result = await _raceService.AddPrixUnitaireAsync(requestForm);
             SetRaceTempData(result);
             return RedirectToAction("Index");
         }

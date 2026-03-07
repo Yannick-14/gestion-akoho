@@ -27,5 +27,15 @@ namespace AkohoAspx.Services
             _mouvementLotRepository = new MouvementLotRepository(_dbContext);
             _croissanceRepository = new CroissanceRepository(_dbContext);
         }
+
+        // compter combien se sont ecoules entre la date actuelle et la date de creation de lot
+        public async Task<int> compterSemaineEcouler(int lotId)
+        {
+            Lot lot = await _lotRepository.getInfoIntialeLot(lotId);
+            Console.WriteLine($"creation: {lot.Creation}");
+            return 0;
+        }
+
+        public void Dispose() { _dbContext.Dispose(); }
     }
 }

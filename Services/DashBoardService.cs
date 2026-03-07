@@ -37,8 +37,7 @@ namespace AkohoAspx.Services
 
             foreach (var lot in lots)
             {
-                var initialInfoList = await _lotRepository.getInfoIntialeLot(lot.Id);
-                var initialInfo = System.Linq.Enumerable.FirstOrDefault(initialInfoList);
+                var initialInfo = await _lotRepository.getInfoIntialeLot(lot.Id);
 
                 if (initialInfo == null) continue;
 
