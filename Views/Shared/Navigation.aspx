@@ -9,6 +9,14 @@
                 <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Lot") %>">Lot</a></li>
                 <li class="nav-item"><a class="nav-link text-dark" href="<%: Url.Action("Index", "Dashboard") %>">Dashboard</a></li>
             </ul>
+            <div class="d-flex align-items-center gap-2">
+                <span class="navbar-text bg-light border px-2 py-1 rounded small">
+                    <strong>Date Active:</strong> <%: AkohoAspx.Utils.Time.GetDateActuelle().ToString("dd/MM/yyyy") %>
+                </span>
+                <form action="/Dashboard/ResetDate" method="post" class="m-0">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Revenir à aujourd'hui">Reset</button>
+                </form>
+            </div>
         </div>
     </div>
 </nav>

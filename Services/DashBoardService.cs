@@ -34,7 +34,9 @@ namespace AkohoAspx.Services
 
         public async Task<DashboardLotItem> GetDashboardDataAsync()
         {
-            var lots = await _lotRepository.GetAllAsync();
+            var dateActuelle = Time.GetDateActuelle();
+            Console.WriteLine($"dateActuelle: {dateActuelle}");
+            var lots = await _lotRepository.GetAllAtDateAsync(dateActuelle);
             var mouvementRepo = new MouvementLotRepository(_dbContext);
             var resteActuelLots = new System.Collections.Generic.Dictionary<int, int>();
             var prixTotalNourritureLots = new System.Collections.Generic.Dictionary<int, decimal>();
@@ -42,20 +44,19 @@ namespace AkohoAspx.Services
             var prixVenteLots = new System.Collections.Generic.Dictionary<int, decimal>();
             var prixVenteRaceUnitaireLots = new System.Collections.Generic.Dictionary<int, decimal>();
             var semaineEcoulerLots = new System.Collections.Generic.Dictionary<int, int>();
-            var dateActuelle = new Time().GetDateActuelle();
 
             foreach (var lot in lots)
             {
-                semaineEcoulerLots[lot.Id] = Time.getSemaineEcouler(lot.Creation);
-                var resteNombre = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id);
+                semaineEcoulerLots[lot.Id] = Time.getSemaineEcouler(lot.Creation, dateActuelle);
+                var resteNombre = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id, dateActuelle);
                 resteActuelLots[lot.Id] = resteNombre;
-                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, mouvementRepo, dateActuelle);
+                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, mouvementRepo);
 
-                var poidsFinal = await GetPoidsFinalUnitaireAsync(lot);
+                var poidsFinal = await GetPoidsFinalUnitaireAsync(lot, dateActuelle);
                 poidsFinalUnitaireLots[lot.Id] = poidsFinal;
 
                 // Calcul du prix de vente total estimé du lot à l'instant T
-                var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId, dateActuelle);
+                var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId);
                 if (prixVente != null)
                 {
                     decimal prixUnitaire = prixVente.Prix / prixVente.ValeurGrame;
@@ -80,7 +81,7 @@ namespace AkohoAspx.Services
 
             return new DashboardLotItem
             {
-                LotOeufsActive = await _lotOeufRepository.GetLotOeufsActive(),
+                LotOeufsActive = await _lotOeufRepository.GetLotOeufsActive(dateActuelle),
                 Lots = lots,
                 ResteActuelLots = resteActuelLots,
                 PrixTotalNourritureLots = prixTotalNourritureLots,
@@ -91,18 +92,20 @@ namespace AkohoAspx.Services
             };
         }
 
-        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, MouvementLotRepository mouvementRepo, System.DateTime dateActuelle)
+        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, MouvementLotRepository mouvementRepo)
         {
-            int semainesEcoulees = AkohoAspx.Utils.Time.getSemaineEcouler(lot.Creation);
+            var dateActuelle = Time.GetDateActuelle();
+            int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
             if (semainesEcoulees <= 0) return 0;
 
-            var restesParSemaine = await mouvementRepo.getResteParSemaine(lot);
+            var restesParSemaine = await mouvementRepo.getResteParSemaine(lot, dateActuelle);
             
             var croissancesAliment = await _dbContext.CroissancesAlimentRace
-                .Where(c => c.RaceId == lot.RaceId && c.ValueSemaine <= semainesEcoulees)
-                .ToDictionaryAsync(c => c.ValueSemaine, c => c.PoidsMoyen); // Poids en grammes consommé
+                .Where(c => c.RaceId == lot.RaceId)
+                .OrderBy(c => c.ValueSemaine)
+                .ToListAsync();
 
-            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId, dateActuelle);
+            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId);
             if (prixApplicable == null) return 0; // Pas de prix défini
 
             decimal prixUnitaireGramme = prixApplicable.Prix / prixApplicable.ValeurGrame;
@@ -112,7 +115,8 @@ namespace AkohoAspx.Services
             {
                 int pouletsVivants = s <= restesParSemaine.Count ? restesParSemaine[s - 1] : (restesParSemaine.LastOrDefault() == 0 && restesParSemaine.Count == 0 ? lot.NombreInitial : restesParSemaine.LastOrDefault());
                 
-                int consommationGrammes = croissancesAliment.ContainsKey(s) ? croissancesAliment[s] : 0;
+                var croissanceSemaine = croissancesAliment.LastOrDefault(c => c.ValueSemaine <= s) ?? croissancesAliment.FirstOrDefault();
+                int consommationGrammes = croissanceSemaine != null ? croissanceSemaine.PoidsMoyen : 0;
                 
                 if (consommationGrammes == 0 || pouletsVivants == 0) continue;
 
@@ -123,17 +127,18 @@ namespace AkohoAspx.Services
             return coutTotal;
         }
 
-        private async Task<int> GetPoidsFinalUnitaireAsync(Lot lot)
+        private async Task<int> GetPoidsFinalUnitaireAsync(Lot lot, System.DateTime dateActuelle)
         {
-            int semainesEcoulees = AkohoAspx.Utils.Time.getSemaineEcouler(lot.Creation);
+            int semainesEcoulees = AkohoAspx.Utils.Time.getSemaineEcouler(lot.Creation, dateActuelle);
             if (semainesEcoulees <= 0) return lot.PoidsInitiale;
 
-            var croissancePoids = await _dbContext.CroissancesPoidsRace
-                .Where(c => c.RaceId == lot.RaceId && c.ValueSemaine <= semainesEcoulees)
-                .OrderByDescending(c => c.ValueSemaine)
-                .FirstOrDefaultAsync();
+            var croissancesPoids = await _dbContext.CroissancesPoidsRace
+                .Where(c => c.RaceId == lot.RaceId)
+                .OrderBy(c => c.ValueSemaine)
+                .ToListAsync();
 
-            return croissancePoids != null ? croissancePoids.PoidsMoyen : lot.PoidsInitiale;
+            var croissancePoids = croissancesPoids.LastOrDefault(c => c.ValueSemaine <= semainesEcoulees) ?? croissancesPoids.FirstOrDefault();
+            return croissancePoids != null ? lot.PoidsInitiale + croissancePoids.PoidsMoyen : lot.PoidsInitiale;
         }
 
         public void Dispose()

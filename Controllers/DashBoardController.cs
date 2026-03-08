@@ -26,6 +26,24 @@ namespace AkohoAspx.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult ActualiserDate(System.DateTime? DateActualiser)
+        {
+            if (DateActualiser.HasValue)
+            {
+                var dateFinDeJour = DateActualiser.Value.Date.AddDays(1).AddTicks(-1);
+                AkohoAspx.Utils.Time.SetDateActuelle(dateFinDeJour);
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult ResetDate()
+        {
+            AkohoAspx.Utils.Time.ResetDateActuelle();
+            return RedirectToAction("Index");
+        }
+
         public ActionResult Privacy()
         {
             return View();

@@ -31,24 +31,29 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
-        public async Task<int> getTotalMortDansLot(int lotId)
+        public async Task<int> getTotalMortDansLot(int lotId, System.DateTime? dateActuelle = null)
         {
-            return await _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lotId)
+            var query = _dbContext.MouvementsLot.Where(mvt => mvt.LotId == lotId);
+            if (dateActuelle.HasValue)
+            {
+                query = query.Where(mvt => mvt.Creation <= dateActuelle.Value);
+            }
+
+            return await query
                 .Select(mvt => (int?)mvt.Nombre)
                 .SumAsync() ?? 0;
         }
 
-        public async Task<int> resteNombreRaceActuelleLot(int lotId)
+        public async Task<int> resteNombreRaceActuelleLot(int lotId, System.DateTime? dateActuelle = null)
         { 
             var lot = await _dbContext.Lots.FindAsync(lotId);
             if (lot == null) return 0;
             
-            int totalMort = await getTotalMortDansLot(lotId);
+            int totalMort = await getTotalMortDansLot(lotId, dateActuelle);
             return lot.NombreInitial - totalMort;
         }
 
-        public async Task<List<int>> getResteParSemaine(Lot lot)
+        public async Task<List<int>> getResteParSemaine(Lot lot, System.DateTime? dateActuelle = null)
         {
             var resteParSemaine = new List<int>();
             if (lot == null)
@@ -56,14 +61,21 @@ namespace AkohoAspx.Repository
                 return resteParSemaine;
             }
 
-            int semainesEcoulees = Time.getSemaineEcouler(lot.Creation);
+            var dateReference = dateActuelle ?? Time.GetDateActuelle();
+            int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateReference);
             if (semainesEcoulees <= 0)
             {
                 return resteParSemaine;
             }
 
-            var mortsParSemaine = await _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lot.Id && mvt.Creation >= lot.Creation)
+            var query = _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lot.Id && mvt.Creation >= lot.Creation);
+            if (dateActuelle.HasValue)
+            {
+                query = query.Where(mvt => mvt.Creation <= dateActuelle.Value);
+            }
+
+            var mortsParSemaine = await query
                 .GroupBy(mvt => DbFunctions.DiffDays(lot.Creation, mvt.Creation) / 7 + 1)
                 .Select(g => new
                 {

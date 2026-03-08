@@ -18,8 +18,13 @@
         <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Models.Lot>(); %>
         <section class="mb-3">
             <div class="col-12 col-md-4">
-                <label for="DateActualiser" class="form-label">Personnaliser la date actuelle</label>
-                <input id="DateActualiser" name="DateActualiser" type="date" class="form-control" />
+                <form action="/Dashboard/ActualiserDate" method="post" class="d-flex align-items-end gap-2">
+                    <div class="flex-grow-1">
+                        <label for="DateActualiser" class="form-label">Personnaliser la date actuelle</label>
+                        <input id="DateActualiser" name="DateActualiser" type="date" class="form-control" value="<%: AkohoAspx.Utils.Time.GetDateActuelle().ToString("yyyy-MM-dd") %>" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualiser</button>
+                </form>
             </div>
         </section>
         <section class="mb-5">

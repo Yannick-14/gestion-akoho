@@ -4,19 +4,35 @@ namespace AkohoAspx.Utils
 {
     public class Time
     {
-        // ✅ Propriété avec getter/setter + valeur par défaut
-        public DateTime DateActuelle { get; private set; } = DateTime.Now;
-
-        // ✅ Setter explicite
-        public void SetDateActuelle(DateTime date)
+        // ✅ Getter static qui lit depuis la Session ou retourne DateTime.Now
+        public static DateTime GetDateActuelle()
         {
-            DateActuelle = date;
+            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null && System.Web.HttpContext.Current.Session["DateActuelle"] != null)
+            {
+                if (System.Web.HttpContext.Current.Session["DateActuelle"] is DateTime dateActuelle)
+                {
+                    return dateActuelle;
+                }
+            }
+            return DateTime.Now;
         }
 
-        // ✅ Getter explicite
-        public DateTime GetDateActuelle()
+        // ✅ Setter static qui écrit dans la Session
+        public static void SetDateActuelle(DateTime date)
         {
-            return DateActuelle;
+            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null)
+            {
+                System.Web.HttpContext.Current.Session["DateActuelle"] = date;
+            }
+        }
+
+        // ✅ Reset static qui vide la Session
+        public static void ResetDateActuelle()
+        {
+            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null)
+            {
+                System.Web.HttpContext.Current.Session.Remove("DateActuelle");
+            }
         }
 
         public static DateTime creationDateAvecJour(int jours)
@@ -26,19 +42,15 @@ namespace AkohoAspx.Utils
 
         public static int getSemaineEcouler(DateTime date)
         {
-            DateTime dateActuelle = new Time().GetDateActuelle();
+            DateTime dateActuelle = GetDateActuelle();
+            return getSemaineEcouler(date, dateActuelle);
+        }
+
+        public static int getSemaineEcouler(DateTime date, DateTime dateActuelle)
+        {
             TimeSpan difference = dateActuelle - date;
             int semaines = (int)(difference.TotalDays / 7);
             return semaines < 0 ? 0 : semaines;
         }
     }
 }
-// EXEMPLE UTILISATION
-// Time time = new Time();
-
-// // Getter — récupère la date (DateTime.Now par défaut)
-// DateTime d = time.GetDateActuelle();
-
-// // Setter — définir une date personnalisée
-// time.SetDateActuelle(new DateTime(2026, 1, 15));
-// DateTime d2 = time.GetDateActuelle(); // → 15/01/2026

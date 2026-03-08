@@ -31,6 +31,15 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
+        public async Task<IReadOnlyList<Lot>> GetAllAtDateAsync(System.DateTime dateActuelle)
+        {
+            return await _dbContext.Lots
+                .Include(l => l.Race)
+                .Where(l => l.Creation <= dateActuelle)
+                .OrderByDescending(l => l.Creation)
+                .ToListAsync();
+        }
+
         public async Task<Lot> getInfoIntialeLot(int lotId)
         {
             return await _dbContext.Lots
