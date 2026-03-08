@@ -44,10 +44,12 @@ namespace AkohoAspx.Services
             var prixVenteLots = new System.Collections.Generic.Dictionary<int, decimal>();
             var prixVenteRaceUnitaireLots = new System.Collections.Generic.Dictionary<int, decimal>();
             var semaineEcoulerLots = new System.Collections.Generic.Dictionary<int, int>();
+            var totalMortsLots = new System.Collections.Generic.Dictionary<int, int>();
 
             foreach (var lot in lots)
             {
                 semaineEcoulerLots[lot.Id] = Time.getSemaineEcouler(lot.Creation, dateActuelle);
+                totalMortsLots[lot.Id] = await mouvementRepo.getTotalMortDansLot(lot.Id, dateActuelle);
                 var resteNombre = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id, dateActuelle);
                 resteActuelLots[lot.Id] = resteNombre;
                 prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, mouvementRepo);
@@ -88,7 +90,8 @@ namespace AkohoAspx.Services
                 PoidsFinalUnitaireLots = poidsFinalUnitaireLots,
                 PrixVenteLots = prixVenteLots,
                 PrixVenteRaceUnitaireLots = prixVenteRaceUnitaireLots,
-                SemaineEcouler = semaineEcoulerLots
+                SemaineEcouler = semaineEcoulerLots,
+                TotalMortLots = totalMortsLots
             };
         }
 

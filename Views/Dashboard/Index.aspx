@@ -72,6 +72,7 @@
                                         <div><strong>PoidsInitiale:</strong> <%: lot.PoidsInitiale %></div>
                                         <div><strong>PrixAchat:</strong> <%: lot.PrixAchat %></div>
                                         <div><strong>Creation:</strong> <%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
+                                        <div><strong>Morts: </strong><%: Model.TotalMortLots[lot.Id] %></div>
                                         <hr class="my-1 border-secondary" />
                                         <div><strong>Semaine ecouler:</strong> <%: Model != null && Model.SemaineEcouler.ContainsKey(lot.Id) ? Model.SemaineEcouler[lot.Id] + " " : "N/A" %></div>
                                         <div><strong>Poids Actuel (U.):</strong> <%: Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] + " g" : "N/A" %></div>

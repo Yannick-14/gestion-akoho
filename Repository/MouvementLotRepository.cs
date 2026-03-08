@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
-        public async Task<int> getTotalMortDansLot(int lotId, System.DateTime? dateActuelle = null)
+        public async Task<int> getTotalMortDansLot(int lotId, DateTime? dateActuelle = null)
         {
             var query = _dbContext.MouvementsLot.Where(mvt => mvt.LotId == lotId);
             if (dateActuelle.HasValue)
@@ -48,7 +49,7 @@ namespace AkohoAspx.Repository
         { 
             var lot = await _dbContext.Lots.FindAsync(lotId);
             if (lot == null) return 0;
-            
+
             int totalMort = await getTotalMortDansLot(lotId, dateActuelle);
             return lot.NombreInitial - totalMort;
         }
