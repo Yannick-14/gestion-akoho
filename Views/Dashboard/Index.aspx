@@ -187,6 +187,7 @@
                                         <div><strong>Nombre oeufs:</strong> <%: lotOeuf.NbOeufs %></div>
                                         <div><strong>Date eclosion:</strong> <%: lotOeuf.DateEclosion.HasValue ? lotOeuf.DateEclosion.Value.ToString("yyyy-MM-dd") : "" %></div>
                                     </div>
+                                    <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
                                     <% if (lotOeuf.DateEclosion.HasValue && AkohoAspx.Utils.Time.GetDateActuelle() >= lotOeuf.DateEclosion.Value) { %>
                                         <hr class="my-1 border-secondary" />
                                         <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>

@@ -49,8 +49,22 @@ namespace AkohoAspx.Repository
             var lot = await _dbContext.Lots.FindAsync(lotId);
             if (lot == null) return 0;
 
-            int totalMort = await getTotalMortDansLot(lotId, dateActuelle);
-            return lot.NombreInitial - totalMort;
+            var dateRef = dateActuelle ?? Time.GetDateActuelle();
+            int semaineActuelle = Time.getSemaineEcouler(lot.Creation, dateRef);
+
+            if (semaineActuelle <= 1) return lot.NombreInitial;
+
+            // Déduction retardée : On ne déduit que les morts des semaines PRÉCÉDENTES
+            // Semaine 2 affiche le reste après les morts de la Semaine 1.
+            int finSemainePrecedenteJours = (semaineActuelle - 1) * 7;
+            DateTime dateLimite = lot.Creation.AddDays(finSemainePrecedenteJours);
+
+            int totalMortPrecedent = await _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lotId && mvt.Creation < dateLimite)
+                .Select(mvt => (int?)mvt.Nombre)
+                .SumAsync() ?? 0;
+
+            return lot.NombreInitial - totalMortPrecedent;
         }
 
         // Recuperer le reste de nombre restant à chaque semaine jusqu' à l'actuelle par rappport à la création du lot
@@ -80,10 +94,14 @@ namespace AkohoAspx.Repository
 
             for (int s = 1; s <= semainesEcoulees; s++)
             {
+                // On ajoute d'abord le reste (celui du début de semaine)
+                resteParSemaine.Add(resteCourant);
+
+                // Puis on prépare le reste pour la semaine SUIVANTE
                 var mortSemaine = mortsParSemaine.FirstOrDefault(v => v.Semaine == s);
                 if (mortSemaine != null) resteCourant -= mortSemaine.Mort;
-
-                resteParSemaine.Add(resteCourant);
+                
+                if (resteCourant < 0) resteCourant = 0;
             }
 
             return resteParSemaine;
