@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Récolte d'Œufs - Elevage Akoho</title>
+    <title>Récolte d'Oeufs - Elevage Akoho</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -91,8 +91,8 @@
                 <div class="glass-panel overflow-hidden">
                     <div class="form-header d-flex justify-content-between align-items-center">
                         <div>
-                            <h1 class="h3 fw-800 mb-0">Récolte d'Œufs</h1>
-                            <p class="mb-0 opacity-75 small fw-600">Enregistrer les nouveaux œufs</p>
+                            <h1 class="h3 fw-800 mb-0">Récolte d'Oeufs</h1>
+                            <p class="mb-0 opacity-75 small fw-600">Enregistrer les nouveaux Oeufs</p>
                         </div>
                         <a href="/Dashboard/Index" class="btn btn-sm btn-light text-warning fw-bold px-3 rounded-pill" style="color: #92400e !important;">&larr; Retour</a>
                     </div>

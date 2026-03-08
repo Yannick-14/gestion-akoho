@@ -115,7 +115,7 @@ namespace AkohoAspx.Services
                     await _lotRepository.creationLot(newLot);
                     await _lotOeufRepository.updateValidationEtPourcentage(lotOeuf.Id, true, pourcentage);
                     transaction.Commit();
-                    return OperationResult.Success("Lot créé avec succès à partir du lot d'œufs.");
+                    return OperationResult.Success("Lot créé avec succès à partir du lot d'Oeufs.");
                 }
                 catch (Exception ex)
                 {

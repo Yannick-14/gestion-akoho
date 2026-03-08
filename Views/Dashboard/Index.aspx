@@ -199,10 +199,28 @@
                                 <div class="lot-card-click p-3 p-lg-4">
                                     <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
                                         <h3 class="lot-card-title mb-0"><%: lot.NomLot %></h3>
-                                        <span class="badge text-bg-light border">Lot #<%: lot.Id %></span>
+                                        <div class="d-flex flex-column align-items-end gap-1">
+                                            <span class="badge text-bg-light border shadow-sm">Lot #<%: lot.Id %></span>
+                                            <% 
+                                                int maxWeek = Model != null && Model.MaxSemaineCroissanceLots.ContainsKey(lot.Id) ? Model.MaxSemaineCroissanceLots[lot.Id] : 0;
+                                                if (semaineEcoulee >= maxWeek && maxWeek > 0) { 
+                                            %>
+                                                <span class="badge rounded-pill shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.2);">
+                                                    ✅ Prêt à vendre
+                                                </span>
+                                            <% } else { %>
+                                                <span class="badge bg-white text-muted border rounded-pill shadow-sm" style="font-size: 0.7rem;">
+                                                    Sem. <%: semaineEcoulee %> / <%: maxWeek %>
+                                                </span>
+                                            <% } %>
+                                        </div>
                                     </div>
 
                                     <div class="kpi-grid">
+                                        <div class="kpi-pill">
+                                            <span class="kpi-label">Croissance</span>
+                                            <span class="kpi-value text-primary">Semaine <%: semaineEcoulee %></span>
+                                        </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Prix d'achat</span>
                                             <span class="kpi-value"><%: lot.PrixAchat.ToString("N2") %> Ar</span>
@@ -219,6 +237,10 @@
                                             <span class="kpi-label">Nombre actuel</span>
                                             <span class="kpi-value"><%: nombreActuel %></span>
                                         </div>
+                                        <div class="kpi-pill">
+                                            <span class="kpi-label">Poids unitaire</span>
+                                            <span class="kpi-value fw-bold"><%: poidsActuelUnitaire %> g</span>
+                                        </div>
                                         <div class="kpi-pill" style="grid-column: span 2;">
                                             <span class="kpi-label">Prix du lot actuel si vente</span>
                                             <span class="kpi-value text-success"><%: prixVenteLot.ToString("N2") %> Ar</span>
@@ -227,7 +249,7 @@
                                 </div>
 
                                 <div class="lot-actions px-3 px-lg-4 pb-3 pb-lg-4 d-grid gap-2">
-                                    <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les œufs &rarr;</a>
+                                    <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les Oeufs &rarr;</a>
                                     <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler une perte &rarr;</a>
                                 </div>
                             </div>
@@ -275,7 +297,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les œufs</a>
+                                        <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les Oeufs</a>
                                         <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler une perte</a>
                                     </div>
                                 </div>

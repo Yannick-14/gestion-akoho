@@ -14,6 +14,7 @@ namespace AkohoAspx.Services
         public Dictionary<int, decimal> PrixVenteLots { get; set; }
         public Dictionary<int, decimal> PrixVenteRaceUnitaireLots { get; set; }
         public Dictionary<int, int> SemaineEcouler { get; set; }
+        public Dictionary<int, int> MaxSemaineCroissanceLots { get; set; }
 
         public DashboardLotItem()
         {
@@ -26,6 +27,7 @@ namespace AkohoAspx.Services
             PrixVenteLots = new Dictionary<int, decimal>();
             PrixVenteRaceUnitaireLots = new Dictionary<int, decimal>();
             SemaineEcouler = new Dictionary<int, int>();
+            MaxSemaineCroissanceLots = new Dictionary<int, int>();
         }
     }
 }

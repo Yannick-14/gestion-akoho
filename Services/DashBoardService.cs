@@ -47,13 +47,19 @@ namespace AkohoAspx.Services
             var prixVenteRaceUnitaireLots = new Dictionary<int, decimal>();
             var semaineEcoulerLots = new Dictionary<int, int>();
             var totalMortsLots = new Dictionary<int, int>();
-
-            // end region return des données
+            var maxSemaineCroissanceLots = new Dictionary<int, int>();
 
             foreach (var lot in lots)
             {
                 semaineEcoulerLots[lot.Id] = Time.getSemaineEcouler(lot.Creation, dateActuelle);
                 totalMortsLots[lot.Id] = await _mouvementLotRepository.getTotalMortDansLot(lot.Id);
+                
+                // Calcul du nombre max de semaines de croissance pour cette race (basé sur le nombre d'entrées)
+                var maxSemaine = await _dbContext.CroissancesPoidsRace
+                    .Where(c => c.RaceId == lot.RaceId)
+                    .CountAsync();
+                maxSemaineCroissanceLots[lot.Id] = maxSemaine;
+
                 var resteNombre = await _mouvementLotRepository.resteActuelleLot(lot.Id);
                 resteActuelLots[lot.Id] = resteNombre;
                 prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, dateActuelle);
@@ -95,7 +101,8 @@ namespace AkohoAspx.Services
                 PrixVenteLots = prixVenteLots,
                 PrixVenteRaceUnitaireLots = prixVenteRaceUnitaireLots,
                 SemaineEcouler = semaineEcoulerLots,
-                TotalMortLots = totalMortsLots
+                TotalMortLots = totalMortsLots,
+                MaxSemaineCroissanceLots = maxSemaineCroissanceLots
             };
         }
 

@@ -90,8 +90,8 @@
                 <div class="glass-panel overflow-hidden">
                     <div class="form-header d-flex justify-content-between align-items-center">
                         <div>
-                            <h1 class="h3 fw-800 mb-0">Éclosion des Œufs</h1>
-                            <p class="mb-0 opacity-75 small fw-600">Transformer le lot d'œufs en poussins</p>
+                            <h1 class="h3 fw-800 mb-0">Éclosion des Oeufs</h1>
+                            <p class="mb-0 opacity-75 small fw-600">Transformer le lot d'Oeufs en poussins</p>
                         </div>
                         <a href="/Dashboard/LotOeufs" class="btn btn-sm btn-light text-warning fw-bold px-3 rounded-pill" style="color: #92400e !important;">&larr; Retour</a>
                     </div>
@@ -101,7 +101,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 <div class="bg-white rounded-3 p-2 shadow-sm">🐣</div>
                                 <div>
-                                    <div class="text-muted small fw-600">Lot d'Œufs cible</div>
+                                    <div class="text-muted small fw-600">Lot d'Oeufs cible</div>
                                     <div class="fw-bold">Lot #<%: ViewBag.LotOeufId %></div>
                                 </div>
                             </div>

@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lots d'Œufs - Elevage Akoho</title>
+    <title>Lots d'Oeufs - Elevage Akoho</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <style>
         :root {
@@ -154,11 +154,11 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-2">
                         <li class="breadcrumb-item"><a href="/Dashboard/Index" class="text-decoration-none text-muted">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Lots d'Œufs</li>
+                        <li class="breadcrumb-item active" aria-current="page">Lots d'Oeufs</li>
                     </ol>
                 </nav>
-                <h1 class="h2 fw-bold mb-0">Gestion des Lots d'Œufs</h1>
-                <p class="text-muted mb-0">Visualisez et faites éclore vos récoltes d'œufs actives.</p>
+                <h1 class="h2 fw-bold mb-0">Gestion des Lots d'Oeufs</h1>
+                <p class="text-muted mb-0">Visualisez et faites éclore vos récoltes d'Oeufs actives.</p>
             </div>
             <div class="text-end">
                 <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
@@ -175,13 +175,13 @@
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="egg-card h-100">
                             <div class="egg-card-header">
-                                <h3 class="h6 mb-0 fw-bold text-amber-900">Lot d'Œufs</h3>
+                                <h3 class="h6 mb-0 fw-bold text-amber-900">Lot d'Oeufs</h3>
                                 <span class="egg-id-badge">#<%: lotOeuf.Id %></span>
                             </div>
                             <div class="egg-card-body">
                                 <div class="egg-quantity-box">
                                     <span class="egg-quantity-value"><%: lotOeuf.NbOeufs %></span>
-                                    <span class="egg-quantity-label">Œufs récoltés</span>
+                                    <span class="egg-quantity-label">Oeufs récoltés</span>
                                 </div>
                                 
                                 <div class="info-grid">
@@ -215,7 +215,7 @@
                 <div class="col-12">
                     <div class="text-center py-5 bg-white rounded-4 border">
                         <div class="display-1 text-muted mb-4 opacity-25">🥚</div>
-                        <h2 class="h4 text-muted">Aucun lot d'œufs actif</h2>
+                        <h2 class="h4 text-muted">Aucun lot d'Oeufs actif</h2>
                         <p class="text-muted">Les récoltes effectuées depuis les lots de poules s'afficheront ici.</p>
                         <a href="/Dashboard/Index" class="btn btn-outline-primary mt-3">Retour au Dashboard</a>
                     </div>
