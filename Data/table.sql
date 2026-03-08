@@ -150,3 +150,6 @@ CREATE INDEX IX_prixVenteRace_raceId_valeurGrame ON dbo.prixVenteRace(raceId, va
 CREATE INDEX IX_prixNourritureRace_raceId_valeurGrame ON dbo.prixNourritureRace(raceId, valeurGrame);
 CREATE INDEX IX_mouvementLot_lotId_creation ON dbo.mouvementLot(lotId, creation);
 GO
+
+
+ALTER TABLE dbo.lotOeuf ALTER COLUMN pourcentage DECIMAL(10,2) NULL;

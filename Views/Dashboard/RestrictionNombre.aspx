@@ -15,12 +15,12 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h1 class="h4 mb-0">Maka Atody</h1>
+                        <h1 class="h4 mb-0">Signaler un Décès</h1>
                         <a href="/Dashboard/Index" class="btn btn-sm btn-light text-primary fw-bold">&larr; Retour</a>
                     </div>
                     <div class="card-body p-4">
                         <div class="alert alert-info mb-4">
-                            <strong>Details du Lot :</strong><br/>
+                            <strong>Détails du Lot :</strong><br/>
                             ID Lot : <%: ViewBag.LotId %><br/>
                         </div>
 
@@ -29,12 +29,12 @@
                             <input type="hidden" name="lotId" value="<%: ViewBag.LotId %>" />
 
                             <div class="mb-3">
-                                <label for="NbSortie" class="form-label">Nombre à sortir (Atody)</label>
-                                <input type="number" class="form-control" id="NombreSortie" name="NombreSortie" min="1" />
+                                <label for="NombreSortie" class="form-label">Nombre de décès à signaler</label>
+                                <input type="number" class="form-control" id="NombreSortie" name="NombreSortie" min="1" placeholder="Ex: 5" />
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-success btn-lg">Signaler</button>
+                                <button type="submit" class="btn btn-danger btn-lg">Enregistrer le Décès</button>
                             </div>
                         </form>
                     </div>

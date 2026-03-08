@@ -53,8 +53,8 @@ namespace AkohoAspx.Services
             foreach (var lot in lots)
             {
                 semaineEcoulerLots[lot.Id] = Time.getSemaineEcouler(lot.Creation, dateActuelle);
-                totalMortsLots[lot.Id] = await _mouvementLotRepository.getTotalMortDansLot(lot.Id, dateActuelle);
-                var resteNombre = await _mouvementLotRepository.resteNombreRaceActuelleLot(lot.Id, dateActuelle);
+                totalMortsLots[lot.Id] = await _mouvementLotRepository.getTotalMortDansLot(lot.Id);
+                var resteNombre = await _mouvementLotRepository.resteActuelleLot(lot.Id);
                 resteActuelLots[lot.Id] = resteNombre;
                 prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, dateActuelle);
 

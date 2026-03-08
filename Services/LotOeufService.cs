@@ -37,24 +37,36 @@ namespace AkohoAspx.Services
             int.TryParse(lotIdRaw, out int lotId);
             int.TryParse(nombreOeufsRaw, out int nombreOeufs);
 
-            if (lotId <= 0 || raceId <= 0 || nombreOeufs <= 0)
-                return OperationResult.Failure("Données invalides : LotId, RaceId et NombreOeufs sont obligatoires.");
+            Console.WriteLine($"[LotOeufService] Tentative création : LotId={lotId}, RaceId={raceId}, Nb={nombreOeufs}");
 
+            if (lotId <= 0 || raceId <= 0 || nombreOeufs <= 0)
+            {
+                Console.WriteLine("[LotOeufService] Erreur : Données d'entrée invalides (<= 0)");
+                return OperationResult.Failure("Données invalides : LotId, RaceId et NombreOeufs sont obligatoires.");
+            }
+
+            DateTime dateActuelle = Time.GetDateActuelle();
             DateTime dateEclosion = Time.creationDateAvecJour(await _raceRepository.getJourEclosionRace(raceId));
             
             var lotOeuf = new LotOeuf
             {
-                Creation = Time.GetDateActuelle(),
+                Creation = dateActuelle,
                 DateEclosion = dateEclosion,
                 LotParentId = lotId,
                 RaceId = raceId,
                 NbOeufs = nombreOeufs
             };
 
+            Console.WriteLine($"[LotOeufService] Objet prêt : Creation={lotOeuf.Creation}, Eclosion={lotOeuf.DateEclosion}");
+
             try {
                 await _lotOeufRepository.creationLotOeuf(lotOeuf);
-                return OperationResult.Success("Lot oeuf cree avec succes.");
-            } catch (Exception ex) { return OperationResult.Failure("Insertion lot échoué: " + ex.Message); }
+                Console.WriteLine("[LotOeufService] Insertion réussie !");
+                return OperationResult.Success("Lot oeuf créé avec succès.");
+            } catch (Exception ex) { 
+                Console.WriteLine($"[LotOeufService] EXCEPTION CRITIQUE : {ex.Message}\n{ex.StackTrace}");
+                return OperationResult.Failure("Insertion lot échoué: " + ex.Message); 
+            }
         }
 
         public void Dispose() { _dbContext.Dispose(); }

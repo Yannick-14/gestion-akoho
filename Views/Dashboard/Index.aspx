@@ -9,30 +9,38 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <style>
         :root {
-            --dashboard-bg: #f4f7fb;
+            --dashboard-bg: #f0f4f8;
             --card-bg: #ffffff;
-            --card-border: #dbe4ef;
-            --text-main: #122033;
-            --text-muted: #5b6f88;
-            --kpi-bg: #f8fbff;
-            --kpi-border: #e4ecf6;
+            --card-border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --kpi-bg: #f8fafc;
+            --kpi-border: #f1f5f9;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
         }
 
         body {
-            background: radial-gradient(circle at top right, #edf4ff 0%, var(--dashboard-bg) 48%, #f7fbff 100%);
+            background-color: var(--dashboard-bg);
+            background-image: radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+                              radial-gradient(at 50% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
             color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
         }
 
         .dashboard-title {
-            font-weight: 700;
-            letter-spacing: 0.25px;
+            font-weight: 800;
+            color: #0f172a;
+            font-size: 2.25rem;
         }
 
         .panel-soft {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--card-border);
-            border-radius: 18px;
-            box-shadow: 0 10px 24px rgba(17, 40, 70, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .egg-card {
@@ -44,15 +52,15 @@
         .lot-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 18px;
-            box-shadow: 0 12px 30px rgba(11, 31, 58, 0.09);
-            transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+            border-radius: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .lot-card:hover {
-            transform: translateY(-3px);
-            border-color: #bad0e8;
-            box-shadow: 0 16px 34px rgba(11, 31, 58, 0.14);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+            border-color: var(--accent-blue);
         }
 
         .lot-card-click {
@@ -60,9 +68,9 @@
         }
 
         .lot-card-title {
-            font-size: 1.04rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: #0f172a;
         }
 
         .kpi-grid {
@@ -74,27 +82,25 @@
         .kpi-pill {
             background: var(--kpi-bg);
             border: 1px solid var(--kpi-border);
-            border-radius: 12px;
-            padding: 0.6rem 0.7rem;
-            min-height: 72px;
+            border-radius: 16px;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 0.25rem;
         }
 
         .kpi-label {
-            font-size: 0.74rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .kpi-value {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--text-main);
-            line-height: 1.2;
+            color: #1e293b;
         }
 
         .lot-actions {
@@ -104,35 +110,34 @@
         }
 
         .btn-action-blue {
-            background: #1f6feb;
-            border-color: #1f6feb;
-            color: #fff;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 0.6rem;
+            border: none;
+            transition: all 0.2s;
         }
 
-        .btn-action-blue:hover {
-            background: #1b5fca;
-            border-color: #1b5fca;
-            color: #fff;
-        }
+        .btn-action-blue:hover { background: #2563eb; color: white; }
 
         .btn-action-red {
-            background: #d32f2f;
-            border-color: #d32f2f;
-            color: #fff;
+            background: #fee2e2;
+            color: var(--accent-red);
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 0.6rem;
+            border: none;
+            transition: all 0.2s;
         }
 
-        .btn-action-red:hover {
-            background: #b82727;
-            border-color: #b82727;
-            color: #fff;
-        }
+        .btn-action-red:hover { background: #dc2626; color: white; }
 
         .modal-kpi {
-            border: 1px solid #e3ebf5;
-            background: #f9fcff;
-            border-radius: 11px;
-            padding: 0.7rem 0.75rem;
-            height: 100%;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 14px;
+            padding: 1rem;
         }
 
         .modal-kpi span {
@@ -171,36 +176,7 @@
             </div>
         </section>
 
-        <section class="mb-5">
-            <h2 class="h4 mb-3">LotOeufs actifs</h2>
-            <% if (lotOeufsActifs.Any()) { %>
-                <div class="row g-3">
-                    <% foreach (var lotOeuf in lotOeufsActifs) { %>
-                        <div class="col-12 col-md-6 col-xl-4">
-                            <div class="card h-100 egg-card shadow-sm">
-                                <div class="card-body">
-                                    <h3 class="h6 mb-3">LotOeuf #<%: lotOeuf.Id %></h3>
-                                    <div class="small vstack gap-1">
-                                        <div><strong>Creation:</strong> <%: lotOeuf.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
-                                        <div><strong>Lot parent:</strong> <%: lotOeuf.LotParentId %></div>
-                                        <div><strong>Race:</strong> <%: lotOeuf.Race != null ? lotOeuf.Race.Nom : lotOeuf.RaceId.ToString() %></div>
-                                        <div><strong>Nombre oeufs:</strong> <%: lotOeuf.NbOeufs %></div>
-                                        <div><strong>Date eclosion:</strong> <%: lotOeuf.DateEclosion.HasValue ? lotOeuf.DateEclosion.Value.ToString("yyyy-MM-dd") : "" %></div>
-                                    </div>
-                                    <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
-                                    <% if (lotOeuf.DateEclosion.HasValue && AkohoAspx.Utils.Time.GetDateActuelle() >= lotOeuf.DateEclosion.Value) { %>
-                                        <hr class="my-1 border-secondary" />
-                                        <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
-                                    <% } %>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>
-                </div>
-            <% } else { %>
-                <div class="alert alert-info">Aucun lotOeuf actif.</div>
-            <% } %>
-        </section>
+
 
         <section>
             <h2 class="h4 mb-3">Tous les lots</h2>
@@ -228,15 +204,15 @@
 
                                     <div class="kpi-grid">
                                         <div class="kpi-pill">
-                                            <span class="kpi-label">Prix achat</span>
+                                            <span class="kpi-label">Prix d'achat</span>
                                             <span class="kpi-value"><%: lot.PrixAchat.ToString("N2") %> Ar</span>
                                         </div>
                                         <div class="kpi-pill">
-                                            <span class="kpi-label">Nourriture depense</span>
+                                            <span class="kpi-label">Dépense nourriture</span>
                                             <span class="kpi-value text-danger"><%: depenseNourriture.ToString("N2") %> Ar</span>
                                         </div>
                                         <div class="kpi-pill">
-                                            <span class="kpi-label">Nombre de mort</span>
+                                            <span class="kpi-label">Nombre de décès</span>
                                             <span class="kpi-value"><%: nombreMort %></span>
                                         </div>
                                         <div class="kpi-pill">
@@ -251,8 +227,8 @@
                                 </div>
 
                                 <div class="lot-actions px-3 px-lg-4 pb-3 pb-lg-4 d-grid gap-2">
-                                    <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Maka Atody &rarr;</a>
-                                    <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler maty &rarr;</a>
+                                    <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les œufs &rarr;</a>
+                                    <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler un décès &rarr;</a>
                                 </div>
                             </div>
                         </div>
@@ -299,8 +275,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Maka Atody</a>
-                                        <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler maty</a>
+                                        <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les œufs</a>
+                                        <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler un décès</a>
                                     </div>
                                 </div>
                             </div>

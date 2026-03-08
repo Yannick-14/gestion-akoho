@@ -67,6 +67,19 @@ namespace AkohoAspx.Repository
             return lot.NombreInitial - totalMortPrecedent;
         }
 
+        public async Task<int> resteActuelleLot(int lotId)
+        { 
+            var lot = await _dbContext.Lots.FindAsync(lotId);
+            if (lot == null) return 0;
+
+            int totalMortPrecedent = await _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lotId)
+                .Select(mvt => (int?)mvt.Nombre)
+                .SumAsync() ?? 0;
+
+            return lot.NombreInitial - totalMortPrecedent;
+        }
+
         // Recuperer le reste de nombre restant à chaque semaine jusqu' à l'actuelle par rappport à la création du lot
         public async Task<List<int>> getResteParSemaine(Lot lot, DateTime? dateActuelle = null)
         {

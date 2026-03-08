@@ -107,7 +107,8 @@ namespace AkohoAspx.Data
                 .HasColumnName("nbOeufs");
             modelBuilder.Entity<LotOeuf>().Property(e => e.Pourcentage)
                 .HasColumnName("pourcentage")
-                .HasPrecision(10, 2);
+                .HasPrecision(10, 2)
+                .IsOptional();
             modelBuilder.Entity<LotOeuf>().Property(e => e.Validation)
                 .HasColumnName("validation");
 

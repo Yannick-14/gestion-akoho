@@ -20,6 +20,12 @@ namespace AkohoAspx.Controllers
             return View(data);
         }
 
+        public async Task<ActionResult> LotOeufs()
+        {
+            var data = await _dashboardService.GetDashboardDataAsync();
+            return View(data);
+        }
+
         public ActionResult MakaAtody(int lotId, int raceId)
         {
             ViewBag.LotId = lotId;

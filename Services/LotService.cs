@@ -99,7 +99,7 @@ namespace AkohoAspx.Services
             Race detailRace = await _raceRepository.getInfoRace(lotOeuf.RaceId);
             var newLot = new Lot
             {
-                Creation = lotOeuf.DateEclosion ?? Time.GetDateActuelle(),
+                Creation = DateTime.Now,
                 NomLot = newNomLot,
                 RaceId = lotOeuf.RaceId,
                 NombreInitial = oeufsEclos,

@@ -15,12 +15,12 @@
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h1 class="h4 mb-0">Maka Atody</h1>
+                        <h1 class="h4 mb-0">Récolte d'Œufs</h1>
                         <a href="/Dashboard/Index" class="btn btn-sm btn-light text-primary fw-bold">&larr; Retour</a>
                     </div>
                     <div class="card-body p-4">
                         <div class="alert alert-info mb-4">
-                            <strong>Details du Lot :</strong><br/>
+                            <strong>Détails du Lot :</strong><br/>
                             ID Lot : <%: ViewBag.LotId %><br/>
                             ID Race : <%: ViewBag.RaceId %>
                         </div>
@@ -31,8 +31,8 @@
                             <input type="hidden" name="raceId" value="<%: ViewBag.RaceId %>" />
 
                             <div class="mb-3">
-                                <label for="NombreOeufs" class="form-label">Quantité d'Oeufs (Atody)</label>
-                                <input type="number" class="form-control" id="nombreOeufs" name="nombreOeufs" min="1" />
+                                <label for="NombreOeufs" class="form-label">Quantité d'Œufs récoltés</label>
+                                <input type="number" class="form-control" id="nombreOeufs" name="nombreOeufs" min="1" placeholder="Ex: 500" />
                             </div>
 
                             <div class="d-grid mt-4">
