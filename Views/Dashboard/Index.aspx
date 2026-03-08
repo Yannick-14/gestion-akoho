@@ -212,7 +212,7 @@
                                             <span class="kpi-value text-danger"><%: depenseNourriture.ToString("N2") %> Ar</span>
                                         </div>
                                         <div class="kpi-pill">
-                                            <span class="kpi-label">Nombre de décès</span>
+                                            <span class="kpi-label">Nombre de pertes</span>
                                             <span class="kpi-value"><%: nombreMort %></span>
                                         </div>
                                         <div class="kpi-pill">
@@ -228,7 +228,7 @@
 
                                 <div class="lot-actions px-3 px-lg-4 pb-3 pb-lg-4 d-grid gap-2">
                                     <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les œufs &rarr;</a>
-                                    <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler un décès &rarr;</a>
+                                    <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler une perte &rarr;</a>
                                 </div>
                             </div>
                         </div>
@@ -276,7 +276,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-action-blue">Récolter les œufs</a>
-                                        <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler un décès</a>
+                                        <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-action-red">Signaler une perte</a>
                                     </div>
                                 </div>
                             </div>
