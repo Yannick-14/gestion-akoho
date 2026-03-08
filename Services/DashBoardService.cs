@@ -56,7 +56,7 @@ namespace AkohoAspx.Services
                 totalMortsLots[lot.Id] = await _mouvementLotRepository.getTotalMortDansLot(lot.Id, dateActuelle);
                 var resteNombre = await _mouvementLotRepository.resteNombreRaceActuelleLot(lot.Id, dateActuelle);
                 resteActuelLots[lot.Id] = resteNombre;
-                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot);
+                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, dateActuelle);
 
                 var poidsFinal = await GetPoidsFinalUnitaireAsync(lot, dateActuelle);
                 poidsFinalUnitaireLots[lot.Id] = poidsFinal;
@@ -99,11 +99,12 @@ namespace AkohoAspx.Services
             };
         }
 
-        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot)
+        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, DateTime dateActuelle)
         {
-            var dateActuelle = Time.GetDateActuelle();
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
-            if (semainesEcoulees <= 0) return 0;
+            int semaineActuelle = semainesEcoulees + 1; // S1 dès le 1er jour (Semaine de consommation en cours)
+
+            if (semaineActuelle <= 0) return 0;
 
             var restesParSemaine = await _mouvementLotRepository.getResteParSemaine(lot, dateActuelle);
             
@@ -113,16 +114,18 @@ namespace AkohoAspx.Services
                 .ToListAsync();
 
             var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId);
-            if (prixApplicable == null) return 0; // Pas de prix défini
+            if (prixApplicable == null) return 0;
 
             decimal prixUnitaireGramme = prixApplicable.Prix / prixApplicable.ValeurGrame;
             decimal coutTotal = 0;
 
-            for (int s = 1; s <= semainesEcoulees; s++)
+            for (int s = 1; s <= semaineActuelle; s++)
             {
                 int pouletsVivants = s <= restesParSemaine.Count ? restesParSemaine[s - 1] : (restesParSemaine.LastOrDefault() == 0 && restesParSemaine.Count == 0 ? lot.NombreInitial : restesParSemaine.LastOrDefault());
                 
-                var croissanceSemaine = croissancesAliment.LastOrDefault(c => c.ValueSemaine <= s) ?? croissancesAliment.FirstOrDefault();
+                var croissanceSemaine = croissancesAliment.FirstOrDefault(c => c.ValueSemaine == s) 
+                                        ?? croissancesAliment.LastOrDefault(c => c.ValueSemaine <= s) 
+                                        ?? croissancesAliment.FirstOrDefault();
                 int consommationGrammes = croissanceSemaine != null ? croissanceSemaine.PoidsMoyen : 0;
                 
                 if (consommationGrammes == 0 || pouletsVivants == 0) continue;
@@ -136,7 +139,9 @@ namespace AkohoAspx.Services
 
         private async Task<int> GetPoidsFinalUnitaireAsync(Lot lot, DateTime dateActuelle)
         {
-            int semainesEcoulees = AkohoAspx.Utils.Time.getSemaineEcouler(lot.Creation, dateActuelle);
+            int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
+
+            // S0 = Poids Initial seulement. On n'ajoute les gains cumulés que si au moins une semaine est passée (Jour 7+).
             if (semainesEcoulees <= 0) return lot.PoidsInitiale;
 
             var croissancesPoids = await _dbContext.CroissancesPoidsRace
@@ -144,8 +149,22 @@ namespace AkohoAspx.Services
                 .OrderBy(c => c.ValueSemaine)
                 .ToListAsync();
 
-            var croissancePoids = croissancesPoids.LastOrDefault(c => c.ValueSemaine <= semainesEcoulees) ?? croissancesPoids.FirstOrDefault();
-            return croissancePoids != null ? lot.PoidsInitiale + croissancePoids.PoidsMoyen : lot.PoidsInitiale;
+            int poidsCumule = lot.PoidsInitiale;
+
+            // Somme cumulative des gains (S1 + S2 + ... + Sn)
+            for (int s = 1; s <= semainesEcoulees; s++)
+            {
+                var croissanceSemaine = croissancesPoids.FirstOrDefault(c => c.ValueSemaine == s)
+                                        ?? croissancesPoids.LastOrDefault(c => c.ValueSemaine <= s)
+                                        ?? croissancesPoids.FirstOrDefault();
+
+                if (croissanceSemaine != null)
+                {
+                    poidsCumule += croissanceSemaine.PoidsMoyen;
+                }
+            }
+
+            return poidsCumule;
         }
 
         public void Dispose()
