@@ -14,6 +14,7 @@ namespace AkohoAspx.Services
     {
         private readonly AppDbContext _dbContext;
         private readonly LotRepository _lotRepository;
+        private readonly LotOeufRepository _lotOeufRepository;
         private readonly RaceRepository _raceRepository;
         private readonly MouvementLotRepository _mouvementLotRepository;
 
@@ -24,6 +25,7 @@ namespace AkohoAspx.Services
         {
             _dbContext = dbContext;
             _lotRepository = new LotRepository(_dbContext);
+            _lotOeufRepository = new LotOeufRepository(_dbContext);
             _raceRepository = new RaceRepository(_dbContext);
             _mouvementLotRepository = new MouvementLotRepository(_dbContext);
         }
@@ -77,50 +79,57 @@ namespace AkohoAspx.Services
         }
 
         // creer un lot provennant d'extraction d'atody
-        // public async Task<OperationResult> CreateLotAtody(FormCollection requestForm)
-        // {
-        //     string nomLotRaw = requestForm != null ? requestForm["nomLot"] : null;
-        //     string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
-        //     string lotIdRaw = requestForm != null ? requestForm["lotId"] : null;
-        //     string quantiteAtodyRaw = requestForm != null ? requestForm["quantiteAtody"] : null;
+        public async Task<OperationResult> CreateNewLotFromLotOeuf(FormCollection requestForm)
+        {
+            string lotOeufIdRaw = requestForm != null ? requestForm["lotOeufId"] : null;
+            string pourcentageRaw = requestForm != null ? requestForm["pourcentage"] : null;
+            string nomLotRaw = requestForm != null ? requestForm["nomLot"] : null;
 
-        //     string nomLot = (nomLotRaw ?? string.Empty).Trim();
+            string newNomLot = (nomLotRaw ?? string.Empty).Trim();
 
-        //     int.TryParse(raceIdRaw, out int raceId);
-        //     int.TryParse(lotIdRaw, out int lotId);
-        //     int.TryParse(quantiteAtodyRaw, out int quantiteAtody);
+            int.TryParse(lotOeufIdRaw, out int lotOeufId);
+            decimal.TryParse(pourcentageRaw, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out decimal pourcentage);
 
-        //     if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || quantiteAtody <= 0) return OperationResult.Failure("Donnees. Verifiez les champs du formulaire.");
+            if (lotOeufId <= 0 || pourcentage <= 0 || string.IsNullOrWhiteSpace(newNomLot)) return OperationResult.Failure("Données invalides : LotOeufId, Pourcentage et NomLot sont obligatoires.");
 
-        //     if (!await _raceRepository.ExistsAsync(raceId)) return OperationResult.Failure("Race introuvable.");
+            LotOeuf lotOeuf = await _lotOeufRepository.getInfoIntialeLotOeufs(lotOeufId);
+            if (lotOeuf == null) return OperationResult.Failure("LotOeuf introuvable.");
 
-        //     DateTime dateEclosion = Time.creationDateAvecJour(await _raceRepository.getJourEclosionRace(raceId));
-        //     var newLot = new Lot
-        //     {
-        //         NomLot = nomLot,
-        //         RaceId = raceId,
-        //         NombreInitial = quantiteAtody,
-        //         PoidsAchat = getPoidsDefault(),
-        //         TotalInvesti = 0,
-        //         Creation = DateTime.Now,
-        //         DateAfoyAkoho = dateEclosion,
-        //         LotParent = lotId,
-        //         Statu = 1
-        //     };
-        //     try
-        //     {
-        //         Lot resultLot = await _lotRepository.creationLot(newLot);
-        //         var mouvement = new MouvementLot
-        //         {
-        //             LotId = resultLot.Id,
-        //             Quantite = quantiteAtody,
-        //             Creation = DateTime.Now,
-        //             TypeId = await _typeMouvementRepository.getIdMouvementEntree()
-        //         };
-        //         await _mouvementLotRepository.creationMouvement(mouvement);
-        //         return OperationResult.Success("Nouvel lot cree avec succes.");
-        //     } catch (Exception ex) { return OperationResult.Failure("Insertion lot echouee: " + ex.Message); }
-        // }
+            int oeufsEclos = resultTotalEclos(lotOeuf.NbOeufs, pourcentage);
+            Race detailRace = await _raceRepository.getInfoRace(lotOeuf.RaceId);
+            var newLot = new Lot
+            {
+                Creation = lotOeuf.DateEclosion ?? Time.GetDateActuelle(),
+                NomLot = newNomLot,
+                RaceId = lotOeuf.RaceId,
+                NombreInitial = oeufsEclos,
+                PoidsInitiale = detailRace.PoidsDefaut,
+                PrixAchat = 0,
+                LotOeufId = lotOeuf.Id
+            };
+
+            using (var transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _lotRepository.creationLot(newLot);
+                    await _lotOeufRepository.updateValidationEtPourcentage(lotOeuf.Id, true, pourcentage);
+                    transaction.Commit();
+                    return OperationResult.Success("Lot créé avec succès à partir du lot d'œufs.");
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return OperationResult.Failure("Insertion lot échouée (rollback effectué) : " + ex.Message);
+                }
+            }
+        }
+
+        public int resultTotalEclos(int nombreOeufs, decimal pourcentage)
+        {
+            // Nombre entier d'oeufs éclos = floor(nbOeufs * pourcentage / 100)
+            return (int)Math.Floor(nombreOeufs * pourcentage / 100m);
+        }
 
         public void Dispose() { _dbContext.Dispose(); }
     }

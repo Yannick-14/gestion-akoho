@@ -33,6 +33,13 @@ namespace AkohoAspx.Repository
             return await _dbContext.Races.AnyAsync(r => r.Id == raceId);
         }
 
+        public async Task<Race> getInfoRace(int raceId)
+        {
+            return await _dbContext.Races
+                .Where(r => r.Id == raceId)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<int> getJourEclosionRace(int raceId)
         {
             return await _dbContext.Races

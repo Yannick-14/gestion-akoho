@@ -50,17 +50,17 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
-        public async Task<LotOeuf> getInfoIntialeLotOeufs(int lotId)
+        public async Task<LotOeuf> getInfoIntialeLotOeufs(int lotOeufId)
         {
             return await _dbContext.LotsOeuf
-                .Where(l => l.Id == lotId)
+                .Where(l => l.Id == lotOeufId)
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<LotOeuf> updateValidationEtPourcentage(int lotId, bool validation, decimal pourcentage)
+        public async Task<LotOeuf> updateValidationEtPourcentage(int lotOeufId, bool validation, decimal pourcentage)
         {
             LotOeuf lotOeuf = await _dbContext.LotsOeuf
-                .Where(l => l.Id == lotId)
+                .Where(l => l.Id == lotOeufId)
                 .FirstOrDefaultAsync();
 
             if (lotOeuf == null) return null;

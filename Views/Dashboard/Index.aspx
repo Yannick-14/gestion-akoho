@@ -37,14 +37,18 @@
                                 <div class="card-body">
                                     <h3 class="h6 mb-3">LotOeuf #<%: lotOeuf.Id %></h3>
                                     <div class="small vstack gap-1">
+                                        <div><strong>Creation:</strong> <%: lotOeuf.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
                                         <div><strong>Lot parent:</strong> <%: lotOeuf.LotParentId %></div>
                                         <div><strong>Race:</strong> <%: lotOeuf.Race != null ? lotOeuf.Race.Nom : lotOeuf.RaceId.ToString() %></div>
                                         <div><strong>Nombre oeufs:</strong> <%: lotOeuf.NbOeufs %></div>
-                                        <div><strong>Pourcentage:</strong> <%: lotOeuf.Pourcentage %></div>
-                                        <div><strong>Validation:</strong> <%: lotOeuf.Validation ? "true" : "false" %></div>
+                                        <div><strong>Date d'eclosion d'oeufs:</strong> <%: lotOeuf.DateEclosion.HasValue ? lotOeuf.DateEclosion.Value.ToString("yyyy-MM-dd") : "" %></div>
+                                        <!-- <div><strong>Validation:</strong> <%: lotOeuf.Validation ? "true" : "false" %></div> -->
                                     </div>
                                     <hr class="my-1 border-secondary" />
-                                    <a href="/Dashboard/MakaAtody?lotId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
+                                    <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
+                                    <% if (AkohoAspx.Utils.Time.GetDateActuelle() >= lotOeuf.DateEclosion.Value) { %>
+                                    <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>

@@ -27,6 +27,20 @@ namespace AkohoAspx.Controllers
             return View();
         }
 
+        [HttpGet]
+        public ActionResult SignalerMaty(int lotId)
+        {
+            ViewBag.LotId = lotId;
+            return View("RestrictionNombre");
+        }
+
+        [HttpGet]
+        public ActionResult EclosOeuf(int lotOeufId)
+        {
+            ViewBag.LotOeufId = lotOeufId;
+            return View("EclosionAtody");
+        }
+
         [HttpPost]
         public ActionResult ActualiserDate(DateTime? DateActualiser)
         {
@@ -36,13 +50,6 @@ namespace AkohoAspx.Controllers
                 AkohoAspx.Utils.Time.SetDateActuelle(dateFinDeJour);
             }
             return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public ActionResult SignalerMaty(int lotId)
-        {
-            ViewBag.LotId = lotId;
-            return View("RestrictionNombre");
         }
 
         [HttpPost]

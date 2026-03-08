@@ -46,6 +46,16 @@ namespace AkohoAspx.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateNewLot(FormCollection requestForm)
+        {
+            OperationResult result = await _lotService.CreateNewLotFromLotOeuf(requestForm);
+
+            SetLotTempData(result);
+            return RedirectToAction("Index", "Dashboard");
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)  _lotService.Dispose();
@@ -57,6 +67,7 @@ namespace AkohoAspx.Controllers
         {
             if (result == null || string.IsNullOrWhiteSpace(result.Message)) return;
             TempData[result.IsSuccess ? "LotSuccess" : "LotError"] = result.Message;
+            Console.WriteLine(TempData);
         }
     }
 }
