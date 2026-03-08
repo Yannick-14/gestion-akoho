@@ -37,7 +37,7 @@ namespace AkohoAspx.Repository
             return await _dbContext.LotsOeuf
                 .Include(l => l.Race)
                 .Where(l => l.Validation == false)
-                .OrderByDescending(l => l.Creation)
+                .OrderBy(l => l.Creation)
                 .ToListAsync();
         }
 

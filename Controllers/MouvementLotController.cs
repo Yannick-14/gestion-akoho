@@ -28,15 +28,12 @@ namespace AkohoAspx.Controllers
             OperationResult result = await _mouvementLotService.creationMouvement(requestForm);
 
             SetLotTempData(result);
-            return RedirectToAction("/Dashboard/Index");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _mouvementLotService.Dispose();
-            }
+            if (disposing) _mouvementLotService.Dispose();
 
             base.Dispose(disposing);
         }

@@ -9,10 +9,12 @@ namespace AkohoAspx.Controllers
     public class LotController : Controller
     {
         private readonly LotService _lotService;
+        private readonly LotOeufService _lotOeufService;
 
         public LotController()
         {
             _lotService = new LotService();
+            _lotOeufService = new LotOeufService();
         }
 
         [HttpGet]
@@ -38,29 +40,22 @@ namespace AkohoAspx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateLotAtody(FormCollection requestForm)
         {
-            OperationResult result = await _lotService.CreateLotAtody(requestForm);
+            OperationResult result = await _lotOeufService.CreateLotOeuf(requestForm);
 
             SetLotTempData(result);
-            return RedirectToAction("Dashboard/Index");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                _lotService.Dispose();
-            }
+            if (disposing)  _lotService.Dispose();
 
             base.Dispose(disposing);
         }
 
         private void SetLotTempData(IOperationResult result)
         {
-            if (result == null || string.IsNullOrWhiteSpace(result.Message))
-            {
-                return;
-            }
-
+            if (result == null || string.IsNullOrWhiteSpace(result.Message)) return;
             TempData[result.IsSuccess ? "LotSuccess" : "LotError"] = result.Message;
         }
     }

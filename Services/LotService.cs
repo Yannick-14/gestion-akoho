@@ -71,7 +71,7 @@ namespace AkohoAspx.Services
 
             try
             {
-                Lot resultLot = await _lotRepository.creationLot(lot);
+                await _lotRepository.creationLot(lot);
                 return OperationResult.Success("Lot cree avec succes.");
             } catch (Exception ex) { return OperationResult.Failure("Insertion lot echouee: " + ex.Message); }
         }
@@ -121,12 +121,6 @@ namespace AkohoAspx.Services
         //         return OperationResult.Success("Nouvel lot cree avec succes.");
         //     } catch (Exception ex) { return OperationResult.Failure("Insertion lot echouee: " + ex.Message); }
         // }
-
-        public async Task<OperationResult> CreateLotAtody(FormCollection requestForm)
-        {
-            await Task.CompletedTask;
-            return OperationResult.Failure("CreateLotAtody n'est pas encore disponible dans cette version.");
-        }
 
         public void Dispose() { _dbContext.Dispose(); }
     }

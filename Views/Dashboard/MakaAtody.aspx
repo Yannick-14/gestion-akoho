@@ -25,27 +25,20 @@
                             ID Race : <%: ViewBag.RaceId %>
                         </div>
 
-                        <!-- <% using (Html.BeginForm("MakaAtodySave", "Dashboard", FormMethod.Post)) { %> -->
                         <form action="/Lot/CreateLotAtody" method="post">
                             <%: Html.AntiForgeryToken() %>
                             <input type="hidden" name="lotId" value="<%: ViewBag.LotId %>" />
                             <input type="hidden" name="raceId" value="<%: ViewBag.RaceId %>" />
 
                             <div class="mb-3">
-                                <label for="nomLot" class="form-label">Nouvel lot</label>
-                                <input type="text" class="form-control" id="nomLot" name="nomLot" />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="QuantiteAtody" class="form-label">Quantité d'Oeufs (Atody)</label>
-                                <input type="number" class="form-control" id="quantiteAtody" name="quantiteAtody" min="1" />
+                                <label for="NombreOeufs" class="form-label">Quantité d'Oeufs (Atody)</label>
+                                <input type="number" class="form-control" id="nombreOeufs" name="nombreOeufs" min="1" />
                             </div>
 
                             <div class="d-grid mt-4">
                                 <button type="submit" class="btn btn-success btn-lg">Enregistrer la Récolte</button>
                             </div>
                         </form>
-                        <!-- <% } %> -->
                     </div>
                 </div>
             </div>
