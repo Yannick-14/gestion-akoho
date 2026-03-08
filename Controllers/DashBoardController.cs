@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using AkohoAspx.Models;
@@ -27,7 +28,7 @@ namespace AkohoAspx.Controllers
         }
 
         [HttpPost]
-        public ActionResult ActualiserDate(System.DateTime? DateActualiser)
+        public ActionResult ActualiserDate(DateTime? DateActualiser)
         {
             if (DateActualiser.HasValue)
             {
@@ -35,6 +36,13 @@ namespace AkohoAspx.Controllers
                 AkohoAspx.Utils.Time.SetDateActuelle(dateFinDeJour);
             }
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ActionResult SignalerMaty(int lotId)
+        {
+            ViewBag.LotId = lotId;
+            return View("RestrictionNombre");
         }
 
         [HttpPost]

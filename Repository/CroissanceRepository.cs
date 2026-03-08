@@ -17,6 +17,7 @@ namespace AkohoAspx.Repository
             _dbContext = dbContext;
         }
 
+        // Recuperer toutes les croissance par semaine d'une race pour ses nourrtitures
         public async Task<IReadOnlyList<CroissanceAlimentRace>> getCroissanceAlimentRace(int raceId)
         {
             return await _dbContext.CroissancesAlimentRace
@@ -24,6 +25,7 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
+        // Recuperer toutes les croissance par semaine d'une race pour ses poids
         public async Task<IReadOnlyList<CroissancePoidsRace>> getCroissancePoidsRace(int raceId)
         {
             return await _dbContext.CroissancesPoidsRace

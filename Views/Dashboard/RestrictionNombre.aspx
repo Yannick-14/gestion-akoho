@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Maka Atody - Elevage Akoho</title>
+    <title>Maty - Elevage Akoho</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 </head>
 <body class="bg-light">
@@ -24,7 +24,7 @@
                             ID Lot : <%: ViewBag.LotId %><br/>
                         </div>
 
-                        <form action="/Mouvement/Restriction" method="post">
+                        <form action="/MouvementLot/Restriction" method="post">
                             <%: Html.AntiForgeryToken() %>
                             <input type="hidden" name="lotId" value="<%: ViewBag.LotId %>" />
 

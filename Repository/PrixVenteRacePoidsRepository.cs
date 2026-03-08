@@ -25,6 +25,7 @@ namespace AkohoAspx.Repository
         {
             return await _dbContext.PrixVentesRace
                 .Where(p => p.RaceId == raceId)
+                .OrderByDescending(p => p.Creation)
                 .ToListAsync();
         }
 

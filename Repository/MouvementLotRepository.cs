@@ -32,20 +32,19 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
+        //  recuperere la totalite de mort dans un lot par rapport à la date actuelle
         public async Task<int> getTotalMortDansLot(int lotId, DateTime? dateActuelle = null)
         {
             var query = _dbContext.MouvementsLot.Where(mvt => mvt.LotId == lotId);
-            if (dateActuelle.HasValue)
-            {
-                query = query.Where(mvt => mvt.Creation <= dateActuelle.Value);
-            }
+            if (dateActuelle.HasValue) query = query.Where(mvt => mvt.Creation <= dateActuelle.Value);
 
             return await query
                 .Select(mvt => (int?)mvt.Nombre)
                 .SumAsync() ?? 0;
         }
 
-        public async Task<int> resteNombreRaceActuelleLot(int lotId, System.DateTime? dateActuelle = null)
+        // Recuperer juste le nombre restant dans un lot à cet instant
+        public async Task<int> resteNombreRaceActuelleLot(int lotId, DateTime? dateActuelle = null)
         { 
             var lot = await _dbContext.Lots.FindAsync(lotId);
             if (lot == null) return 0;
@@ -54,27 +53,18 @@ namespace AkohoAspx.Repository
             return lot.NombreInitial - totalMort;
         }
 
-        public async Task<List<int>> getResteParSemaine(Lot lot, System.DateTime? dateActuelle = null)
+        // Recuperer le reste de nombre restant à chaque semaine jusqu' à l'actuelle par rappport à la création du lot
+        public async Task<List<int>> getResteParSemaine(Lot lot, DateTime? dateActuelle = null)
         {
             var resteParSemaine = new List<int>();
-            if (lot == null)
-            {
-                return resteParSemaine;
-            }
+            if (lot == null) return resteParSemaine;
 
             var dateReference = dateActuelle ?? Time.GetDateActuelle();
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateReference);
-            if (semainesEcoulees <= 0)
-            {
-                return resteParSemaine;
-            }
+            if (semainesEcoulees <= 0) return resteParSemaine;
 
-            var query = _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lot.Id && mvt.Creation >= lot.Creation);
-            if (dateActuelle.HasValue)
-            {
-                query = query.Where(mvt => mvt.Creation <= dateActuelle.Value);
-            }
+            var query = _dbContext.MouvementsLot.Where(mvt => mvt.LotId == lot.Id && mvt.Creation >= lot.Creation);
+            if (dateActuelle.HasValue) query = query.Where(mvt => mvt.Creation <= dateActuelle.Value);
 
             var mortsParSemaine = await query
                 .GroupBy(mvt => DbFunctions.DiffDays(lot.Creation, mvt.Creation) / 7 + 1)
@@ -86,19 +76,12 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
 
             int resteCourant = lot.NombreInitial;
+            if (resteCourant < 0) resteCourant = 0;
 
             for (int s = 1; s <= semainesEcoulees; s++)
             {
                 var mortSemaine = mortsParSemaine.FirstOrDefault(v => v.Semaine == s);
-                if (mortSemaine != null)
-                {
-                    resteCourant -= mortSemaine.Mort;
-                }
-
-                if (resteCourant < 0)
-                {
-                    resteCourant = 0;
-                }
+                if (mortSemaine != null) resteCourant -= mortSemaine.Mort;
 
                 resteParSemaine.Add(resteCourant);
             }

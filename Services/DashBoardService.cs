@@ -17,6 +17,7 @@ namespace AkohoAspx.Services
         private readonly LotOeufRepository _lotOeufRepository;
         private readonly PrixNourritureRaceRepository _prixNourritureRaceRepository;
         private readonly PrixVenteRaceRepository _prixVenteRaceRepository;
+        private readonly MouvementLotRepository _mouvementLotRepository;
 
         public DashboardService()
             : this(new AppDbContext())
@@ -30,29 +31,32 @@ namespace AkohoAspx.Services
             _lotOeufRepository = new LotOeufRepository(_dbContext);
             _prixNourritureRaceRepository = new PrixNourritureRaceRepository(_dbContext);
             _prixVenteRaceRepository = new PrixVenteRaceRepository(_dbContext);
+            _mouvementLotRepository = new MouvementLotRepository(_dbContext);
         }
 
         public async Task<DashboardLotItem> GetDashboardDataAsync()
         {
             var dateActuelle = Time.GetDateActuelle();
-            Console.WriteLine($"dateActuelle: {dateActuelle}");
             var lots = await _lotRepository.GetAllAtDateAsync(dateActuelle);
-            var mouvementRepo = new MouvementLotRepository(_dbContext);
-            var resteActuelLots = new System.Collections.Generic.Dictionary<int, int>();
-            var prixTotalNourritureLots = new System.Collections.Generic.Dictionary<int, decimal>();
-            var poidsFinalUnitaireLots = new System.Collections.Generic.Dictionary<int, int>();
-            var prixVenteLots = new System.Collections.Generic.Dictionary<int, decimal>();
-            var prixVenteRaceUnitaireLots = new System.Collections.Generic.Dictionary<int, decimal>();
-            var semaineEcoulerLots = new System.Collections.Generic.Dictionary<int, int>();
-            var totalMortsLots = new System.Collections.Generic.Dictionary<int, int>();
+
+            // region return des données
+            var resteActuelLots = new Dictionary<int, int>();
+            var prixTotalNourritureLots = new Dictionary<int, decimal>();
+            var poidsFinalUnitaireLots = new Dictionary<int, int>();
+            var prixVenteLots = new Dictionary<int, decimal>();
+            var prixVenteRaceUnitaireLots = new Dictionary<int, decimal>();
+            var semaineEcoulerLots = new Dictionary<int, int>();
+            var totalMortsLots = new Dictionary<int, int>();
+
+            // end region return des données
 
             foreach (var lot in lots)
             {
                 semaineEcoulerLots[lot.Id] = Time.getSemaineEcouler(lot.Creation, dateActuelle);
-                totalMortsLots[lot.Id] = await mouvementRepo.getTotalMortDansLot(lot.Id, dateActuelle);
-                var resteNombre = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id, dateActuelle);
+                totalMortsLots[lot.Id] = await _mouvementLotRepository.getTotalMortDansLot(lot.Id, dateActuelle);
+                var resteNombre = await _mouvementLotRepository.resteNombreRaceActuelleLot(lot.Id, dateActuelle);
                 resteActuelLots[lot.Id] = resteNombre;
-                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, mouvementRepo);
+                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot);
 
                 var poidsFinal = await GetPoidsFinalUnitaireAsync(lot, dateActuelle);
                 poidsFinalUnitaireLots[lot.Id] = poidsFinal;
@@ -95,13 +99,13 @@ namespace AkohoAspx.Services
             };
         }
 
-        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, MouvementLotRepository mouvementRepo)
+        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot)
         {
             var dateActuelle = Time.GetDateActuelle();
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
             if (semainesEcoulees <= 0) return 0;
 
-            var restesParSemaine = await mouvementRepo.getResteParSemaine(lot, dateActuelle);
+            var restesParSemaine = await _mouvementLotRepository.getResteParSemaine(lot, dateActuelle);
             
             var croissancesAliment = await _dbContext.CroissancesAlimentRace
                 .Where(c => c.RaceId == lot.RaceId)
@@ -130,7 +134,7 @@ namespace AkohoAspx.Services
             return coutTotal;
         }
 
-        private async Task<int> GetPoidsFinalUnitaireAsync(Lot lot, System.DateTime dateActuelle)
+        private async Task<int> GetPoidsFinalUnitaireAsync(Lot lot, DateTime dateActuelle)
         {
             int semainesEcoulees = AkohoAspx.Utils.Time.getSemaineEcouler(lot.Creation, dateActuelle);
             if (semainesEcoulees <= 0) return lot.PoidsInitiale;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
-        public async Task<IReadOnlyList<LotOeuf>> GetLotOeufsActive(System.DateTime dateActuelle)
+        public async Task<IReadOnlyList<LotOeuf>> GetLotOeufsActive(DateTime dateActuelle)
         {
             return await _dbContext.LotsOeuf
                 .Include(l => l.Race)
@@ -62,10 +63,7 @@ namespace AkohoAspx.Repository
                 .Where(l => l.Id == lotId)
                 .FirstOrDefaultAsync();
 
-            if (lotOeuf == null)
-            {
-                return null;
-            }
+            if (lotOeuf == null) return null;
 
             lotOeuf.Validation = validation;
             lotOeuf.Pourcentage = pourcentage;
