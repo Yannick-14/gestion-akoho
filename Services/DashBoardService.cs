@@ -62,7 +62,7 @@ namespace AkohoAspx.Services
                 poidsFinalUnitaireLots[lot.Id] = poidsFinal;
 
                 // Calcul du prix de vente total estimé du lot à l'instant T
-                var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId, dateActuelle);
+                var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId);
                 if (prixVente != null)
                 {
                     decimal prixUnitaire = prixVente.Prix / prixVente.ValeurGrame;
@@ -101,8 +101,7 @@ namespace AkohoAspx.Services
 
         private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, DateTime dateActuelle)
         {
-            int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
-            int semaineActuelle = semainesEcoulees + 1; // S1 dès le 1er jour (Semaine de consommation en cours)
+            int semaineActuelle = Time.getSemaineEcouler(lot.Creation, dateActuelle); // Utilise la nouvelle logique incluant la semaine entamée
 
             if (semaineActuelle <= 0) return 0;
 
@@ -113,12 +112,11 @@ namespace AkohoAspx.Services
                 .OrderBy(c => c.ValueSemaine)
                 .ToListAsync();
 
-            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId, dateActuelle);
+            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId);
             if (prixApplicable == null) return 0;
 
             decimal prixUnitaireGramme = prixApplicable.Prix / prixApplicable.ValeurGrame;
             decimal coutTotal = 0;
-
 
             for (int s = 1; s <= semaineActuelle; s++)
             {
@@ -130,10 +128,10 @@ namespace AkohoAspx.Services
                 int consommationGrammes = croissanceSemaine != null ? croissanceSemaine.PoidsMoyen : 0;
                 
                 if (consommationGrammes == 0 || pouletsVivants == 0) continue;
+                Console.WriteLine($"lot {lot.NomLot} semaine: {s} sakafo lany: {consommationGrammes} reste {pouletsVivants} prixsakafo {prixUnitaireGramme}");
 
                 decimal coutSemaine = pouletsVivants * consommationGrammes * prixUnitaireGramme;
                 coutTotal += coutSemaine;
-
             }
 
 
@@ -144,8 +142,11 @@ namespace AkohoAspx.Services
         {
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
 
-            // S0 = Poids Initial seulement. Gains cumulés après la première semaine.
-            if (semainesEcoulees <= 0) return lot.PoidsInitiale;
+            // S0 = Moins de 7 jours révolus = Poids Initial seulement. 
+            // Avec la nouvelle logique, on veut que le cumul ne commence qu'APRES la première semaine complète ou entamée ?
+            // L'utilisateur dit : 10j = 2 semaines. Donc S0 < 1 semaine ?
+            TimeSpan diff = dateActuelle - lot.Creation;
+            if (diff.TotalDays < 7) return lot.PoidsInitiale;
 
 
             var croissancesPoids = await _dbContext.CroissancesPoidsRace

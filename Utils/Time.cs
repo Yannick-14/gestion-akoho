@@ -40,17 +40,15 @@ namespace AkohoAspx.Utils
             return DateTime.Now.AddDays(jours);
         }
 
-        public static int getSemaineEcouler(DateTime date)
-        {
-            DateTime dateActuelle = GetDateActuelle();
-            return getSemaineEcouler(date, dateActuelle);
-        }
-
         public static int getSemaineEcouler(DateTime date, DateTime dateActuelle)
         {
             TimeSpan difference = dateActuelle - date;
-            int semaines = (int)(difference.TotalDays / 7);
-            return semaines < 0 ? 0 : semaines;
+            double totalDays = difference.TotalDays;
+            
+            if (totalDays < 0) return 0;
+
+            // On arrondit au supérieur pour inclure la semaine entamée (ex: 10 jours = 2 semaines)
+            return (int)Math.Ceiling(totalDays / 7.0);
         }
     }
 }
