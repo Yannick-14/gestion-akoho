@@ -68,9 +68,10 @@
                                         <div><strong>PrixAchat:</strong> <%: lot.PrixAchat %></div>
                                         <div><strong>Creation:</strong> <%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
                                         <hr class="my-1 border-secondary" />
+                                        <div><strong>Semaine ecouler:</strong> <%: Model != null && Model.SemaineEcouler.ContainsKey(lot.Id) ? Model.SemaineEcouler[lot.Id] + " " : "N/A" %></div>
                                         <div><strong>Poids Actuel (U.):</strong> <%: Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] + " g" : "N/A" %></div>
-                                        <div><strong>Total Nourriture 💵:</strong> <span class="text-danger"><%: Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
-                                        <div><strong>Valeur Vente Estimée 💰:</strong> <span class="text-success"><%: Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
+                                        <div><strong>Total Nourriture :</strong> <span class="text-danger"><%: Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
+                                        <div><strong>Valeur Vente Estimée :</strong> <span class="text-success"><%: Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
                                         <div><strong>Prix de vente race / g:</strong> <%: Model != null && Model.PrixVenteRaceUnitaireLots.ContainsKey(lot.Id) ? Model.PrixVenteRaceUnitaireLots[lot.Id].ToString("N2") + " Ar" : "N/A" %></div>
                                         <div><strong>Prix de vente de lot:</strong> <span class="text-success"><%: Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
                                         <div>

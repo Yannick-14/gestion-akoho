@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
 using System.Threading.Tasks;
@@ -40,14 +41,16 @@ namespace AkohoAspx.Services
             var poidsFinalUnitaireLots = new System.Collections.Generic.Dictionary<int, int>();
             var prixVenteLots = new System.Collections.Generic.Dictionary<int, decimal>();
             var prixVenteRaceUnitaireLots = new System.Collections.Generic.Dictionary<int, decimal>();
+            var semaineEcoulerLots = new System.Collections.Generic.Dictionary<int, int>();
             var dateActuelle = new Time().GetDateActuelle();
 
             foreach (var lot in lots)
             {
+                semaineEcoulerLots[lot.Id] = Time.getSemaineEcouler(lot.Creation);
                 var resteNombre = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id);
                 resteActuelLots[lot.Id] = resteNombre;
                 prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, mouvementRepo, dateActuelle);
-                
+
                 var poidsFinal = await GetPoidsFinalUnitaireAsync(lot);
                 poidsFinalUnitaireLots[lot.Id] = poidsFinal;
 
@@ -83,7 +86,8 @@ namespace AkohoAspx.Services
                 PrixTotalNourritureLots = prixTotalNourritureLots,
                 PoidsFinalUnitaireLots = poidsFinalUnitaireLots,
                 PrixVenteLots = prixVenteLots,
-                PrixVenteRaceUnitaireLots = prixVenteRaceUnitaireLots
+                PrixVenteRaceUnitaireLots = prixVenteRaceUnitaireLots,
+                SemaineEcouler = semaineEcoulerLots
             };
         }
 
