@@ -7,3 +7,7 @@
 
 <!-- apres succes de build on fait -->
 >> iisexpress /path:"Y:\MY PROJECT\Akoho\Akoho ASPX" /port:8080
+
+
+<!-- Config base -->
+<!-- >> dans le web.config au debut -->
