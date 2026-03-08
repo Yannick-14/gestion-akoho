@@ -118,6 +118,7 @@ namespace AkohoAspx.Services
 
             decimal prixUnitaireGramme = prixApplicable.Prix / prixApplicable.ValeurGrame;
             decimal coutTotal = 0;
+            Console.WriteLine($"\n[LOG NOURRITURE] Lot#{lot.Id} ({lot.NomLot}) - Jusqu'à: S{semaineActuelle}");
 
             for (int s = 1; s <= semaineActuelle; s++)
             {
@@ -132,8 +133,10 @@ namespace AkohoAspx.Services
 
                 decimal coutSemaine = pouletsVivants * consommationGrammes * prixUnitaireGramme;
                 coutTotal += coutSemaine;
+                Console.WriteLine($"  -> Semaine {s}: {pouletsVivants} têtes x {consommationGrammes}g = {coutSemaine:N2} Ar {(s > (croissancesAliment.LastOrDefault()?.ValueSemaine ?? 0) ? "(Fallback Max)" : "")}");
             }
 
+            Console.WriteLine($"[LOG NOURRITURE] TOTAL = {coutTotal:N2} Ar");
             return coutTotal;
         }
 
@@ -141,8 +144,13 @@ namespace AkohoAspx.Services
         {
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
 
-            // S0 = Poids Initial seulement. On n'ajoute les gains cumulés que si au moins une semaine est passée (Jour 7+).
-            if (semainesEcoulees <= 0) return lot.PoidsInitiale;
+            // S0 = Poids Initial seulement. Gains cumulés après la première semaine.
+            if (semainesEcoulees <= 0)
+            {
+                Console.WriteLine($"\n[LOG POIDS] Lot#{lot.Id} - Age: {semainesEcoulees} sem -> S0: {lot.PoidsInitiale}g");
+                return lot.PoidsInitiale;
+            }
+            Console.WriteLine($"\n[LOG POIDS] Lot#{lot.Id} - Age: {semainesEcoulees} sem");
 
             var croissancesPoids = await _dbContext.CroissancesPoidsRace
                 .Where(c => c.RaceId == lot.RaceId)
@@ -151,17 +159,11 @@ namespace AkohoAspx.Services
 
             int poidsCumule = lot.PoidsInitiale;
 
-            // Somme cumulative des gains (S1 + S2 + ... + Sn)
-            for (int s = 1; s <= semainesEcoulees; s++)
+            // Somme cumulative des gains des semaines ÉXISTANTES dans la table (l'augmentation s'arrête à la fin de la table)
+            foreach (var cp in croissancesPoids.Where(c => c.ValueSemaine <= semainesEcoulees))
             {
-                var croissanceSemaine = croissancesPoids.FirstOrDefault(c => c.ValueSemaine == s)
-                                        ?? croissancesPoids.LastOrDefault(c => c.ValueSemaine <= s)
-                                        ?? croissancesPoids.FirstOrDefault();
-
-                if (croissanceSemaine != null)
-                {
-                    poidsCumule += croissanceSemaine.PoidsMoyen;
-                }
+                poidsCumule += cp.PoidsMoyen;
+                Console.WriteLine($"  -> + Gain S{cp.ValueSemaine}: {cp.PoidsMoyen}g (Cumul: {poidsCumule}g)");
             }
 
             return poidsCumule;

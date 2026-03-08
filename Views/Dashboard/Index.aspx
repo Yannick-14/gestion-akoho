@@ -42,11 +42,10 @@
                                         <div><strong>Race:</strong> <%: lotOeuf.Race != null ? lotOeuf.Race.Nom : lotOeuf.RaceId.ToString() %></div>
                                         <div><strong>Nombre oeufs:</strong> <%: lotOeuf.NbOeufs %></div>
                                         <div><strong>Date d'eclosion d'oeufs:</strong> <%: lotOeuf.DateEclosion.HasValue ? lotOeuf.DateEclosion.Value.ToString("yyyy-MM-dd") : "" %></div>
-                                        <!-- <div><strong>Validation:</strong> <%: lotOeuf.Validation ? "true" : "false" %></div> -->
                                     </div>
-                                    <hr class="my-1 border-secondary" />
-                                    <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
+                                    <!-- <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a> -->
                                     <% if (AkohoAspx.Utils.Time.GetDateActuelle() >= lotOeuf.DateEclosion.Value) { %>
+                                    <hr class="my-1 border-secondary" />
                                     <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
                                     <% } %>
                                 </div>
@@ -89,7 +88,7 @@
                                             <% 
                                                 decimal depenseNourriture = Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id] : 0;
                                                 decimal valeurVente = Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id] : 0;
-                                                decimal benefice = valeurVente - depenseNourriture - lot.PrixAchat;
+                                                decimal benefice = valeurVente - (depenseNourriture + lot.PrixAchat);
                                             %>
                                             <span class="<%: benefice >= 0 ? "text-success fw-bold" : "text-danger fw-bold" %>"><%: benefice.ToString("N2") %> Ar</span>
                                         </div>
