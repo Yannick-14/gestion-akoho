@@ -62,7 +62,7 @@ namespace AkohoAspx.Services
                 poidsFinalUnitaireLots[lot.Id] = poidsFinal;
 
                 // Calcul du prix de vente total estimé du lot à l'instant T
-                var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId);
+                var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId, dateActuelle);
                 if (prixVente != null)
                 {
                     decimal prixUnitaire = prixVente.Prix / prixVente.ValeurGrame;
@@ -113,12 +113,12 @@ namespace AkohoAspx.Services
                 .OrderBy(c => c.ValueSemaine)
                 .ToListAsync();
 
-            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId);
+            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId, dateActuelle);
             if (prixApplicable == null) return 0;
 
             decimal prixUnitaireGramme = prixApplicable.Prix / prixApplicable.ValeurGrame;
             decimal coutTotal = 0;
-            Console.WriteLine($"\n[LOG NOURRITURE] Lot#{lot.Id} ({lot.NomLot}) - Jusqu'à: S{semaineActuelle}");
+
 
             for (int s = 1; s <= semaineActuelle; s++)
             {
@@ -133,10 +133,10 @@ namespace AkohoAspx.Services
 
                 decimal coutSemaine = pouletsVivants * consommationGrammes * prixUnitaireGramme;
                 coutTotal += coutSemaine;
-                Console.WriteLine($"  -> Semaine {s}: {pouletsVivants} têtes x {consommationGrammes}g = {coutSemaine:N2} Ar {(s > (croissancesAliment.LastOrDefault()?.ValueSemaine ?? 0) ? "(Fallback Max)" : "")}");
+
             }
 
-            Console.WriteLine($"[LOG NOURRITURE] TOTAL = {coutTotal:N2} Ar");
+
             return coutTotal;
         }
 
@@ -145,12 +145,8 @@ namespace AkohoAspx.Services
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
 
             // S0 = Poids Initial seulement. Gains cumulés après la première semaine.
-            if (semainesEcoulees <= 0)
-            {
-                Console.WriteLine($"\n[LOG POIDS] Lot#{lot.Id} - Age: {semainesEcoulees} sem -> S0: {lot.PoidsInitiale}g");
-                return lot.PoidsInitiale;
-            }
-            Console.WriteLine($"\n[LOG POIDS] Lot#{lot.Id} - Age: {semainesEcoulees} sem");
+            if (semainesEcoulees <= 0) return lot.PoidsInitiale;
+
 
             var croissancesPoids = await _dbContext.CroissancesPoidsRace
                 .Where(c => c.RaceId == lot.RaceId)
@@ -163,7 +159,6 @@ namespace AkohoAspx.Services
             foreach (var cp in croissancesPoids.Where(c => c.ValueSemaine <= semainesEcoulees))
             {
                 poidsCumule += cp.PoidsMoyen;
-                Console.WriteLine($"  -> + Gain S{cp.ValueSemaine}: {cp.PoidsMoyen}g (Cumul: {poidsCumule}g)");
             }
 
             return poidsCumule;
