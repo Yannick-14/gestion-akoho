@@ -68,12 +68,20 @@
                                         <div><strong>PrixAchat:</strong> <%: lot.PrixAchat %></div>
                                         <div><strong>Creation:</strong> <%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
                                         <hr class="my-1 border-secondary" />
-                                        <div><strong>Poids Actuel (Unitaire.):</strong> <%: Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] + " g" : "N/A" %></div>
-                                        <div><strong>Depense Total Nourriture :</strong> <%: Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></div>
-                                        <hr class="my-1 border-secondary" />
-                                        <div><strong>Prix de vente race /g:</strong> 100 Ar</div>
-                                        <div><strong>Prix de vente de lot:</strong> 100000 Ar</div>
-                                        <div><strong>Benefice Actuelle:</strong> 100000 Ar</div>
+                                        <div><strong>Poids Actuel (U.):</strong> <%: Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] + " g" : "N/A" %></div>
+                                        <div><strong>Total Nourriture 💵:</strong> <span class="text-danger"><%: Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
+                                        <div><strong>Valeur Vente Estimée 💰:</strong> <span class="text-success"><%: Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
+                                        <div><strong>Prix de vente race / g:</strong> <%: Model != null && Model.PrixVenteRaceUnitaireLots.ContainsKey(lot.Id) ? Model.PrixVenteRaceUnitaireLots[lot.Id].ToString("N2") + " Ar" : "N/A" %></div>
+                                        <div><strong>Prix de vente de lot:</strong> <span class="text-success"><%: Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></span></div>
+                                        <div>
+                                            <strong>Benefice Actuel:</strong> 
+                                            <% 
+                                                decimal depenseNourriture = Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id] : 0;
+                                                decimal valeurVente = Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id] : 0;
+                                                decimal benefice = valeurVente - depenseNourriture - lot.PrixAchat;
+                                            %>
+                                            <span class="<%: benefice >= 0 ? "text-success fw-bold" : "text-danger fw-bold" %>"><%: benefice.ToString("N2") %> Ar</span>
+                                        </div>
                                         <hr class="my-1 border-secondary" />
                                         <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-primary">Maka Atody &rarr;</a>
                                         <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-success">Signaler maty &rarr;</a>

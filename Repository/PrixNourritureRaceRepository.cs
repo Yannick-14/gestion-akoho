@@ -16,13 +16,20 @@ namespace AkohoAspx.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<decimal> getPrixNourritureRaceId(raceId)
+        public async Task<PrixNourritureRace> GetLatestPrixNourritureRaceId(int raceId, System.DateTime dateActuelle)
+        {
+            return await _dbContext.PrixNourrituresRace
+                .Where(p => p.RaceId == raceId && p.Creation <= dateActuelle)
+                .OrderByDescending(p => p.Creation)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<PrixNourritureRace>> GetAllPrixNourritureRaceId(int raceId)
         {
             return await _dbContext.PrixNourrituresRace
                 .Where(p => p.RaceId == raceId)
                 .OrderByDescending(p => p.Creation)
-                .Select(p => p.Prix)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
         }
     }
 }

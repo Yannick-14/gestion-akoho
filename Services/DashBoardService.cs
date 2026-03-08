@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AkohoAspx.Data;
 using AkohoAspx.Models;
 using AkohoAspx.Repository;
+using AkohoAspx.Utils;
 
 namespace AkohoAspx.Services
 {
@@ -14,6 +15,7 @@ namespace AkohoAspx.Services
         private readonly LotRepository _lotRepository;
         private readonly LotOeufRepository _lotOeufRepository;
         private readonly PrixNourritureRaceRepository _prixNourritureRaceRepository;
+        private readonly PrixVenteRaceRepository _prixVenteRaceRepository;
 
         public DashboardService()
             : this(new AppDbContext())
@@ -26,6 +28,7 @@ namespace AkohoAspx.Services
             _lotRepository = new LotRepository(_dbContext);
             _lotOeufRepository = new LotOeufRepository(_dbContext);
             _prixNourritureRaceRepository = new PrixNourritureRaceRepository(_dbContext);
+            _prixVenteRaceRepository = new PrixVenteRaceRepository(_dbContext);
         }
 
         public async Task<DashboardLotItem> GetDashboardDataAsync()
@@ -35,12 +38,41 @@ namespace AkohoAspx.Services
             var resteActuelLots = new System.Collections.Generic.Dictionary<int, int>();
             var prixTotalNourritureLots = new System.Collections.Generic.Dictionary<int, decimal>();
             var poidsFinalUnitaireLots = new System.Collections.Generic.Dictionary<int, int>();
+            var prixVenteLots = new System.Collections.Generic.Dictionary<int, decimal>();
+            var prixVenteRaceUnitaireLots = new System.Collections.Generic.Dictionary<int, decimal>();
+            var dateActuelle = new Time().GetDateActuelle();
 
             foreach (var lot in lots)
             {
-                resteActuelLots[lot.Id] = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id);
-                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, mouvementRepo);
-                poidsFinalUnitaireLots[lot.Id] = await GetPoidsFinalUnitaireAsync(lot);
+                var resteNombre = await mouvementRepo.resteNombreRaceActuelleLot(lot.Id);
+                resteActuelLots[lot.Id] = resteNombre;
+                prixTotalNourritureLots[lot.Id] = await GetTotalPrixNourritureParLotAsync(lot, mouvementRepo, dateActuelle);
+                
+                var poidsFinal = await GetPoidsFinalUnitaireAsync(lot);
+                poidsFinalUnitaireLots[lot.Id] = poidsFinal;
+
+                // Calcul du prix de vente total estimé du lot à l'instant T
+                var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId, dateActuelle);
+                if (prixVente != null)
+                {
+                    decimal prixUnitaire = prixVente.Prix / prixVente.ValeurGrame;
+                    prixVenteRaceUnitaireLots[lot.Id] = prixUnitaire;
+
+                    if (resteNombre > 0)
+                    {
+                        decimal valeurParPlume = poidsFinal * prixUnitaire;
+                        prixVenteLots[lot.Id] = resteNombre * valeurParPlume;
+                    }
+                    else
+                    {
+                        prixVenteLots[lot.Id] = 0;
+                    }
+                }
+                else
+                {
+                    prixVenteRaceUnitaireLots[lot.Id] = 0;
+                    prixVenteLots[lot.Id] = 0;
+                }
             }
 
             return new DashboardLotItem
@@ -49,11 +81,13 @@ namespace AkohoAspx.Services
                 Lots = lots,
                 ResteActuelLots = resteActuelLots,
                 PrixTotalNourritureLots = prixTotalNourritureLots,
-                PoidsFinalUnitaireLots = poidsFinalUnitaireLots
+                PoidsFinalUnitaireLots = poidsFinalUnitaireLots,
+                PrixVenteLots = prixVenteLots,
+                PrixVenteRaceUnitaireLots = prixVenteRaceUnitaireLots
             };
         }
 
-        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, MouvementLotRepository mouvementRepo)
+        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, MouvementLotRepository mouvementRepo, System.DateTime dateActuelle)
         {
             int semainesEcoulees = AkohoAspx.Utils.Time.getSemaineEcouler(lot.Creation);
             if (semainesEcoulees <= 0) return 0;
@@ -64,14 +98,10 @@ namespace AkohoAspx.Services
                 .Where(c => c.RaceId == lot.RaceId && c.ValueSemaine <= semainesEcoulees)
                 .ToDictionaryAsync(c => c.ValueSemaine, c => c.PoidsMoyen); // Poids en grammes consommé
 
-            // var prixNourritures =  await _prixNourritureRaceRepository.getPrixNourritureRaceId(lot.RaceId);
-            var prixNourritures = await _dbContext.PrixNourrituresRace
-                .Where(p => p.RaceId == lot.RaceId)
-                .OrderByDescending(p => p.Creation)
-                .ToListAsync();
+            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId, dateActuelle);
+            if (prixApplicable == null) return 0; // Pas de prix défini
 
-            if (!prixNourritures.Any()) return 0; // Pas de prix défini
-
+            decimal prixUnitaireGramme = prixApplicable.Prix / prixApplicable.ValeurGrame;
             decimal coutTotal = 0;
 
             for (int s = 1; s <= semainesEcoulees; s++)
@@ -82,11 +112,7 @@ namespace AkohoAspx.Services
                 
                 if (consommationGrammes == 0 || pouletsVivants == 0) continue;
 
-                // Trouver le prix applicable pour cette semaine (le plus récent avant ou pendant la semaine)
-                DateTime dateSemaine = lot.Creation.AddDays(s * 7);
-                var prixApplicable = prixNourritures.FirstOrDefault(p => p.Creation <= dateSemaine) ?? prixNourritures.Last();
-
-                decimal coutSemaine = pouletsVivants * consommationGrammes * (prixApplicable.Prix / prixApplicable.ValeurGrame);
+                decimal coutSemaine = pouletsVivants * consommationGrammes * prixUnitaireGramme;
                 coutTotal += coutSemaine;
             }
 
