@@ -6,16 +6,16 @@ using AkohoAspx.Services.Results;
 
 namespace AkohoAspx.Controllers
 {
-    public class DashBoardController : Controller
+    public class DashboardController : Controller
     {
-        private readonly DashBoardService _dashBoardService;
-        public DashBoardController()
+        private readonly DashboardService _dashboardService;
+        public DashboardController()
         {
-            _dashBoardService = new DashBoardService();
+            _dashboardService = new DashboardService();
         }
         public async Task<ActionResult> Index()
         {
-            var data = await _dashBoardService.GetDashboardDataAsync();
+            var data = await _dashboardService.GetDashboardDataAsync();
             return View(data);
         }
 

@@ -41,7 +41,7 @@ namespace AkohoAspx.Controllers
             OperationResult result = await _lotService.CreateLotAtody(requestForm);
 
             SetLotTempData(result);
-            return RedirectToAction("DashBoard/Index");
+            return RedirectToAction("Dashboard/Index");
         }
 
         protected override void Dispose(bool disposing)

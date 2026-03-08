@@ -8,22 +8,24 @@ using AkohoAspx.Repository;
 
 namespace AkohoAspx.Services
 {
-    public class DashBoardService : IDisposable
+    public class DashboardService : IDisposable
     {
         private readonly AppDbContext _dbContext;
         private readonly LotRepository _lotRepository;
         private readonly LotOeufRepository _lotOeufRepository;
+        private readonly PrixNourritureRaceRepository _prixNourritureRaceRepository;
 
-        public DashBoardService()
+        public DashboardService()
             : this(new AppDbContext())
         {
         }
 
-        public DashBoardService(AppDbContext dbContext)
+        public DashboardService(AppDbContext dbContext)
         {
             _dbContext = dbContext;
             _lotRepository = new LotRepository(_dbContext);
             _lotOeufRepository = new LotOeufRepository(_dbContext);
+            _prixNourritureRaceRepository = new PrixNourritureRaceRepository(_dbContext);
         }
 
         public async Task<DashboardLotItem> GetDashboardDataAsync()
@@ -62,6 +64,7 @@ namespace AkohoAspx.Services
                 .Where(c => c.RaceId == lot.RaceId && c.ValueSemaine <= semainesEcoulees)
                 .ToDictionaryAsync(c => c.ValueSemaine, c => c.PoidsMoyen); // Poids en grammes consommé
 
+            // var prixNourritures =  await _prixNourritureRaceRepository.getPrixNourritureRaceId(lot.RaceId);
             var prixNourritures = await _dbContext.PrixNourrituresRace
                 .Where(p => p.RaceId == lot.RaceId)
                 .OrderByDescending(p => p.Creation)

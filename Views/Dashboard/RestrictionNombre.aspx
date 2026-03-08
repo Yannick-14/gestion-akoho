@@ -22,30 +22,21 @@
                         <div class="alert alert-info mb-4">
                             <strong>Details du Lot :</strong><br/>
                             ID Lot : <%: ViewBag.LotId %><br/>
-                            ID Race : <%: ViewBag.RaceId %>
                         </div>
 
-                        <!-- <% using (Html.BeginForm("MakaAtodySave", "Dashboard", FormMethod.Post)) { %> -->
-                        <form action="/Lot/CreateLotAtody" method="post">
+                        <form action="/Mouvement/Restriction" method="post">
                             <%: Html.AntiForgeryToken() %>
                             <input type="hidden" name="lotId" value="<%: ViewBag.LotId %>" />
-                            <input type="hidden" name="raceId" value="<%: ViewBag.RaceId %>" />
 
                             <div class="mb-3">
-                                <label for="nomLot" class="form-label">Nouvel lot</label>
-                                <input type="text" class="form-control" id="nomLot" name="nomLot" />
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="QuantiteAtody" class="form-label">Quantité d'Oeufs (Atody)</label>
-                                <input type="number" class="form-control" id="quantiteAtody" name="quantiteAtody" min="1" />
+                                <label for="NbSortie" class="form-label">Nombre à sortir (Atody)</label>
+                                <input type="number" class="form-control" id="NombreSortie" name="NombreSortie" min="1" />
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-success btn-lg">Enregistrer la Récolte</button>
+                                <button type="submit" class="btn btn-success btn-lg">Signaler</button>
                             </div>
                         </form>
-                        <!-- <% } %> -->
                     </div>
                 </div>
             </div>

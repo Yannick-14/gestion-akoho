@@ -16,7 +16,12 @@
 
         <% var lotOeufsActifs = Model != null ? Model.LotOeufsActive : Enumerable.Empty<AkohoAspx.Models.LotOeuf>(); %>
         <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Models.Lot>(); %>
-
+        <section class="mb-3">
+            <div class="col-12 col-md-4">
+                <label for="DateActualiser" class="form-label">Personnaliser la date actuelle</label>
+                <input id="DateActualiser" name="DateActualiser" type="date" class="form-control" />
+            </div>
+        </section>
         <section class="mb-5">
             <h2 class="h4 mb-3">LotOeufs actifs</h2>
             <% if (lotOeufsActifs.Any()) { %>
@@ -33,6 +38,8 @@
                                         <div><strong>Pourcentage:</strong> <%: lotOeuf.Pourcentage %></div>
                                         <div><strong>Validation:</strong> <%: lotOeuf.Validation ? "true" : "false" %></div>
                                     </div>
+                                    <hr class="my-1 border-secondary" />
+                                    <a href="/Dashboard/MakaAtody?lotId=<%: lotOeuf.Id %>" class="btn btn-primary">Eclore &rarr;</a>
                                 </div>
                             </div>
                         </div>
@@ -61,8 +68,15 @@
                                         <div><strong>PrixAchat:</strong> <%: lot.PrixAchat %></div>
                                         <div><strong>Creation:</strong> <%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></div>
                                         <hr class="my-1 border-secondary" />
-                                        <div><strong>Poids Actuel (U.):</strong> <%: Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] + " g" : "N/A" %></div>
-                                        <div><strong>Total Nourriture 💵:</strong> <%: Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></div>
+                                        <div><strong>Poids Actuel (Unitaire.):</strong> <%: Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] + " g" : "N/A" %></div>
+                                        <div><strong>Depense Total Nourriture :</strong> <%: Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id].ToString("N2") + " Ar" : "0.00 Ar" %></div>
+                                        <hr class="my-1 border-secondary" />
+                                        <div><strong>Prix de vente race /g:</strong> 100 Ar</div>
+                                        <div><strong>Prix de vente de lot:</strong> 100000 Ar</div>
+                                        <div><strong>Benefice Actuelle:</strong> 100000 Ar</div>
+                                        <hr class="my-1 border-secondary" />
+                                        <a href="/Dashboard/MakaAtody?lotId=<%: lot.Id %>&raceId=<%: lot.RaceId %>" class="btn btn-primary">Maka Atody &rarr;</a>
+                                        <a href="/Dashboard/SignalerMaty?lotId=<%: lot.Id %>" class="btn btn-success">Signaler maty &rarr;</a>
                                     </div>
                                 </div>
                             </div>
