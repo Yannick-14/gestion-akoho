@@ -208,10 +208,6 @@
                                                 <span class="badge rounded-pill shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.2);">
                                                     ✅ Prêt à vendre
                                                 </span>
-                                            <% } else { %>
-                                                <span class="badge bg-white text-muted border rounded-pill shadow-sm" style="font-size: 0.7rem;">
-                                                    Sem. <%: semaineEcoulee %> / <%: maxWeek %>
-                                                </span>
                                             <% } %>
                                         </div>
                                     </div>
@@ -280,13 +276,19 @@
                                                 <div class="modal-kpi"><span>Semaine ecoulee</span><strong><%: semaineEcoulee %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Poids actuel (U.)</span><strong><%: poidsActuelUnitaire > 0 ? poidsActuelUnitaire + " g" : "N/A" %></strong></div>
+                                                <div class="modal-kpi"><span>Poids actuel (Unit.)</span><strong><%: poidsActuelUnitaire > 0 ? poidsActuelUnitaire + " g" : "N/A" %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Prix vente race / g</span><strong><%: prixVenteRaceUnitaire > 0 ? prixVenteRaceUnitaire.ToString("N2") + " Ar" : "N/A" %></strong></div>
+                                                <div class="modal-kpi"><span>Prix vente race </span><strong><%: prixVenteRaceUnitaire > 0 ? prixVenteRaceUnitaire.ToString("N2") + " Ar" : "N/A" %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Creation</span><strong><%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></strong></div>
+                                                <div class="modal-kpi">
+                                                    <span>Prix unit. estimé</span>
+                                                    <strong class="text-success"><%: (poidsActuelUnitaire * prixVenteRaceUnitaire).ToString("N2") %> Ar</strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-md-4">
+                                                <div class="modal-kpi"><span>Création</span><strong><%: lot.Creation.ToString("yyyy-MM-dd HH:mm") %></strong></div>
                                             </div>
                                             <div class="col-12 col-md-4">
                                                 <div class="modal-kpi">

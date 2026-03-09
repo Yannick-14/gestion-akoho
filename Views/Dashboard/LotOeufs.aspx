@@ -9,17 +9,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <style>
         :root {
-            --egg-bg: #fffbf2;
-            --egg-accent: #f59e0b; /* Amber */
-            --egg-accent-soft: #fef3c7;
-            --text-main: #1e293b;
-            --card-border: #fde68a;
+            --egg-bg: #f0f9ff; /* Sky Blue Light */
+            --egg-accent: #0ea5e9; /* Sky Blue */
+            --egg-accent-soft: #e0f2fe;
+            --text-main: #0f172a;
+            --card-border: #bae6fd;
         }
 
         body {
             background-color: var(--egg-bg);
-            background-image: radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.05) 0px, transparent 50%),
-                              radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.03) 0px, transparent 50%);
+            background-image: radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.05) 0px, transparent 50%),
+                              radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.03) 0px, transparent 50%);
             color: var(--text-main);
             font-family: 'Inter', -apple-system, sans-serif;
             min-height: 100vh;
@@ -35,7 +35,7 @@
             background: #ffffff;
             border: 1px solid var(--card-border);
             border-radius: 24px;
-            box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.05);
             transition: all 0.3s ease;
             overflow: hidden;
             position: relative;
@@ -43,7 +43,7 @@
 
         .egg-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(14, 165, 233, 0.1);
             border-color: var(--egg-accent);
         }
 
@@ -89,7 +89,7 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             font-weight: 600;
-            color: #92400e;
+            color: #0369a1;
             letter-spacing: 0.05em;
         }
 
@@ -104,7 +104,7 @@
             justify-content: space-between;
             align-items: center;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid #fff7ed;
+            border-bottom: 1px solid #f0f9ff;
         }
 
         .info-label {
@@ -129,19 +129,19 @@
         }
 
         .btn-eclore-premium:hover {
-            background: #d97706;
+            background: #0284c7;
             transform: scale(1.02);
             color: white;
         }
 
         .pulse-premium {
-            animation: pulse-amber 2s infinite;
+            animation: pulse-blue 2s infinite;
         }
 
-        @keyframes pulse-amber {
-            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
         }
     </style>
 </head>
@@ -151,14 +151,14 @@
     <div class="container py-5">
         <div class="page-header d-flex justify-content-between align-items-end">
             <div>
-                <nav aria-label="breadcrumb">
+                <!-- <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-2">
                         <li class="breadcrumb-item"><a href="/Dashboard/Index" class="text-decoration-none text-muted">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Lots d'Oeufs</li>
                     </ol>
-                </nav>
-                <h1 class="h2 fw-bold mb-0">Gestion des Lots d'Oeufs</h1>
-                <p class="text-muted mb-0">Visualisez et faites éclore vos récoltes d'Oeufs actives.</p>
+                </nav> -->
+                <h1 class="h2 fw-bold mb-0">Lots d'Oeufs</h1>
+                <!-- <p class="text-muted mb-0">Visualisez et faites éclore vos récoltes d'Oeufs actives.</p> -->
             </div>
             <div class="text-end">
                 <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">

@@ -88,17 +88,17 @@
                 string currentAction = actionValue != null ? actionValue.ToString() : string.Empty;
             %>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-1">
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link nav-link-premium <%= currentController == "Home" ? "active" : "" %>" 
                        href="/">Accueil</a>
-                </li>
+                </li> -->
                 <li class="nav-item">
                     <a class="nav-link nav-link-premium <%= currentController == "Dashboard" && currentAction == "Index" ? "active" : "" %>" 
                        href="/Dashboard">Tableau de Bord</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link nav-link-premium <%= currentController == "Dashboard" && currentAction == "LotOeufs" ? "active" : "" %>" 
-                       href="/Dashboard/LotOeufs">Lots d'Œufs</a>
+                       href="/Dashboard/LotOeufs">Lots d'Oeufs</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link nav-link-premium <%= currentController == "Lot" ? "active" : "" %>" 

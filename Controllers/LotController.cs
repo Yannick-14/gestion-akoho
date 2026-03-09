@@ -68,7 +68,7 @@ namespace AkohoAspx.Controllers
         {
             if (result == null || string.IsNullOrWhiteSpace(result.Message)) return;
             TempData[result.IsSuccess ? "LotSuccess" : "LotError"] = result.Message;
-            Console.WriteLine(result.Message);
+            // Console.WriteLine(result.Message);
         }
     }
 }
