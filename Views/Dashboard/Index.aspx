@@ -184,14 +184,7 @@
                 <div class="row g-4">
                     <% foreach (var lot in lots) { %>
                         <%
-                            int nombreActuel = Model != null && Model.ResteActuelLots.ContainsKey(lot.Id) ? Model.ResteActuelLots[lot.Id] : lot.NombreInitial;
-                            int nombreMort = Model != null && Model.TotalMortLots.ContainsKey(lot.Id) ? Model.TotalMortLots[lot.Id] : 0;
-                            decimal depenseNourriture = Model != null && Model.PrixTotalNourritureLots.ContainsKey(lot.Id) ? Model.PrixTotalNourritureLots[lot.Id] : 0;
-                            decimal prixVenteLot = Model != null && Model.PrixVenteLots.ContainsKey(lot.Id) ? Model.PrixVenteLots[lot.Id] : 0;
-                            int semaineEcoulee = Model != null && Model.SemaineEcouler.ContainsKey(lot.Id) ? Model.SemaineEcouler[lot.Id] : 0;
-                            int poidsActuelUnitaire = Model != null && Model.PoidsFinalUnitaireLots.ContainsKey(lot.Id) ? Model.PoidsFinalUnitaireLots[lot.Id] : 0;
-                            decimal prixVenteRaceUnitaire = Model != null && Model.PrixVenteRaceUnitaireLots.ContainsKey(lot.Id) ? Model.PrixVenteRaceUnitaireLots[lot.Id] : 0;
-                            decimal benefice = prixVenteLot - (depenseNourriture + lot.PrixAchat);
+                            var details = GetLotDetails(lot);
                         %>
 
                         <div class="col-12 col-md-6 col-xl-4 d-flex">
@@ -212,10 +205,7 @@
                                                 </button>
                                                 <span class="badge text-bg-light border shadow-sm">Lot #<%: lot.Id %></span>
                                             </div>
-                                            <% 
-                                                int maxWeek = Model != null && Model.MaxSemaineCroissanceLots.ContainsKey(lot.Id) ? Model.MaxSemaineCroissanceLots[lot.Id] : 0;
-                                                if (semaineEcoulee >= maxWeek && maxWeek > 0) { 
-                                            %>
+                                            <% if (details.IsReadyToSell) { %>
                                                 <span class="badge rounded-pill shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.2);">
                                                     ✅ Prêt à vendre
                                                 </span>
@@ -226,7 +216,7 @@
                                     <div class="kpi-grid">
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Croissance</span>
-                                            <span class="kpi-value text-primary">Semaine <%: semaineEcoulee %></span>
+                                            <span class="kpi-value text-primary">Semaine <%: details.SemaineEcoulee %></span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Prix d'achat</span>
@@ -234,23 +224,23 @@
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Dépense nourriture</span>
-                                            <span class="kpi-value text-danger"><%: depenseNourriture.ToString("N2") %> Ar</span>
+                                            <span class="kpi-value text-danger"><%: details.DepenseNourriture.ToString("N2") %> Ar</span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Nombre de pertes</span>
-                                            <span class="kpi-value"><%: nombreMort %></span>
+                                            <span class="kpi-value"><%: details.NombreMort %></span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Nombre actuel</span>
-                                            <span class="kpi-value"><%: nombreActuel %></span>
+                                            <span class="kpi-value"><%: details.NombreActuel %></span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Poids unitaire</span>
-                                            <span class="kpi-value fw-bold"><%: poidsActuelUnitaire %> g</span>
+                                            <span class="kpi-value fw-bold"><%: details.PoidsActuelUnitaire %> g</span>
                                         </div>
                                         <div class="kpi-pill" style="grid-column: span 2;">
                                             <span class="kpi-label">Prix du lot actuel si vente</span>
-                                            <span class="kpi-value text-success"><%: prixVenteLot.ToString("N2") %> Ar</span>
+                                            <span class="kpi-value text-success"><%: details.PrixVenteLot.ToString("N2") %> Ar</span>
                                         </div>
                                     </div>
                                 </div>
@@ -284,18 +274,18 @@
                                                 <div class="modal-kpi"><span>Poids initial</span><strong><%: lot.PoidsInitiale %> g</strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Semaine ecoulee</span><strong><%: semaineEcoulee %></strong></div>
+                                                <div class="modal-kpi"><span>Semaine ecoulee</span><strong><%: details.SemaineEcoulee %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Poids actuel (Unit.)</span><strong><%: poidsActuelUnitaire > 0 ? poidsActuelUnitaire + " g" : "N/A" %></strong></div>
+                                                <div class="modal-kpi"><span>Poids actuel (Unit.)</span><strong><%: details.PoidsActuelUnitaire > 0 ? details.PoidsActuelUnitaire + " g" : "N/A" %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Prix vente race </span><strong><%: prixVenteRaceUnitaire > 0 ? prixVenteRaceUnitaire.ToString("N2") + " Ar" : "N/A" %></strong></div>
+                                                <div class="modal-kpi"><span>Prix vente race </span><strong><%: details.PrixVenteRaceUnitaire > 0 ? details.PrixVenteRaceUnitaire.ToString("N2") + " Ar" : "N/A" %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
                                                 <div class="modal-kpi">
                                                     <span>Prix unit. estimé</span>
-                                                    <strong class="text-success"><%: (poidsActuelUnitaire * prixVenteRaceUnitaire).ToString("N2") %> Ar</strong>
+                                                    <strong class="text-success"><%: details.PrixUnitEstime.ToString("N2") %> Ar</strong>
                                                 </div>
                                             </div>
                                             <div class="col-6 col-md-4">
@@ -304,7 +294,7 @@
                                             <div class="col-12 col-md-4">
                                                 <div class="modal-kpi">
                                                     <span>Benefice actuel</span>
-                                                    <strong class="<%: benefice >= 0 ? "text-success" : "text-danger" %>"><%: benefice.ToString("N2") %> Ar</strong>
+                                                    <strong class="<%: details.Benefice >= 0 ? "text-success" : "text-danger" %>"><%: details.Benefice.ToString("N2") %> Ar</strong>
                                                 </div>
                                             </div>
                                         </div>
