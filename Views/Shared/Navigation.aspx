@@ -72,8 +72,8 @@
 <nav class="navbar navbar-expand-lg navbar-light navbar-premium mb-4">
     <div class="container">
         <a class="navbar-brand navbar-brand-premium d-flex align-items-center gap-2" href="/">
-            <span class="bg-primary text-white rounded-2 px-2 py-1" style="font-size: 0.9rem;">AK</span>
-            Akoho ASPX
+            <!-- <span class="bg-primary text-white rounded-2 px-2 py-1" style="font-size: 0.9rem;">AK</span> -->
+            Akoho
         </a>
         
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">

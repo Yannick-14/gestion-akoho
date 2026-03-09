@@ -9,18 +9,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --hatch-bg: #fffbf2;
-            --hatch-accent: #10b981; /* Green for new life */
-            --hatch-amber: #f59e0b;
-            --hatch-amber-soft: #fef3c7;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --text-main: #1e293b;
+            --hatch-bg: #f0f9ff;
+            --hatch-accent: #0ea5e9;
+            --hatch-blue-soft: #e0f2fe;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --text-main: #0f172a;
         }
 
         body {
             background-color: var(--hatch-bg);
-            background-image: radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-                              radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.04) 0px, transparent 50%);
+            background-image: radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.08) 0px, transparent 50%),
+                              radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.04) 0px, transparent 50%);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
@@ -36,15 +35,15 @@
         }
 
         .form-header {
-            background: linear-gradient(135deg, var(--hatch-amber) 0%, #d97706 100%);
+            background: linear-gradient(135deg, var(--hatch-accent) 0%, #0284c7 100%);
             padding: 2rem;
             border-radius: 28px 28px 0 0;
             color: white;
         }
 
         .info-card-soft {
-            background: rgba(245, 158, 11, 0.03);
-            border: 1px solid var(--hatch-amber-soft);
+            background: rgba(14, 165, 233, 0.04);
+            border: 1px solid var(--hatch-blue-soft);
             border-radius: 18px;
             padding: 1.25rem;
         }
@@ -58,8 +57,8 @@
         }
 
         .input-premium:focus {
-            border-color: var(--hatch-amber);
-            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+            border-color: var(--hatch-accent);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
         }
 
         .btn-premium-hatch {
@@ -74,9 +73,9 @@
         }
 
         .btn-premium-hatch:hover {
-            background: #059669;
+            background: #0284c7;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(14, 165, 233, 0.4);
             color: white;
         }
     </style>
@@ -93,7 +92,7 @@
                             <h1 class="h3 fw-800 mb-0">Éclosion des Oeufs</h1>
                             <p class="mb-0 opacity-75 small fw-600">Transformer le lot d'Oeufs en poussins</p>
                         </div>
-                        <a href="/Dashboard/LotOeufs" class="btn btn-sm btn-light text-warning fw-bold px-3 rounded-pill" style="color: #92400e !important;">&larr; Retour</a>
+                        <a href="/Dashboard/LotOeufs" class="btn btn-sm btn-light fw-bold px-3 rounded-pill" style="color: var(--hatch-accent) !important;">&larr; Retour</a>
                     </div>
                     
                     <div class="p-4 p-lg-5">
