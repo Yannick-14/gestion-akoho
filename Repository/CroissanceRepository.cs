@@ -33,6 +33,13 @@ namespace AkohoAspx.Repository
                 .ToListAsync();
         }
 
+        public async Task<int> getMaxWeek(int raceId)
+        {
+            return await _dbContext.CroissancesPoidsRace
+                .Where(c => c.RaceId == raceId)
+                .CountAsync();
+        }
+
         public async Task<T> createDataEntity<T>(T entity) where T : class
         {
             _dbContext.Set<T>().Add(entity);
