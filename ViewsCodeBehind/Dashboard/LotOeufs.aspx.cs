@@ -4,7 +4,7 @@ using AkohoAspx.Services;
 
 namespace AkohoAspx.ViewsCodeBehind.Dashboard
 {
-    public class LotOeufsPage : ViewPage<AkohoAspx.Services.DashboardLotItem>
+    public class LotOeufsPage : ViewPage<Recap>
     {
     }
 }
