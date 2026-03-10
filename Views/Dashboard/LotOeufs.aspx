@@ -151,6 +151,17 @@
     <div class="container py-5">
         <div class="page-header d-flex justify-content-between align-items-end">
             <div>
+                <!-- <section class="mb-4">
+                    <div class="col-12 col-md-5 col-lg-4 panel-soft p-3">
+                        <form action="/Dashboard/ActualiserDate" method="post" class="d-flex align-items-end gap-2">
+                            <div class="flex-grow-1">
+                                <label for="DateActualiser" class="form-label">Personnaliser une date</label>
+                                <input id="DateActualiser" name="DateActualiser" type="date" class="form-control" value="<%: AkohoAspx.Utils.Time.GetDateActuelle().ToString("yyyy-MM-dd") %>" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Actualiser</button>
+                        </form>
+                    </div>
+                </section> -->
                 <!-- <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-2">
                         <li class="breadcrumb-item"><a href="/Dashboard/Index" class="text-decoration-none text-muted">Dashboard</a></li>
@@ -198,15 +209,12 @@
                                         <span class="info-value"><%: lotOeuf.DateEclosion.HasValue ? lotOeuf.DateEclosion.Value.ToString("dd MMM yyyy") : "-" %></span>
                                     </div>
                                 </div>
-
+                                <% if (estPret) { %>
                                 <a href="/Dashboard/EclosOeuf?lotOeufId=<%: lotOeuf.Id %>" 
                                    class="btn-eclore-premium text-decoration-none d-flex align-items-center justify-content-center gap-2 <%= estPret ? "pulse-premium" : "" %>">
-                                   <% if (estPret) { %>
-                                        ✨ Faire éclore maintenant
-                                   <% } else { %>
-                                        Voir les détails &rarr;
-                                   <% } %>
+                                    Eclore
                                 </a>
+                                <% } %>
                             </div>
                         </div>
                     </div>
@@ -214,9 +222,7 @@
             <% } else { %>
                 <div class="col-12">
                     <div class="text-center py-5 bg-white rounded-4 border">
-                        <div class="display-1 text-muted mb-4 opacity-25">🥚</div>
                         <h2 class="h4 text-muted">Aucun lot d'Oeufs actif</h2>
-                        <p class="text-muted">Les récoltes effectuées depuis les lots de poules s'afficheront ici.</p>
                         <a href="/Dashboard/Index" class="btn btn-outline-primary mt-3">Retour au Dashboard</a>
                     </div>
                 </div>
