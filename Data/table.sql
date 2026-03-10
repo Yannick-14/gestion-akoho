@@ -124,7 +124,7 @@ CREATE TABLE dbo.prixNourritureRace
     CONSTRAINT PK_prixNourritureRace PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_prixNourritureRace_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
     CONSTRAINT CK_prixNourritureRace_prix_nonnegative CHECK (prix >= 0),
-    CONSTRAINT CK_prixNourritureRace_valeurGrame_positive CHECK (valeurGrame > 0)
+    CONSTRAINT CK_prixNourritureRace_valeurGrame_positive CHECK (valeurGrame >= 0)
 );
 GO
 
@@ -153,3 +153,8 @@ GO
 
 
 ALTER TABLE dbo.lotOeuf ALTER COLUMN pourcentage DECIMAL(10,2) NULL;
+
+
+ALTER TABLE dbo.croissancePoidsRace NOCHECK CONSTRAINT CK_croissancePoidsRace_valueSemaine_positive;
+ALTER TABLE dbo.croissanceAlimentRace NOCHECK CONSTRAINT CK_croissanceAlimentRace_valueSemaine_positive;
+GO
