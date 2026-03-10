@@ -162,7 +162,7 @@
         <h1 class="mb-4 dashboard-title">Dashboard</h1>
 
         <% var lotOeufsActifs = Model != null ? Model.LotOeufsActive : Enumerable.Empty<AkohoAspx.Models.LotOeuf>(); %>
-        <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Models.Lot>(); %>
+        <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Services.LotRecap>(); %>
 
         <section class="mb-4">
             <div class="col-12 col-md-5 col-lg-4 panel-soft p-3">
@@ -176,17 +176,11 @@
             </div>
         </section>
 
-
-
         <section>
             <h2 class="h4 mb-3">Tous les lots</h2>
             <% if (lots.Any()) { %>
                 <div class="row g-4">
                     <% foreach (var lot in lots) { %>
-                        <%
-                            var details = GetLotDetails(lot);
-                        %>
-
                         <div class="col-12 col-md-6 col-xl-4 d-flex">
                             <div class="lot-card d-flex flex-column w-100">
                                 <div class="lot-card-click p-3 p-lg-4">
@@ -205,18 +199,18 @@
                                                 </button>
                                                 <span class="badge text-bg-light border shadow-sm">Lot #<%: lot.Id %></span>
                                             </div>
-                                            <% if (details.IsReadyToSell) { %>
+                                            <!-- <% if (lot.IsReadyToSell) { %>
                                                 <span class="badge rounded-pill shadow-sm" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.2);">
                                                     ✅ Prêt à vendre
                                                 </span>
-                                            <% } %>
+                                            <% } %> -->
                                         </div>
                                     </div>
 
                                     <div class="kpi-grid">
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Croissance</span>
-                                            <span class="kpi-value text-primary">Semaine <%: details.SemaineEcoulee %></span>
+                                            <span class="kpi-value text-primary">Semaine <%: lot.SemaineEcoulee %></span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Prix d'achat</span>
@@ -224,23 +218,23 @@
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Dépense nourriture</span>
-                                            <span class="kpi-value text-danger"><%: details.DepenseNourriture.ToString("N2") %> Ar</span>
+                                            <span class="kpi-value text-danger"><%: lot.DepenseNourriture.ToString("N2") %> Ar</span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Nombre de pertes</span>
-                                            <span class="kpi-value"><%: details.NombreMort %></span>
+                                            <span class="kpi-value"><%: lot.NombreMort %></span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Nombre actuel</span>
-                                            <span class="kpi-value"><%: details.NombreActuel %></span>
+                                            <span class="kpi-value"><%: lot.NombreActuel %></span>
                                         </div>
                                         <div class="kpi-pill">
                                             <span class="kpi-label">Poids unitaire</span>
-                                            <span class="kpi-value fw-bold"><%: details.PoidsActuelUnitaire %> g</span>
+                                            <span class="kpi-value fw-bold"><%: lot.PoidsActuelUnitaire %> g</span>
                                         </div>
                                         <div class="kpi-pill" style="grid-column: span 2;">
                                             <span class="kpi-label">Prix du lot actuel si vente</span>
-                                            <span class="kpi-value text-success"><%: details.PrixVenteLot.ToString("N2") %> Ar</span>
+                                            <span class="kpi-value text-success"><%: lot.PrixVenteLot.ToString("N2") %> Ar</span>
                                         </div>
                                     </div>
                                 </div>
@@ -274,18 +268,18 @@
                                                 <div class="modal-kpi"><span>Poids initial</span><strong><%: lot.PoidsInitiale %> g</strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Semaine ecoulee</span><strong><%: details.SemaineEcoulee %></strong></div>
+                                                <div class="modal-kpi"><span>Semaine ecoulee</span><strong><%: lot.SemaineEcoulee %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Poids actuel (Unit.)</span><strong><%: details.PoidsActuelUnitaire > 0 ? details.PoidsActuelUnitaire + " g" : "N/A" %></strong></div>
+                                                <div class="modal-kpi"><span>Poids actuel (Unit.)</span><strong><%: lot.PoidsActuelUnitaire > 0 ? lot.PoidsActuelUnitaire + " g" : "N/A" %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
-                                                <div class="modal-kpi"><span>Prix vente race </span><strong><%: details.PrixVenteRaceUnitaire > 0 ? details.PrixVenteRaceUnitaire.ToString("N2") + " Ar" : "N/A" %></strong></div>
+                                                <div class="modal-kpi"><span>Prix vente race </span><strong><%: lot.PrixVenteRaceUnitaire > 0 ? lot.PrixVenteRaceUnitaire.ToString("N2") + " Ar" : "N/A" %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
                                                 <div class="modal-kpi">
                                                     <span>Prix unit. estimé</span>
-                                                    <strong class="text-success"><%: details.PrixUnitEstime.ToString("N2") %> Ar</strong>
+                                                    <strong class="text-success"><%: lot.PrixUnitEstime.ToString("N2") %> Ar</strong>
                                                 </div>
                                             </div>
                                             <div class="col-6 col-md-4">
@@ -294,7 +288,7 @@
                                             <div class="col-12 col-md-4">
                                                 <div class="modal-kpi">
                                                     <span>Benefice actuel</span>
-                                                    <strong class="<%: details.Benefice >= 0 ? "text-success" : "text-danger" %>"><%: details.Benefice.ToString("N2") %> Ar</strong>
+                                                    <strong class="<%: lot.Benefice >= 0 ? "text-success" : "text-danger" %>"><%: lot.Benefice.ToString("N2") %> Ar</strong>
                                                 </div>
                                             </div>
                                         </div>

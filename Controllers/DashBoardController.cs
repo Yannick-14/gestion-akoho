@@ -16,13 +16,13 @@ namespace AkohoAspx.Controllers
         }
         public async Task<ActionResult> Index()
         {
-            var data = await _dashboardService.GetDashboardDataAsync();
+            var data = await _dashboardService.GetDashoboardData();
             return View(data);
         }
 
         public async Task<ActionResult> LotOeufs()
         {
-            var data = await _dashboardService.GetDashboardDataAsync();
+            var data = await _dashboardService.GetDashoboardData();
             return View(data);
         }
 

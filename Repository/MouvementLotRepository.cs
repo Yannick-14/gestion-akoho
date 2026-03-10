@@ -38,9 +38,13 @@ namespace AkohoAspx.Repository
             var query = _dbContext.MouvementsLot.Where(mvt => mvt.LotId == lotId);
             if (dateActuelle.HasValue) query = query.Where(mvt => mvt.Creation <= dateActuelle.Value);
 
-            return await query
-                .Select(mvt => (int?)mvt.Nombre)
-                .SumAsync() ?? 0;
+            var mvts = await query.ToListAsync();
+            int total = 0;
+            foreach (var m in mvts)
+            {
+                total += m.Nombre;
+            }
+            return total;
         }
 
         // Recuperer juste le nombre restant dans un lot à cet instant
@@ -67,13 +71,13 @@ namespace AkohoAspx.Repository
             return lot.NombreInitial - totalMortPrecedent;
         }
 
-        public async Task<int> resteActuelleLot(int lotId)
+        public async Task<int> resteActuelleLot(int lotId, DateTime? dateActuelle)
         { 
             var lot = await _dbContext.Lots.FindAsync(lotId);
             if (lot == null) return 0;
 
             int totalMortPrecedent = await _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lotId)
+                .Where(mvt => mvt.LotId == lotId && mvt.Creation <= dateActuelle.Value)
                 .Select(mvt => (int?)mvt.Nombre)
                 .SumAsync() ?? 0;
 
