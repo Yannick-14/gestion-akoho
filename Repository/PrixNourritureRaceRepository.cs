@@ -16,7 +16,7 @@ namespace AkohoAspx.Repository
             _dbContext = dbContext;
         }
 
-        // Recuperer le dernier prix de donnée de prix de nourriture pour une race
+        // Recuperer le dernier prix de donnée de prix de nourriture pour une race (hebdomaire)
         public async Task<PrixNourritureRace> GetLatestPrixNourritureRaceId(int raceId)
         {
             return await _dbContext.PrixNourrituresRace
