@@ -8,6 +8,7 @@ namespace AkohoAspx.Models
         public string Nom { get; set; }
         public int DureEclosionOeuf { get; set; }
         public int PoidsDefaut { get; set; }
+        public int CapacitePondesion { get; set; }
 
         public virtual ICollection<CroissancePoidsRace> CroissancesPoids { get; set; }
         public virtual ICollection<CroissanceAlimentRace> CroissancesAliment { get; set; }

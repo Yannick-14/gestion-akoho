@@ -24,6 +24,8 @@ namespace AkohoAspx.Data
         public virtual DbSet<PrixVenteRace>        PrixVentesRace         { get; set; }
         public virtual DbSet<PrixNourritureRace>   PrixNourrituresRace    { get; set; }
         public virtual DbSet<MouvementLot>         MouvementsLot          { get; set; }
+        public virtual DbSet<ParametrePondetionOeuf> ParametresPondesionOeuf { get; set; }
+        public virtual DbSet<PrixVenteAtody>       PrixVentesAtody        { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -42,6 +44,8 @@ namespace AkohoAspx.Data
                 .HasColumnName("dureEclosionOeuf");
             modelBuilder.Entity<Race>().Property(e => e.PoidsDefaut)
                 .HasColumnName("poidsDefaut");
+            modelBuilder.Entity<Race>().Property(e => e.CapacitePondesion)
+                .HasColumnName("capacitePondesion");
 
             // ── croissancePoidsRace ─────────────────────────────────
             modelBuilder.Entity<CroissancePoidsRace>()
@@ -125,6 +129,56 @@ namespace AkohoAspx.Data
                 .HasForeignKey(e => e.LotParentId)
                 .WillCascadeOnDelete(false);
 
+            // ── Parametre podesion oeuf ────────────────────────────
+            modelBuilder.Entity<ParametrePondetionOeuf>()
+                .ToTable("ParametrePondetionOeuf")
+                .HasKey(e => e.Id);
+
+            modelBuilder.Entity<ParametrePondetionOeuf>().Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<ParametrePondetionOeuf>().Property(e => e.LotOeufId)
+                .HasColumnName("lotOeufId");
+
+            modelBuilder.Entity<ParametrePondetionOeuf>().Property(e => e.PourcentageMal)
+                .HasColumnName("pourcentageMal");
+
+            modelBuilder.Entity<ParametrePondetionOeuf>().Property(e => e.PourcentageFemelle)
+                .HasColumnName("pourcentageFemelle");
+
+            modelBuilder.Entity<ParametrePondetionOeuf>()
+                .HasRequired(e => e.LotOeuf)
+                .WithMany()
+                .HasForeignKey(e => e.LotOeufId)
+                .WillCascadeOnDelete(false);
+
+            // ── prixVenteAtody ──────────────────────────────────────
+            modelBuilder.Entity<PrixVenteAtody>()
+                .ToTable("prixVenteAtody")
+                .HasKey(e => e.Id);
+
+            modelBuilder.Entity<PrixVenteAtody>().Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+
+            modelBuilder.Entity<PrixVenteAtody>().Property(e => e.Creation)
+                .HasColumnName("creation")
+                .HasColumnType("datetime");
+
+            modelBuilder.Entity<PrixVenteAtody>().Property(e => e.RaceId)
+                .HasColumnName("raceId");
+
+            modelBuilder.Entity<PrixVenteAtody>().Property(e => e.Prix)
+                .HasColumnName("prix")
+                .HasPrecision(10, 2);
+
+            modelBuilder.Entity<PrixVenteAtody>()
+                .HasRequired(e => e.Race)
+                .WithMany()
+                .HasForeignKey(e => e.RaceId)
+                .WillCascadeOnDelete(false);
+
             // ── lot ─────────────────────────────────────────────────
             modelBuilder.Entity<Lot>()
                 .ToTable("lot")
@@ -150,6 +204,8 @@ namespace AkohoAspx.Data
                 .HasPrecision(10, 2);
             modelBuilder.Entity<Lot>().Property(e => e.LotOeufId)
                 .HasColumnName("lotOeufId");
+            modelBuilder.Entity<Lot>().Property(e => e.MaxCapacitePondesion)
+                .HasColumnName("maxCapacitePondesion");
 
             modelBuilder.Entity<Lot>()
                 .HasRequired(e => e.Race)

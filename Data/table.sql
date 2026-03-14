@@ -29,6 +29,7 @@ CREATE TABLE dbo.race
     nom NVARCHAR(80) NOT NULL,
     dureEclosionOeuf INT NOT NULL,
     poidsDefaut INT NOT NULL,
+    capacitePondesion INT NOT NULL CONSTRAINT DF_race_pondesion DEFAULT (0),
     CONSTRAINT PK_race PRIMARY KEY CLUSTERED (id),
     CONSTRAINT CK_race_dureEclosionOeuf_nonnegative CHECK (dureEclosionOeuf >= 0),
     CONSTRAINT CK_race_poidsDefaut_nonnegative CHECK (poidsDefaut >= 0)
@@ -69,12 +70,22 @@ CREATE TABLE dbo.lotOeuf
     lotParentId INT NOT NULL,
     raceId INT NOT NULL,
     nbOeufs INT NOT NULL,
-    pourcentage DECIMAL(10,2) NOT NULL,
+    pourcentage DECIMAL(10,2) NULL,
     validation BIT NOT NULL CONSTRAINT DF_lotOeuf_validation DEFAULT 0,  -- FALSE par défaut
     CONSTRAINT PK_lotOeuf PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_lotOeuf_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
     CONSTRAINT CK_lotOeuf_nbOeufs_nonnegative CHECK (nbOeufs >= 0),
     CONSTRAINT CK_lotOeuf_pourcentage_nonnegative CHECK (pourcentage >= 0)
+);
+GO
+
+CREATE TABLE dbo.parametrePondetionOeuf
+(
+    id INT IDENTITY(1,1) NOT NULL,
+    lotOeufId INT NOT NULL,
+    pourcentageMal INT NOT NULL,
+    pourcentageFemelle INT NOT NULL, 
+    CONSTRAINT FK_parametreLot_lotOeuf FOREIGN KEY (lotOeufId) REFERENCES dbo.lotOeuf(id)
 );
 GO
 
@@ -88,6 +99,7 @@ CREATE TABLE dbo.lot
     poidsInitiale INT NOT NULL,
     prixAchat DECIMAL(10,2) NOT NULL CONSTRAINT DF_lot_prixAchat DEFAULT (0),
     lotOeufId INT NULL,
+    maxCapacitePondesion INT NOT NULL,
     CONSTRAINT PK_lot PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_lot_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
     CONSTRAINT CK_lot_nombreInitial_nonnegative CHECK (nombreInitial >= 0),
@@ -125,6 +137,18 @@ CREATE TABLE dbo.prixNourritureRace
     CONSTRAINT FK_prixNourritureRace_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
     CONSTRAINT CK_prixNourritureRace_prix_nonnegative CHECK (prix >= 0),
     CONSTRAINT CK_prixNourritureRace_valeurGrame_positive CHECK (valeurGrame >= 0)
+);
+GO
+
+CREATE TABLE dbo.prixVenteAtody
+(
+    id INT IDENTITY(1,1) NOT NULL,
+    creation DATETIME NOT NULL CONSTRAINT DF_prixVenteAtody_creation DEFAULT (GETDATE()),
+    raceId INT NOT NULL,
+    prix DECIMAL(10,2) NOT NULL,
+    CONSTRAINT PK_prixVenteAtody PRIMARY KEY CLUSTERED (id),
+    CONSTRAINT FK_prixVenteAtody_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
+    CONSTRAINT CK_prixVenteAtody_prix_nonnegative CHECK (prix >= 0)
 );
 GO
 
