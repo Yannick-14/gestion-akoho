@@ -20,7 +20,7 @@ namespace AkohoAspx.Models
         public decimal DepenseNourriture { get; set; }
         public decimal PrixVenteLot { get; set; }
         public int SemaineEcoulee { get; set; }
-        public int PoidsActuelUnitaire { get; set; }
+        public decimal PoidsActuelUnitaire { get; set; }
         public decimal PrixVenteRaceUnitaire { get; set; }
         public decimal Benefice { get; set; }
         public int MaxWeek { get; set; }

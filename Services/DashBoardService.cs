@@ -147,7 +147,7 @@ namespace AkohoAspx.Services
             return poidsTotal * prixGramme.Prix;
         }
 
-        private async Task<int> GetPoidsFinalUnitaireAsync(Lot lot, DateTime dateActuelle)
+        private async Task<decimal> GetPoidsFinalUnitaireAsync(Lot lot, DateTime dateActuelle)
         {
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
 
@@ -157,7 +157,7 @@ namespace AkohoAspx.Services
             var croissancesPoids = await _croissanceRepository.getCroissancePoidsRace(lot.RaceId, semainesEcoulees);
             if (croissancesPoids == null || croissancesPoids.Count == 0) return lot.PoidsInitiale;
 
-            int poidsCumule = lot.PoidsInitiale != 0 ? lot.PoidsInitiale : croissancesPoids[0].PoidsMoyen;
+            decimal poidsCumule = lot.PoidsInitiale != 0 ? lot.PoidsInitiale : croissancesPoids[0].PoidsMoyen;
             int joursDerniereSemaine = Time.getJoursEcouleesDerniereSemaine(lot.Creation, dateActuelle);
             // Console.WriteLine($"joursDerniereSemaine: {joursDerniereSemaine}");
 
@@ -171,7 +171,7 @@ namespace AkohoAspx.Services
                 if (cp.ValueSemaine == semainesEcoulees && joursDerniereSemaine < 7)
                 {
                     double poidsJournalier = cp.PoidsMoyen / 7.0;
-                    poidsCumule += (int)Math.Round(poidsJournalier * joursDerniereSemaine);
+                    poidsCumule += (decimal) poidsJournalier * joursDerniereSemaine;
                 }
                 else
                 {
