@@ -15,19 +15,12 @@ namespace AkohoAspx.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<PrixVenteAtody> GetLatestByRaceAsync(int raceId)
+        public async Task<PrixVenteAtody> GetPrixVenteAtody(int raceId)
         {
             return await _dbContext.PrixVentesAtody
                 .Where(p => p.RaceId == raceId)
                 .OrderByDescending(p => p.Creation)
                 .FirstOrDefaultAsync();
-        }
-
-        public async Task<PrixVenteAtody> AddAsync(PrixVenteAtody prix)
-        {
-            _dbContext.PrixVentesAtody.Add(prix);
-            await _dbContext.SaveChangesAsync();
-            return prix;
         }
     }
 }

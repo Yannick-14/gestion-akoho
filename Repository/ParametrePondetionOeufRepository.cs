@@ -16,16 +16,16 @@ namespace AkohoAspx.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<ParametrePondetionOeuf> creationLot(ParametrePondetionOeuf parametres)
+        public async Task<ParametrePondetionOeuf> creationParametre(ParametrePondetionOeuf parametres)
         {
-            _dbContext.ParametresPondesionOeuf.Add(parametres);
+            _dbContext.ParametresPondetionOeuf.Add(parametres);
             await _dbContext.SaveChangesAsync();
             return parametres;
         }
 
-        public async Task<ParametrePondetionOeuf> getInfoIntialeLot(int lotId)
+        public async Task<ParametrePondetionOeuf> getParametreLotOeufPourcentage(int lotId)
         {
-            return await _dbContext.ParametresPondesionOeuf
+            return await _dbContext.ParametresPondetionOeuf
                 .Where(l => l.LotOeufId == lotId)
                 .FirstOrDefaultAsync();
         }

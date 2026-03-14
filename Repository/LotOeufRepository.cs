@@ -71,5 +71,16 @@ namespace AkohoAspx.Repository
             await _dbContext.SaveChangesAsync();
             return lotOeuf;
         }
+
+        public async Task<int> totaliteOeufsLotPondu(int lotParentId, DateTime? dateActuelle  = null)
+        {
+            DateTime dateRef = dateActuelle ?? Time.GetDateActuelle();
+
+            int totaliteActualiser = await _dbContext.LotsOeuf
+                .Where(lo => lo.LotParentId == lotParentId && lo.Creation <= dateRef)
+                .Select(lo => (int?)lo.NbOeufs)
+                .SumAsync() ?? 0;
+            return totaliteActualiser;
+        }
     }
 }

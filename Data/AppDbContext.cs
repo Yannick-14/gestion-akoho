@@ -24,7 +24,7 @@ namespace AkohoAspx.Data
         public virtual DbSet<PrixVenteRace>        PrixVentesRace         { get; set; }
         public virtual DbSet<PrixNourritureRace>   PrixNourrituresRace    { get; set; }
         public virtual DbSet<MouvementLot>         MouvementsLot          { get; set; }
-        public virtual DbSet<ParametrePondetionOeuf> ParametresPondesionOeuf { get; set; }
+        public virtual DbSet<ParametrePondetionOeuf> ParametresPondetionOeuf { get; set; }
         public virtual DbSet<PrixVenteAtody>       PrixVentesAtody        { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -44,8 +44,8 @@ namespace AkohoAspx.Data
                 .HasColumnName("dureEclosionOeuf");
             modelBuilder.Entity<Race>().Property(e => e.PoidsDefaut)
                 .HasColumnName("poidsDefaut");
-            modelBuilder.Entity<Race>().Property(e => e.CapacitePondesion)
-                .HasColumnName("capacitePondesion");
+            modelBuilder.Entity<Race>().Property(e => e.CapacitePondetion)
+                .HasColumnName("capacitePondetion");
 
             // ── croissancePoidsRace ─────────────────────────────────
             modelBuilder.Entity<CroissancePoidsRace>()
@@ -204,8 +204,8 @@ namespace AkohoAspx.Data
                 .HasPrecision(10, 2);
             modelBuilder.Entity<Lot>().Property(e => e.LotOeufId)
                 .HasColumnName("lotOeufId");
-            modelBuilder.Entity<Lot>().Property(e => e.MaxCapacitePondesion)
-                .HasColumnName("maxCapacitePondesion");
+            modelBuilder.Entity<Lot>().Property(e => e.MaxCapacitePondetion)
+                .HasColumnName("maxCapacitePondetion");
 
             modelBuilder.Entity<Lot>()
                 .HasRequired(e => e.Race)

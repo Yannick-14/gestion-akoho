@@ -29,7 +29,7 @@ CREATE TABLE dbo.race
     nom NVARCHAR(80) NOT NULL,
     dureEclosionOeuf INT NOT NULL,
     poidsDefaut INT NOT NULL,
-    capacitePondesion INT NOT NULL CONSTRAINT DF_race_pondesion DEFAULT (0),
+    capacitePondetion INT NOT NULL CONSTRAINT DF_race_pondetion DEFAULT (0),
     CONSTRAINT PK_race PRIMARY KEY CLUSTERED (id),
     CONSTRAINT CK_race_dureEclosionOeuf_nonnegative CHECK (dureEclosionOeuf >= 0),
     CONSTRAINT CK_race_poidsDefaut_nonnegative CHECK (poidsDefaut >= 0)
@@ -99,7 +99,7 @@ CREATE TABLE dbo.lot
     poidsInitiale INT NOT NULL,
     prixAchat DECIMAL(10,2) NOT NULL CONSTRAINT DF_lot_prixAchat DEFAULT (0),
     lotOeufId INT NULL,
-    maxCapacitePondesion INT NOT NULL,
+    maxCapacitePondetion INT NOT NULL,
     CONSTRAINT PK_lot PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_lot_race FOREIGN KEY (raceId) REFERENCES dbo.race(id),
     CONSTRAINT CK_lot_nombreInitial_nonnegative CHECK (nombreInitial >= 0),

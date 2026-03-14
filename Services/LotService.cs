@@ -40,6 +40,7 @@ namespace AkohoAspx.Services
 
         public async Task<OperationResult> CreateLotAsync(FormCollection requestForm)
         {
+            // recuperation des champs de formulaire
             string nomLotRaw = requestForm != null ? requestForm["nomLot"] : null;
             string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
             string nombreInitialRaw = requestForm != null ? requestForm["nombreInitial"] : null;
@@ -54,12 +55,17 @@ namespace AkohoAspx.Services
 
             string totalRaw = totalInvestiRaw ?? "0";
             decimal totalInvesti;
+            int pondetioRace = 0;
+            int capacite = 0;
+
             bool totalOk = decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.CurrentCulture, out totalInvesti) || decimal.TryParse(totalRaw, NumberStyles.Number, CultureInfo.InvariantCulture, out totalInvesti);
 
             if (string.IsNullOrWhiteSpace(nomLot) || raceId <= 0 || nombreInitial <= 0 || poidsAchat <= 0) return OperationResult.Failure("Donnees invalides. Verifiez les champs du formulaire.");
 
             if (!await _raceRepository.ExistsAsync(raceId)) return OperationResult.Failure("Race introuvable.");
 
+            pondetioRace = await _raceRepository.getNombrePendetionRace(raceId);
+            capacite = pondetioRace * nombreInitial;
             var lot = new Lot
             {
                 NomLot = nomLot,
@@ -68,6 +74,7 @@ namespace AkohoAspx.Services
                 PoidsInitiale = poidsAchat,
                 PrixAchat = totalInvesti,
                 Creation = DateTime.Now
+                MaxCapacitePondetion = capacite
             };
 
             try
