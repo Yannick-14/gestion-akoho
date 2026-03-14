@@ -47,6 +47,10 @@ namespace AkohoAspx.Services
             } catch (Exception ex) { return OperationResult.Failure("Erreur de transaction: " + ex.Message); }
         }
 
+        /*Restreint le jour où il y a une perte et l'exclure de la semaine
+        *Recuperer les jours de cette où il n'y a pas de perte
+        *Recuperer la totalite
+        */
 
         public void Dispose() { _dbContext.Dispose(); }
     }

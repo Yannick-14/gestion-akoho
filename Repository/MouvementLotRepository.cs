@@ -48,40 +48,19 @@ namespace AkohoAspx.Repository
         }
 
         // Recuperer juste le nombre restant dans un lot à cet instant
-        public async Task<int> resteNombreRaceActuelleLot(int lotId, DateTime? dateActuelle = null)
-        { 
+        public async Task<int> resteActuelleLot(int lotId, DateTime? dateActuelle  = null)
+        {
             var lot = await _dbContext.Lots.FindAsync(lotId);
             if (lot == null) return 0;
 
-            var dateRef = dateActuelle ?? Time.GetDateActuelle();
-            int semaineActuelle = Time.getSemaineEcouler(lot.Creation, dateRef);
+            DateTime dateRef = dateActuelle ?? Time.GetDateActuelle();
 
-            if (semaineActuelle <= 1) return lot.NombreInitial;
-
-            // Déduction retardée : On ne déduit que les morts des semaines PRÉCÉDENTES
-            // Semaine 2 affiche le reste après les morts de la Semaine 1.
-            int finSemainePrecedenteJours = (semaineActuelle - 1) * 7;
-            DateTime dateLimite = lot.Creation.AddDays(finSemainePrecedenteJours);
-
-            int totalMortPrecedent = await _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lotId && mvt.Creation < dateLimite)
+            int totalPerteActualiser = await _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lotId && mvt.Creation <= dateRef)
                 .Select(mvt => (int?)mvt.Nombre)
                 .SumAsync() ?? 0;
 
-            return lot.NombreInitial - totalMortPrecedent;
-        }
-
-        public async Task<int> resteActuelleLot(int lotId, DateTime? dateActuelle)
-        { 
-            var lot = await _dbContext.Lots.FindAsync(lotId);
-            if (lot == null) return 0;
-
-            int totalMortPrecedent = await _dbContext.MouvementsLot
-                .Where(mvt => mvt.LotId == lotId && mvt.Creation <= dateActuelle.Value)
-                .Select(mvt => (int?)mvt.Nombre)
-                .SumAsync() ?? 0;
-
-            return lot.NombreInitial - totalMortPrecedent;
+            return lot.NombreInitial - totalPerteActualiser;
         }
 
         // Recuperer le reste de nombre restant à chaque semaine jusqu' à l'actuelle par rappport à la création du lot

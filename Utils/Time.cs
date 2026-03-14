@@ -1,15 +1,17 @@
 using System;
+using System.Web;
 
 namespace AkohoAspx.Utils
 {
     public class Time
     {
-        // ✅ Getter static qui lit depuis la Session ou retourne DateTime.Now
+        private static HttpContext Current => HttpContext.Current;
+        // Getter qui lit depuis la Session ou retourne DateTime.Now
         public static DateTime GetDateActuelle()
         {
-            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null && System.Web.HttpContext.Current.Session["DateActuelle"] != null)
+            if (Current != null && Current.Session != null && Current.Session["DateActuelle"] != null)
             {
-                if (System.Web.HttpContext.Current.Session["DateActuelle"] is DateTime dateActuelle)
+                if (Current.Session["DateActuelle"] is DateTime dateActuelle)
                 {
                     return dateActuelle;
                 }
@@ -17,22 +19,17 @@ namespace AkohoAspx.Utils
             return DateTime.Now;
         }
 
-        // ✅ Setter static qui écrit dans la Session
         public static void SetDateActuelle(DateTime date)
         {
-            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null)
+            if (Current != null && Current.Session != null)
             {
-                System.Web.HttpContext.Current.Session["DateActuelle"] = date;
+                Current.Session["DateActuelle"] = date;
             }
         }
 
-        // ✅ Reset static qui vide la Session
         public static void ResetDateActuelle()
         {
-            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Session != null)
-            {
-                System.Web.HttpContext.Current.Session.Remove("DateActuelle");
-            }
+            if (Current != null && Current.Session != null) { Current.Session.Remove("DateActuelle"); }
         }
 
         public static DateTime creationDateAvecJour(int jours)

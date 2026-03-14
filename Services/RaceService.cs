@@ -15,7 +15,7 @@ namespace AkohoAspx.Services
         private readonly AppDbContext _dbContext;
         private readonly RaceRepository _raceRepository;
         private readonly CroissanceRepository _croissanceRepository;
-        private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository;
+        // private readonly PrixVenteRacePoidsRepository _prixVenteRacePoidsRepository;
 
         public RaceService() : this(new AppDbContext()) {}
 
@@ -24,7 +24,7 @@ namespace AkohoAspx.Services
             _dbContext = dbContext;
             _raceRepository = new RaceRepository(_dbContext);
             _croissanceRepository = new CroissanceRepository(_dbContext);
-            _prixVenteRacePoidsRepository = new PrixVenteRacePoidsRepository(_dbContext);
+            // _prixVenteRacePoidsRepository = new PrixVenteRacePoidsRepository(_dbContext);
         }
 
         public async Task<RaceIndexData> GetIndexDataAsync(object currentRaceSessionValue)
@@ -48,22 +48,22 @@ namespace AkohoAspx.Services
             return OperationResult.Success((left.Count + right.Count) + " ligne(s) inseree(s) pour la race " + raceId + ".");
         }
 
-        public async Task<OperationResult> AddPrixUnitaireAsync(FormCollection requestForm)
-        {
-            string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
-            string prixRaw = requestForm != null ? requestForm["prix"] : null;
-            int resolvedRaceId = ParseInt(raceIdRaw);
-            if (resolvedRaceId <= 0) return OperationResult.Failure("Aucune race active dans la session.");
+        // public async Task<OperationResult> AddPrixUnitaireAsync(FormCollection requestForm)
+        // {
+        //     string raceIdRaw = requestForm != null ? requestForm["raceId"] : null;
+        //     string prixRaw = requestForm != null ? requestForm["prix"] : null;
+        //     int resolvedRaceId = ParseInt(raceIdRaw);
+        //     if (resolvedRaceId <= 0) return OperationResult.Failure("Aucune race active dans la session.");
 
-            decimal prix = ParseDecimal(prixRaw);
-            await _prixVenteRacePoidsRepository.Creation(new PrixVenteRace
-            {
-                RaceId = resolvedRaceId,
-                Prix = prix
-            });
+        //     decimal prix = ParseDecimal(prixRaw);
+        //     await _prixVenteRacePoidsRepository.Creation(new PrixVenteRace
+        //     {
+        //         RaceId = resolvedRaceId,
+        //         Prix = prix
+        //     });
 
-            return OperationResult.Success("Prix enregistre pour la race " + resolvedRaceId + ": " + prix);
-        }
+        //     return OperationResult.Success("Prix enregistre pour la race " + resolvedRaceId + ": " + prix);
+        // }
 
         public OperationResult BuildResetCurrentRaceResult() { return OperationResult.Success("Race active retiree de la session."); }
 

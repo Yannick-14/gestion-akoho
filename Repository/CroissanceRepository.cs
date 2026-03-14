@@ -26,10 +26,11 @@ namespace AkohoAspx.Repository
         }
 
         // Recuperer toutes les croissance par semaine d'une race pour ses poids
-        public async Task<IReadOnlyList<CroissancePoidsRace>> getCroissancePoidsRace(int raceId)
+        public async Task<IReadOnlyList<CroissancePoidsRace>> getCroissancePoidsRace(int raceId, int? semaine = null)
         {
             return await _dbContext.CroissancesPoidsRace
-                .Where(c => c.RaceId == raceId)
+                .Where(c => c.RaceId == raceId && c.ValueSemaine <= semaine)
+                .OrderBy(c => c.ValueSemaine)
                 .ToListAsync();
         }
 

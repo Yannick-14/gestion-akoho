@@ -7,7 +7,7 @@ VALUES
     (N'Borboneze', 30, 50);
 GO
 
--- Croissance poids pour 5 semaines
+-- Croissance poids
 INSERT INTO dbo.croissancePoidsRace (raceId, valueSemaine, poidsMoyen)
 VALUES
     (1, 0, 50),

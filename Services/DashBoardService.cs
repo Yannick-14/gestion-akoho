@@ -119,7 +119,6 @@ namespace AkohoAspx.Services
                 int consommationGrammes = croissanceSemaine != null ? croissanceSemaine.PoidsMoyen : 0;
                 
                 if (consommationGrammes == 0 || pouletsVivants == 0) continue;
-                Console.WriteLine($"lot {lot.NomLot} semaine: {s} sakafo lany: {consommationGrammes} reste {pouletsVivants} prixsakafo {prixUnitaireGramme}");
 
                 decimal coutSemaine = pouletsVivants * consommationGrammes * prixUnitaireGramme;
                 coutTotal += coutSemaine;
@@ -133,28 +132,29 @@ namespace AkohoAspx.Services
         {
             int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateActuelle);
 
-            // S0 = Moins de 7 jours révolus = Poids Initial seulement. 
-            // Avec la nouvelle logique, on veut que le cumul ne commence qu'APRES la première semaine complète ou entamée ?
-            // L'utilisateur dit : 10j = 2 semaines. Donc S0 < 1 semaine ?
             TimeSpan diff = dateActuelle - lot.Creation;
             if (diff.TotalDays < 7) return lot.PoidsInitiale;
 
+            var croissancesPoids = await _croissanceRepository.getCroissancePoidsRace(lot.RaceId, semainesEcoulees);
+            int poidsCumule = lot.PoidsInitiale != 0 ? lot.PoidsInitiale : croissancesPoids[0].PoidsMoyen;
 
-            var croissancesPoids = await _dbContext.CroissancesPoidsRace
-                .Where(c => c.RaceId == lot.RaceId)
-                .OrderBy(c => c.ValueSemaine)
-                .ToListAsync();
-
-            int poidsCumule = lot.PoidsInitiale;
-
-            // Somme cumulative des gains des semaines ÉXISTANTES dans la table (l'augmentation s'arrête à la fin de la table)
-            foreach (var cp in croissancesPoids.Where(c => c.ValueSemaine <= semainesEcoulees))
+            foreach (var cp in croissancesPoids)
             {
+                if (lot.PoidsInitiale != 0 && cp == croissancesPoids[0])
+                {
+                    continue;
+                }
                 poidsCumule += cp.PoidsMoyen;
             }
 
             return poidsCumule;
         }
+
+        // calculer le total de prix de vente d'un lot par poids au poids unitaire d'une race avec reference de date actuelle
+        // private async Task<decimal> GetPrixVenteTotalPoids(decimal poidsUnitaire, int raceId) {
+        //     var prixVentePoids = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(raceId);
+        //     int totalAkohoActualiser = await 
+        // }
 
         public void Dispose()
         {

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using AkohoAspx.Models;
 using AkohoAspx.Services;
+using AkohoAspx.Utils;
 using AkohoAspx.Services.Results;
 
 namespace AkohoAspx.Controllers
@@ -53,7 +54,7 @@ namespace AkohoAspx.Controllers
             if (DateActualiser.HasValue)
             {
                 var dateFinDeJour = DateActualiser.Value.Date.AddDays(1).AddTicks(-1);
-                AkohoAspx.Utils.Time.SetDateActuelle(dateFinDeJour);
+                Time.SetDateActuelle(dateFinDeJour);
             }
             return RedirectToAction("Index");
         }
@@ -61,7 +62,7 @@ namespace AkohoAspx.Controllers
         [HttpPost]
         public ActionResult ResetDate()
         {
-            AkohoAspx.Utils.Time.ResetDateActuelle();
+            Time.ResetDateActuelle();
             return RedirectToAction("Index");
         }
 
