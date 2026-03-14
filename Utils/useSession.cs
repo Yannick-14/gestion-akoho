@@ -15,7 +15,7 @@ namespace AkohoAspx.Utils
             }
         }
 
-        private void getSessionDate()
+        private DateTime getSessionDate()
         {
             if (Current != null && Current.Session != null && Current.Session["DateActuelle"] != null)
             {
@@ -24,6 +24,7 @@ namespace AkohoAspx.Utils
                     return dateActuelle;
                 }
             }
+            return DateTime.Now;
         }
         public static void removeSessionDate()
         {

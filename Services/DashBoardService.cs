@@ -92,9 +92,14 @@ namespace AkohoAspx.Services
 
         private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, DateTime dateActuelle)
         {
-            int semaineActuelle = Time.getSemaineEcouler(lot.Creation, dateActuelle); // Utilise la nouvelle logique incluant la semaine entamée
+            int semaineActuelle = Time.getSemaineEcouler(lot.Creation, dateActuelle);
 
             if (semaineActuelle <= 0) return 0;
+
+            // Nombre de jours réellement utilisés dans la dernière semaine (1 à 7)
+            // Ex: semaine 5 commence le 29/01, dateActuelle = 31/01 → 3 jours (29, 30, 31)
+            int joursEcouleesDerniereSemaine = Time.getJoursEcouleesDerniereSemaine(lot.Creation, dateActuelle);
+            Console.WriteLine($"jours actif last semaine: {joursEcouleesDerniereSemaine}");
 
             var restesParSemaine = await _mouvementLotRepository.getResteParSemaine(lot, dateActuelle);
             
@@ -121,6 +126,14 @@ namespace AkohoAspx.Services
                 if (consommationGrammes == 0 || pouletsVivants == 0) continue;
 
                 decimal coutSemaine = pouletsVivants * consommationGrammes * prixUnitaireGramme;
+                Console.WriteLine($"Semaine: {s}");
+
+                // Pour la semaine courante (incomplète), on proratise selon les jours réellement utilisés
+                if (s == semaineActuelle && joursEcouleesDerniereSemaine < 7)
+                {
+                    coutSemaine = coutSemaine * joursEcouleesDerniereSemaine / 7m;
+                }
+
                 coutTotal += coutSemaine;
             }
 
