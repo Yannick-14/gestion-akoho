@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using AkohoAspx.Models;
 
-namespace AkohoAspx.Services
+namespace AkohoAspx.Models
 {
     public class LotRecap
     {

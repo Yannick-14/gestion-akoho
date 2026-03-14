@@ -161,8 +161,7 @@
     <div class="container py-4">
         <h1 class="mb-4 dashboard-title">Dashboard</h1>
 
-        <% var lotOeufsActifs = Model != null ? Model.LotOeufsActive : Enumerable.Empty<AkohoAspx.Models.LotOeuf>(); %>
-        <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Services.LotRecap>(); %>
+        <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Models.LotRecap>(); %>
 
         <section class="mb-4">
             <div class="col-12 col-md-5 col-lg-4 panel-soft p-3">
