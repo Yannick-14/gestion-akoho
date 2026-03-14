@@ -102,5 +102,96 @@ namespace AkohoAspx.Repository
 
             return resteParSemaine;
         }
+
+        /// <summary>
+        /// Retourne le flux journalier du reste pour chaque semaine.
+        /// Chaque élément de la liste = une semaine, sous forme d'une liste de restes journaliers (7 valeurs max).
+        ///
+        /// Exemple (NombreInitial=50, perte de 2 au J4 et perte de 2 au J7) :
+        ///   S1 → [50, 50, 50, 48, 48, 48, 46]
+        ///   S2 → [46, 46, 46, ...]   (commence au reste du dernier jour de S1)
+        ///
+        /// La semaine courante (incomplète) ne contient que les jours réellement écoulés.
+        /// </summary>
+        public async Task<List<List<int>>> getFluxJournalierParSemaine(Lot lot, DateTime? dateActuelle = null)
+        {
+            var result = new List<List<int>>();
+            if (lot == null) return result;
+
+            var dateReference = dateActuelle ?? Time.GetDateActuelle();
+            int semainesEcoulees = Time.getSemaineEcouler(lot.Creation, dateReference);
+            if (semainesEcoulees <= 0) return result;
+
+            // Chargement en mémoire de tous les mouvements du lot (tri par date)
+            var mouvements = await _dbContext.MouvementsLot
+                .Where(mvt => mvt.LotId == lot.Id
+                           && mvt.Creation >= lot.Creation
+                           && mvt.Creation <= dateReference)
+                .OrderBy(mvt => mvt.Creation)
+                .ToListAsync();
+
+            // Date de création normalisée (sans heure) comme référence du calendrier
+            DateTime dateCreationNorm = lot.Creation.Date;
+            DateTime dateReferenceNorm = dateReference.Date;
+
+            int resteActuel = Math.Max(0, lot.NombreInitial);
+
+            for (int s = 1; s <= semainesEcoulees; s++)
+            {
+                DateTime debutSemaine = dateCreationNorm.AddDays((s - 1) * 7);
+                DateTime finSemaine   = dateCreationNorm.AddDays(s * 7 - 1);
+
+                // Pour la dernière semaine on s'arrête à dateActuelle
+                if (finSemaine > dateReferenceNorm)
+                    finSemaine = dateReferenceNorm;
+
+                int nbJours = (int)(finSemaine - debutSemaine).TotalDays + 1;
+                var joursResteSemaine = new List<int>(nbJours);
+
+                for (int j = 0; j < nbJours; j++)
+                {
+                    DateTime jourCourant = debutSemaine.AddDays(j);
+
+                    // Appliquer les pertes du jour courant
+                    int perteDuJour = mouvements
+                        .Where(m => m.Creation.Date == jourCourant)
+                        .Sum(m => m.Nombre);
+
+                    resteActuel = Math.Max(0, resteActuel - perteDuJour);
+                    joursResteSemaine.Add(resteActuel);
+                }
+
+                result.Add(joursResteSemaine);
+            }
+            // Console.WriteLine("\n--- FLUX JOURNALIER ---");
+            // for (int s = 0; s < result.Count; s++)
+            // {
+            //     var jours = result[s];
+            //     Console.Write($"S{s + 1}: ");
+
+            //     int i = 0;
+            //     while (i < jours.Count)
+            //     {
+            //         int valeur = jours[i];
+            //         int debut  = i + 1; // 1-indexé
+
+            //         // Avancer tant que la valeur est identique
+            //         while (i < jours.Count && jours[i] == valeur) i++;
+
+            //         int fin = i; // 1-indexé (i pointe déjà sur le suivant)
+
+            //         if (debut == fin)
+            //             Console.Write($"J{debut} = {valeur}");
+            //         else
+            //             Console.Write($"J{debut}-J{fin} = {valeur}");
+
+            //         if (i < jours.Count) Console.Write(", ");
+            //     }
+            //     Console.WriteLine();
+            // }
+            // Console.WriteLine("--- FIN ---\n");
+
+            return result;
+        }
     }
 }
