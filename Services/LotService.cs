@@ -19,7 +19,6 @@ namespace AkohoAspx.Services
         private readonly MouvementLotRepository _mouvementLotRepository;
 
         public LotService() : this(new AppDbContext()) {}
-        public int getPoidsDefault() { return 150; }
 
         public LotService(AppDbContext dbContext)
         {

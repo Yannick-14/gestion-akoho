@@ -19,6 +19,7 @@ namespace AkohoAspx.Services
         private readonly PrixNourritureRaceRepository _prixNourritureRaceRepository;
         private readonly PrixVenteRaceRepository _prixVenteRaceRepository;
         private readonly MouvementLotRepository _mouvementLotRepository;
+        private readonly AlimentService alimentService;
 
         public DashboardService()
             : this(new AppDbContext())
@@ -34,6 +35,7 @@ namespace AkohoAspx.Services
             _prixNourritureRaceRepository = new PrixNourritureRaceRepository(_dbContext);
             _prixVenteRaceRepository = new PrixVenteRaceRepository(_dbContext);
             _mouvementLotRepository = new MouvementLotRepository(_dbContext);
+            alimentService = new AlimentService();
         }
 
         public async Task<Recap> GetDashoboardData()
@@ -58,28 +60,29 @@ namespace AkohoAspx.Services
                 lotRecap.MaxWeek = await _croissanceRepository.getMaxWeek(lot.RaceId);
 
                 lotRecap.NombreActuel = await _mouvementLotRepository.resteActuelleLot(lot.Id, dateActuelle);
-                lotRecap.DepenseNourriture = await GetTotalPrixNourritureParLotAsync(lot, dateActuelle);
+                lotRecap.DepenseNourriture = await depenseAlimentaireTotale(lot, dateActuelle);
                 lotRecap.PoidsActuelUnitaire = await GetPoidsFinalUnitaireAsync(lot, dateActuelle);
-
+                lotRecap.PrixVenteLot = await GetPrixVenteTotalPoids(lotRecap.PoidsActuelUnitaire, dateActuelle, lot);
                 // Calcul du prix de vente total estimé du lot à l'instant T
                 var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId);
-                if (prixVente != null)
-                {
-                    decimal prixUnitaire = prixVente.Prix / prixVente.ValeurGrame;
-                    lotRecap.PrixVenteRaceUnitaire = prixUnitaire;
+                lotRecap.PrixVenteRaceUnitaire = prixVente.Prix / prixVente.ValeurGrame;
+                // if (prixVente != null)
+                // {
+                //     decimal prixUnitaire = prixVente.Prix / prixVente.ValeurGrame;
+                //     lotRecap.PrixVenteRaceUnitaire = prixUnitaire;
 
-                    if (lotRecap.NombreActuel > 0)
-                    {
-                        decimal valeurParPlume = lotRecap.PoidsActuelUnitaire * prixUnitaire;
-                        lotRecap.PrixVenteLot = lotRecap.NombreActuel * valeurParPlume;
-                    }
-                    else { lotRecap.PrixVenteLot = 0; }
-                }
-                else
-                {
-                    lotRecap.PrixVenteRaceUnitaire = 0;
-                    lotRecap.PrixVenteLot = 0;
-                }
+                //     if (lotRecap.NombreActuel > 0)
+                //     {
+                //         decimal valeurParPlume = lotRecap.PoidsActuelUnitaire * prixUnitaire;
+                //         lotRecap.PrixVenteLot = lotRecap.NombreActuel * valeurParPlume;
+                //     }
+                //     else { lotRecap.PrixVenteLot = 0; }
+                // }
+                // else
+                // {
+                //     lotRecap.PrixVenteRaceUnitaire = 0;
+                //     lotRecap.PrixVenteLot = 0;
+                // }
 
                 // Calcul du Bénéfice
                 lotRecap.Benefice = lotRecap.PrixVenteLot - (lotRecap.DepenseNourriture + lot.PrixAchat);
@@ -90,55 +93,58 @@ namespace AkohoAspx.Services
             return recap;
         }
 
-        private async Task<decimal> GetTotalPrixNourritureParLotAsync(Lot lot, DateTime dateActuelle)
-        {
-            int semaineActuelle = Time.getSemaineEcouler(lot.Creation, dateActuelle);
-
-            if (semaineActuelle <= 0) return 0;
-
-            // Nombre de jours réellement utilisés dans la dernière semaine (1 à 7)
-            // Ex: semaine 5 commence le 29/01, dateActuelle = 31/01 → 3 jours (29, 30, 31)
-            int joursEcouleesDerniereSemaine = Time.getJoursEcouleesDerniereSemaine(lot.Creation, dateActuelle);
-            Console.WriteLine($"jours actif last semaine: {joursEcouleesDerniereSemaine}");
-
-            var restesParSemaine = await _mouvementLotRepository.getResteParSemaine(lot, dateActuelle);
+        private async Task<decimal> getSakafoGrammeDepenser(Lot lot, DateTime dateActuelle) {
+            var fluxJournalier = await _mouvementLotRepository.getFluxJournalierParSemaine(lot, dateActuelle);
             
-            var croissancesAliment = await _dbContext.CroissancesAlimentRace
-                .Where(c => c.RaceId == lot.RaceId)
-                .OrderBy(c => c.ValueSemaine)
-                .ToListAsync();
+            var croissancesAliment = await _croissanceRepository.getCroissanceAlimentRace(lot.RaceId);
 
-            var prixApplicable = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId);
-            if (prixApplicable == null) return 0;
-
-            decimal prixUnitaireGramme = prixApplicable.Prix / prixApplicable.ValeurGrame;
-            decimal coutTotal = 0;
-
-            for (int s = 1; s <= semaineActuelle; s++)
+            Console.WriteLine($"\n--- FLUX JOURNALIER LOT {lot.NomLot} ---");
+            decimal totalPoidsActualiser = 0.0M;
+            for (int i = 0; i < fluxJournalier.Count; i++)
             {
-                int pouletsVivants = s <= restesParSemaine.Count ? restesParSemaine[s - 1] : (restesParSemaine.LastOrDefault() == 0 && restesParSemaine.Count == 0 ? lot.NombreInitial : restesParSemaine.LastOrDefault());
+                var jours = fluxJournalier[i];
+                int s = i + 1; // Numéro de semaine pour l'affichage
                 
-                var croissanceSemaine = croissancesAliment.FirstOrDefault(c => c.ValueSemaine == s) 
-                                        ?? croissancesAliment.LastOrDefault(c => c.ValueSemaine <= s) 
+                var croissanceSemaine = croissancesAliment.FirstOrDefault(c => c.ValueSemaine == s)
+                                        ?? croissancesAliment.LastOrDefault(c => c.ValueSemaine <= s)
                                         ?? croissancesAliment.FirstOrDefault();
-                int consommationGrammes = croissanceSemaine != null ? croissanceSemaine.PoidsMoyen : 0;
+
+                decimal poidsHebdo = croissanceSemaine != null ? croissanceSemaine.PoidsMoyen : 0;
+                // decimal poidsJournalier = poidsHebdo / 7m;
+
+                // Console.WriteLine($"s {s} - jours count {jours.Count} | Poids Hebdo: {poidsHebdo}g | Poids/Jour: {poidsJournalier:F2}g");
                 
-                if (consommationGrammes == 0 || pouletsVivants == 0) continue;
-
-                decimal coutSemaine = pouletsVivants * consommationGrammes * prixUnitaireGramme;
-                Console.WriteLine($"Semaine: {s}");
-
-                // Pour la semaine courante (incomplète), on proratise selon les jours réellement utilisés
-                if (s == semaineActuelle && joursEcouleesDerniereSemaine < 7)
+                Console.Write($"S{s}: ");
+                int jourIdx = 0;
+                while (jourIdx < jours.Count)
                 {
-                    coutSemaine = coutSemaine * joursEcouleesDerniereSemaine / 7m;
+                    int valeur = jours[jourIdx];
+                    int debut  = jourIdx + 1;
+                    while (jourIdx < jours.Count && jours[jourIdx] == valeur) jourIdx++;
+                    int fin = jourIdx;
+                    int countJours = fin - debut + 1;
+
+                    // decimal poidsPeriode = countJours * poidsJournalier;
+                    decimal poidsPeriode = alimentService.getPoidsAlimentXjours(poidsHebdo, countJours);
+                    totalPoidsActualiser += poidsPeriode * valeur;
+
+                    if (debut == fin)
+                        Console.Write($"J{debut} = {valeur} (x{countJours}j = {poidsPeriode:F2}g)");
+                    else
+                        Console.Write($"J{debut}-J{fin} = {valeur} (x{countJours}j = {poidsPeriode:F2}g)");
+
+                    if (jourIdx < jours.Count) Console.Write(", ");
                 }
-
-                coutTotal += coutSemaine;
+                Console.WriteLine();
             }
+            Console.WriteLine($"total= {totalPoidsActualiser}--- FIN ---\n");
+            return totalPoidsActualiser;
+        }
 
-
-            return coutTotal;
+        private async Task<decimal> depenseAlimentaireTotale(Lot lot, DateTime dateActuelle) {
+            decimal poidsTotal = await getSakafoGrammeDepenser(lot, dateActuelle);
+            var prixGramme = await _prixNourritureRaceRepository.GetLatestPrixNourritureRaceId(lot.RaceId);
+            return poidsTotal * prixGramme.Prix;
         }
 
         private async Task<int> GetPoidsFinalUnitaireAsync(Lot lot, DateTime dateActuelle)
@@ -149,7 +155,11 @@ namespace AkohoAspx.Services
             if (diff.TotalDays < 7) return lot.PoidsInitiale;
 
             var croissancesPoids = await _croissanceRepository.getCroissancePoidsRace(lot.RaceId, semainesEcoulees);
+            if (croissancesPoids == null || croissancesPoids.Count == 0) return lot.PoidsInitiale;
+
             int poidsCumule = lot.PoidsInitiale != 0 ? lot.PoidsInitiale : croissancesPoids[0].PoidsMoyen;
+            int joursDerniereSemaine = Time.getJoursEcouleesDerniereSemaine(lot.Creation, dateActuelle);
+            // Console.WriteLine($"joursDerniereSemaine: {joursDerniereSemaine}");
 
             foreach (var cp in croissancesPoids)
             {
@@ -157,17 +167,27 @@ namespace AkohoAspx.Services
                 {
                     continue;
                 }
-                poidsCumule += cp.PoidsMoyen;
+
+                if (cp.ValueSemaine == semainesEcoulees && joursDerniereSemaine < 7)
+                {
+                    double poidsJournalier = cp.PoidsMoyen / 7.0;
+                    poidsCumule += (int)Math.Round(poidsJournalier * joursDerniereSemaine);
+                }
+                else
+                {
+                    poidsCumule += cp.PoidsMoyen;
+                }
             }
 
             return poidsCumule;
         }
 
         // calculer le total de prix de vente d'un lot par poids au poids unitaire d'une race avec reference de date actuelle
-        // private async Task<decimal> GetPrixVenteTotalPoids(decimal poidsUnitaire, int raceId) {
-        //     var prixVentePoids = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(raceId);
-        //     int totalAkohoActualiser = await 
-        // }
+        private async Task<decimal> GetPrixVenteTotalPoids(decimal poidsUnitaire, DateTime dateActuelle, Lot lot) {
+            var prixVentePoids = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId);
+            int totalAkohoActualiser = await _mouvementLotRepository.resteActuelleLot(lot.Id, dateActuelle);
+            return  ((decimal)totalAkohoActualiser * poidsUnitaire) * prixVentePoids.Prix;
+        }
 
         public void Dispose()
         {
