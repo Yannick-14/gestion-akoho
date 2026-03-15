@@ -29,15 +29,8 @@ namespace AkohoAspx.Services.Pondetion
         {
             int totalitePonduActualiser = await _lotOeufRepository.totaliteOeufsLotPondu(lotId, dateActuelle);
             int maxPondetionLot = await _pondetionRepository.getMaxCapacitePondetionLot(lotId);
-            while (maxPondetionLot > totalitePonduActualiser)
-            {
-                int reste = maxPondetionLot - totalitePonduActualiser;
-                while(reste > oeufsExtrait)
-                {
-                    return true;
-                }
-                return false;
-            }
+            
+            return (maxPondetionLot - totalitePonduActualiser) >= oeufsExtrait;
         }
 
         public void Dispose() { _dbContext.Dispose(); }

@@ -9,12 +9,14 @@ namespace AkohoAspx.Models
         public string NomLot { get; set; }
         public int RaceId { get; set; }
         public Race Race { get; set; }
+        public Lot lot { get; set; }
         public int NombreInitial { get; set; }
         public int PoidsInitiale { get; set; }
         public decimal PrixAchat { get; set; }
         public DateTime Creation { get; set; }
 
         // Calculs
+        public int ResteLotPondu { get; set; }
         public int NombreActuel { get; set; }
         public int NombreMort { get; set; }
         public decimal DepenseNourriture { get; set; }
@@ -29,6 +31,7 @@ namespace AkohoAspx.Models
 
         public LotRecap(Lot lot)
         {
+            this.lot = lot;
             Id = lot.Id;
             NomLot = lot.NomLot;
             RaceId = lot.RaceId;

@@ -40,7 +40,7 @@ namespace AkohoAspx.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateLotAtody(FormCollection requestForm)
         {
-            Console.WriteLine("anaty controller CreateLotAtody");
+            // Console.WriteLine("anaty controller CreateLotAtody");
             OperationResult result = await _lotOeufService.CreateLotOeuf(requestForm);
 
             SetLotTempData(result);

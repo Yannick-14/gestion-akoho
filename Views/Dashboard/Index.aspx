@@ -162,6 +162,18 @@
         <h1 class="mb-4 dashboard-title">Dashboard</h1>
 
         <% var lots = Model != null ? Model.Lots : Enumerable.Empty<AkohoAspx.Models.LotRecap>(); %>
+        <section>
+            <% if (TempData["LotError"] != null) { %>
+                <div class="alert alert-danger rounded-4 border-0 shadow-sm mb-4" role="alert">
+                    <strong>Erreur :</strong> <%: TempData["LotError"] %>
+                </div>
+            <% } %>
+            <% if (TempData["LotSuccess"] != null) { %>
+                <div class="alert alert-success rounded-4 border-0 shadow-sm mb-4" role="alert">
+                    <strong>Succès :</strong> <%: TempData["LotSuccess"] %>
+                </div>
+            <% } %>
+        </section>
 
         <section class="mb-4">
             <div class="col-12 col-md-5 col-lg-4 panel-soft p-3">
@@ -258,7 +270,16 @@
                                                 <div class="modal-kpi"><span>ID</span><strong><%: lot.Id %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
+                                                <div class="modal-kpi"><span>Max capacite lot</span><strong><%: lot.lot.MaxCapacitePondetion %></strong></div>
+                                            </div>
+                                            <div class="col-6 col-md-4">
+                                                <div class="modal-kpi"><span>Reste a pondre</span><strong><%: lot.ResteLotPondu %></strong></div>
+                                            </div>
+                                            <div class="col-6 col-md-4">
                                                 <div class="modal-kpi"><span>Race</span><strong><%: lot.Race != null ? lot.Race.Nom : lot.RaceId.ToString() %></strong></div>
+                                            </div>
+                                            <div class="col-6 col-md-4">
+                                                <div class="modal-kpi"><span>Pondu Unit Race</span><strong><%: lot.Race.CapacitePondetion %></strong></div>
                                             </div>
                                             <div class="col-6 col-md-4">
                                                 <div class="modal-kpi"><span>Nombre initial</span><strong><%: lot.NombreInitial %></strong></div>

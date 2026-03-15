@@ -7,6 +7,7 @@ using AkohoAspx.Models;
 using AkohoAspx.Repository;
 using AkohoAspx.Utils;
 using AkohoAspx.Services.Results;
+using AkohoAspx.Services.Pondetion;
 
 namespace AkohoAspx.Services
 {
@@ -16,6 +17,7 @@ namespace AkohoAspx.Services
         private readonly LotOeufRepository _lotOeufRepository;
         private readonly LotRepository _lotRepository;
         private readonly RaceRepository _raceRepository;
+        private readonly PondetionService pondetionService;
 
         public LotOeufService() : this(new AppDbContext()) {}
 
@@ -25,6 +27,7 @@ namespace AkohoAspx.Services
             _lotOeufRepository = new LotOeufRepository(_dbContext);
             _lotRepository = new LotRepository(_dbContext);
             _raceRepository = new RaceRepository(_dbContext);
+            pondetionService = new PondetionService(); 
         }
 
         public async Task<OperationResult> CreateLotOeuf(FormCollection requestForm)
@@ -37,6 +40,8 @@ namespace AkohoAspx.Services
             int.TryParse(lotIdRaw, out int lotId);
             int.TryParse(nombreOeufsRaw, out int nombreOeufs);
 
+            DateTime dateActuelle = Time.GetDateActuelle();
+
             Console.WriteLine($"[LotOeufService] Tentative création : LotId={lotId}, RaceId={raceId}, Nb={nombreOeufs}");
 
             if (lotId <= 0 || raceId <= 0 || nombreOeufs <= 0)
@@ -45,7 +50,12 @@ namespace AkohoAspx.Services
                 return OperationResult.Failure("Données invalides : LotId, RaceId et NombreOeufs sont obligatoires.");
             }
 
-            DateTime dateActuelle = Time.GetDateActuelle();
+            bool check = await pondetionService.checkPossibilitePondetion(lotId, nombreOeufs, dateActuelle);
+            if (!check)
+            {
+                return OperationResult.Failure("Capacite maximum de pondu d'oeuf atteint dans ce lot");
+            }
+
             DateTime dateEclosion = Time.creationDateAvecJour(await _raceRepository.getJourEclosionRace(raceId));
             
             var lotOeuf = new LotOeuf

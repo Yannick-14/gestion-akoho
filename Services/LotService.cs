@@ -17,6 +17,7 @@ namespace AkohoAspx.Services
         private readonly LotOeufRepository _lotOeufRepository;
         private readonly RaceRepository _raceRepository;
         private readonly MouvementLotRepository _mouvementLotRepository;
+        private readonly PondetionRepository _pondetionRepository;
 
         public LotService() : this(new AppDbContext()) {}
 
@@ -27,6 +28,7 @@ namespace AkohoAspx.Services
             _lotOeufRepository = new LotOeufRepository(_dbContext);
             _raceRepository = new RaceRepository(_dbContext);
             _mouvementLotRepository = new MouvementLotRepository(_dbContext);
+            _pondetionRepository = new PondetionRepository(_dbContext);
         }
 
         public async Task<LotIndexData> GetIndexDataAsync()
@@ -64,7 +66,7 @@ namespace AkohoAspx.Services
 
             if (!await _raceRepository.ExistsAsync(raceId)) return OperationResult.Failure("Race introuvable.");
 
-            pondetioRace = await _raceRepository.getNombrePendetionRace(raceId);
+            pondetioRace = await _pondetionRepository.getNombrePendetionRace(raceId);
             capacite = pondetioRace * nombreInitial;
             var lot = new Lot
             {
@@ -73,7 +75,7 @@ namespace AkohoAspx.Services
                 NombreInitial = nombreInitial,
                 PoidsInitiale = poidsAchat,
                 PrixAchat = totalInvesti,
-                Creation = DateTime.Now
+                Creation = DateTime.Now,
                 MaxCapacitePondetion = capacite
             };
 

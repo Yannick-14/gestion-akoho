@@ -20,6 +20,7 @@ namespace AkohoAspx.Services
         private readonly PrixVenteRaceRepository _prixVenteRaceRepository;
         private readonly MouvementLotRepository _mouvementLotRepository;
         private readonly AlimentService alimentService;
+        private readonly PondetionRepository _pondetionRepository;
 
         public DashboardService()
             : this(new AppDbContext())
@@ -35,6 +36,7 @@ namespace AkohoAspx.Services
             _prixNourritureRaceRepository = new PrixNourritureRaceRepository(_dbContext);
             _prixVenteRaceRepository = new PrixVenteRaceRepository(_dbContext);
             _mouvementLotRepository = new MouvementLotRepository(_dbContext);
+            _pondetionRepository = new PondetionRepository(_dbContext);
             alimentService = new AlimentService();
         }
 
@@ -66,6 +68,7 @@ namespace AkohoAspx.Services
                 // Calcul du prix de vente total estimé du lot à l'instant T
                 var prixVente = await _prixVenteRaceRepository.GetLatestPrixVenteByRaceId(lot.RaceId);
                 lotRecap.PrixVenteRaceUnitaire = prixVente.Prix / prixVente.ValeurGrame;
+                lotRecap.ResteLotPondu = (await _pondetionRepository.getMaxCapacitePondetionLot(lot.Id)) - (await _lotOeufRepository.totaliteOeufsLotPondu(lot.Id, dateActuelle));
                 // if (prixVente != null)
                 // {
                 //     decimal prixUnitaire = prixVente.Prix / prixVente.ValeurGrame;
